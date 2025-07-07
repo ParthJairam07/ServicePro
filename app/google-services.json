@@ -1,0 +1,29 @@
+{
+  "project_info": {
+    "project_number": "337854786062",
+    "project_id": "relationship-app-292fa",
+    "storage_bucket": "relationship-app-292fa.firebasestorage.app"
+  },
+  "client": [
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:337854786062:android:dba299909e9583a7252a5f",
+        "android_client_info": {
+          "package_name": "com.example.b07proj"
+        }
+      },
+      "oauth_client": [],
+      "api_key": [
+        {
+          "current_key": "AIzaSyACiFX0nZAP22vVAv5zjE90_yZESTmg5xU"
+        }
+      ],
+      "services": {
+        "appinvite_service": {
+          "other_platform_oauth_client": []
+        }
+      }
+    }
+  ],
+  "configuration_version": "1"
+}
