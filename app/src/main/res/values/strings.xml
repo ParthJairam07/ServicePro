@@ -1,3 +1,9 @@
 <resources>
     <string name="app_name">B07Proj</string>
+    <string name='pinPromptTitle'>Create your pin</string>
+    <string name='pinPromptInfo'>ⓘ Setting up your PIN enables you to log in quicker the next time you launch the app</string>
+    <string name='pinPromptHeaderText'>Setup Process</string>
+    <string name='inputPinInfo'>Choose a 4–6 digit PIN</string>
+    <string name='continueButtonText'>Done</string>
+    <string name="arrow_content_description">1</string>
 </resources>
