@@ -1,4 +1,4 @@
-package com.example.b07proj
+package com.example.b07proj.view
 import android.os.Bundle
 import android.util.Log
 import androidx.activity.ComponentActivity
@@ -15,14 +15,12 @@ import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.width
 import androidx.compose.foundation.text.KeyboardOptions
 import androidx.compose.material3.Button
+import androidx.compose.material3.ButtonDefaults
 import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.material3.HorizontalDivider
-import androidx.compose.material3.Icon
-import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.OutlinedTextField
 import androidx.compose.material3.Scaffold
 import androidx.compose.material3.TopAppBar
-import androidx.compose.material3.TopAppBarDefaults
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
@@ -31,7 +29,6 @@ import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.scale
 import androidx.compose.ui.graphics.Color
-import androidx.compose.ui.res.colorResource
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.font.Font
@@ -40,6 +37,7 @@ import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.input.KeyboardType
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
+import com.example.b07proj.R
 import com.example.b07proj.ui.theme.HeaderPurple
 import com.example.b07proj.ui.theme.TitlePink
 
@@ -84,7 +82,6 @@ fun InputPinText() {
         text = stringResource(R.string.inputPinInfo),
         fontWeight = FontWeight.Bold,
         fontFamily = myFont
-
     )
 
 }
@@ -111,23 +108,24 @@ fun InputPinField(
 }
 
 @Composable
-fun continueButton(pinValue: String, isPinValid: Boolean) {
+fun ContinueButton(pinValue: String, isPinValid: Boolean, modifier: Modifier) {
     Button(
         onClick = {
             Log.d("valid pin", "pin is: $pinValue, Valid?: $isPinValid")
+
         },
         enabled = isPinValid,
-        modifier = Modifier.fillMaxWidth()
+        modifier = modifier,
+        colors = ButtonDefaults.buttonColors(containerColor = HeaderPurple),
     ) {
         Text(
             text = stringResource(R.string.continueButtonText),
-
+            modifier = Modifier.padding(end = 30.dp)
             )
         Image(
             painter = painterResource(id = R.drawable.sendhorizontal),
             contentDescription = stringResource(id = R.string.arrow_content_description),
             modifier = Modifier.scale(2.5F),
-
             )
 
     }
@@ -146,9 +144,9 @@ fun MainBody(modifier: Modifier = Modifier) {
         horizontalAlignment = Alignment.CenterHorizontally
     ) {
         TitleText()
-        Spacer(modifier = Modifier.height(16.dp)) // <-- Adjust the dp value as you like
+        Spacer(modifier = Modifier.height(16.dp))
         SetUpPinInfo()
-        Spacer(modifier = Modifier.height(24.dp)) // <-- Adjust the dp value as you like
+        Spacer(modifier = Modifier.height(24.dp))
         InputPinField(
             pinValue = pin,
             onPinValueChange = { pin = it },
@@ -156,9 +154,10 @@ fun MainBody(modifier: Modifier = Modifier) {
         )
         Spacer(modifier = Modifier.height(32.dp))
         val isPinValid = pin.length in 4..6
-        continueButton(
+        ContinueButton(
             pinValue = pin,
-            isPinValid = isPinValid
+            isPinValid = isPinValid,
+            modifier =  Modifier.align(Alignment.End)
         )
 
     }
