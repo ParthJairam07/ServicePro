@@ -6,4 +6,7 @@
     <string name='inputPinInfo'>Choose a 4–6 digit PIN</string>
     <string name='continueButtonText'>Done</string>
     <string name="arrow_content_description">1</string>
+    <string name="contentDescription">27</string>
+    <string name="contentDescription3">30\n</string>
+    <string name="contentDescription2">Login now</string>
 </resources>

@@ -38,8 +38,8 @@ import androidx.compose.ui.text.input.KeyboardType
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import com.example.b07proj.R
-import com.example.b07proj.ui.theme.HeaderPurple
-import com.example.b07proj.ui.theme.TitlePink
+import com.example.b07proj.ui.theme.Primary40
+import com.example.b07proj.ui.theme.backgroundAccent
 
 
 class MainActivity : ComponentActivity() {
@@ -56,7 +56,7 @@ fun TitleText() {
     val myFont = FontFamily(Font(R.font.afacad))
     Text(
         text = stringResource(R.string.pinPromptTitle),
-        color = TitlePink,
+        color = backgroundAccent,
         fontSize = 30.sp,
         fontWeight = FontWeight.Bold,
         fontFamily = myFont
@@ -116,7 +116,7 @@ fun ContinueButton(pinValue: String, isPinValid: Boolean, modifier: Modifier) {
         },
         enabled = isPinValid,
         modifier = modifier,
-        colors = ButtonDefaults.buttonColors(containerColor = HeaderPurple),
+        colors = ButtonDefaults.buttonColors(containerColor = Primary40),
     ) {
         Text(
             text = stringResource(R.string.continueButtonText),
@@ -175,7 +175,7 @@ fun RenderScreen() {
                             text = stringResource(R.string.pinPromptHeaderText),
                             fontWeight = FontWeight.Bold,
                             fontSize = 20.sp,
-                            color = HeaderPurple
+                            color = Primary40
                         )
                     }
                 )

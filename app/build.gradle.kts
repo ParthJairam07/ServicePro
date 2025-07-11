@@ -50,7 +50,6 @@ dependencies {
     implementation(libs.androidx.ui.graphics)
     implementation(libs.androidx.ui.tooling.preview)
     implementation(libs.androidx.material3)
-    implementation(libs.material)
     testImplementation(libs.junit)
     androidTestImplementation(libs.androidx.junit)
     androidTestImplementation(libs.androidx.espresso.core)
@@ -59,16 +58,23 @@ dependencies {
     debugImplementation(libs.androidx.ui.tooling)
     debugImplementation(libs.androidx.ui.test.manifest)
     // Import the Firebase BoM
-    implementation(platform(libs.firebase.bom))
-
-    // TODO: Add the dependencies for Firebase products you want to use
-    // When using the BoM, don't specify versions in Firebase dependencies
-    implementation(libs.firebase.analytics)
-
+    implementation(platform("com.google.firebase:firebase-bom:33.16.0"))
+    // Import material design 3
     implementation("androidx.compose.material3:material3:1.3.2")
     implementation("androidx.compose.material3:material3-window-size-class:1.3.2")
     implementation("androidx.compose.material3:material3-adaptive-navigation-suite:1.4.0-alpha17")
 
+    // TODO: Add the dependencies for Firebase products you want to use
+    // When using the BoM, don't specify versions in Firebase dependencies
+    implementation("com.google.firebase:firebase-analytics")
+
     // Add the dependencies for any other desired Firebase products
     // https://firebase.google.com/docs/android/setup#available-libraries
+    implementation("com.firebaseui:firebase-ui-auth:9.0.0")
+    implementation("com.google.android.material:material:1.12.0") // Use the latest version
+
+    val nav_version = "2.9.1"
+
+    // Jetpack Compose integration
+    implementation("androidx.navigation:navigation-compose:$nav_version")
 }
