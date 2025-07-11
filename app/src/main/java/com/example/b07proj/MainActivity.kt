@@ -4,27 +4,52 @@ import android.os.Bundle
 import androidx.activity.ComponentActivity
 import androidx.activity.compose.setContent
 import androidx.activity.enableEdgeToEdge
-import androidx.compose.foundation.layout.fillMaxSize
-import androidx.compose.foundation.layout.padding
-import androidx.compose.material3.Scaffold
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.tooling.preview.Preview
+import androidx.navigation.compose.NavHost
+import androidx.navigation.compose.composable
+import androidx.navigation.compose.rememberNavController
 import com.example.b07proj.ui.theme.B07ProjTheme
+import com.example.b07proj.view.EmailLogin
+import com.example.b07proj.view.LandingPage
+import com.example.b07proj.view.LoginPage
+import com.example.b07proj.view.SignUpPage
 
 class MainActivity : ComponentActivity() {
+
+
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         enableEdgeToEdge()
+
         setContent {
-            B07ProjTheme {
-                Scaffold(modifier = Modifier.fillMaxSize()) { innerPadding ->
-                    Greeting(
-                        name = "Android",
-                        modifier = Modifier.padding(innerPadding)
-                    )
-                }
+            B07ProjTheme() {
+                val navController = rememberNavController() // to navigate to screens
+                //host the navigation graph
+                NavHost(
+                    navController = navController,
+                    startDestination = "login_page",
+                    builder = {
+                        //define the route
+                        composable("landing_page"){
+                            LandingPage(navController)
+                        }
+                        composable("pin_page"){
+                            PinPage(navController);
+                        }
+                        composable("login_page"){
+                            LoginPage(navController)
+                        }
+                        composable("sign_up_page"){
+                            SignUpPage(navController)
+                        }
+                        composable("email_login"){
+                            EmailLogin(navController)
+                        }
+                    }
+                )
             }
         }
     }
