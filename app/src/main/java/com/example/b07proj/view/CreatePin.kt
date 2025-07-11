@@ -39,11 +39,13 @@ import com.example.b07proj.R
 import com.example.b07proj.ui.theme.Primary40
 import com.example.b07proj.ui.theme.backgroundAccent
 
+
+// renders Create PIN screen
 @Composable
 fun CreatePin(navController: NavHostController) {
     UICreatePin(navController)
 }
-
+// renders title for PIN screen
 @Composable
 fun TitleText() {
     val myFont = FontFamily(Font(R.font.afacad))
@@ -53,9 +55,9 @@ fun TitleText() {
         fontSize = 30.sp,
         fontWeight = FontWeight.Bold,
         fontFamily = myFont
-
     )
 }
+// renders information about the PIN
 @Composable
 fun SetUpPinInfo() {
     val myFont = FontFamily(Font(R.font.afacad))
@@ -67,6 +69,7 @@ fun SetUpPinInfo() {
 
     )
 }
+// renders header for text field
 @Composable
 fun InputPinText() {
     val myFont = FontFamily(Font(R.font.afacad))
@@ -79,6 +82,7 @@ fun InputPinText() {
 
 }
 
+// renders input field and check if input is valid or not
 @Composable
 fun InputPinField(
     pinValue: String,
@@ -87,6 +91,7 @@ fun InputPinField(
 ) {
     OutlinedTextField(
         value = pinValue,
+        // we only change the value if its less than 6 and all digits
         onValueChange = { newValue ->
             if (newValue.length <= 6 && newValue.all { it.isDigit() }) {
                 onPinValueChange(newValue)
@@ -94,6 +99,7 @@ fun InputPinField(
         },
         modifier = modifier,
         label = { InputPinText() },
+        // convert keyboard PIN keyboard
         keyboardOptions = KeyboardOptions(keyboardType = KeyboardType.NumberPassword),
         singleLine = true,
 
@@ -104,9 +110,11 @@ fun InputPinField(
 fun ContinueButton(pinValue: String, isPinValid: Boolean, modifier: Modifier) {
     Button(
         onClick = {
+            // send to logcat the pin and its vaildity
             Log.d("valid pin", "pin is: $pinValue, Valid?: $isPinValid")
-
+            navController.navigate("landing_page") // this is temporary for now
         },
+        // button will be glowing depending on if the pin is valid
         enabled = isPinValid,
         modifier = modifier,
         colors = ButtonDefaults.buttonColors(containerColor = Primary40),
@@ -129,6 +137,7 @@ fun ContinueButton(pinValue: String, isPinValid: Boolean, modifier: Modifier) {
 @Composable
 fun MainBody(modifier: Modifier = Modifier) {
     var pin by remember { mutableStateOf("") }
+    // generally layout is centered column, this takes up the whole screen and has padding
     Column(
         modifier = modifier
             .fillMaxSize()
@@ -136,6 +145,7 @@ fun MainBody(modifier: Modifier = Modifier) {
             .padding(horizontal = 40.dp),
         horizontalAlignment = Alignment.CenterHorizontally
     ) {
+        // rendering all components
         TitleText()
         Spacer(modifier = Modifier.height(16.dp))
         SetUpPinInfo()
@@ -147,20 +157,22 @@ fun MainBody(modifier: Modifier = Modifier) {
         )
         Spacer(modifier = Modifier.height(32.dp))
         val isPinValid = pin.length in 4..6
+        // light up the continue button if they typed 4-6 digits
         ContinueButton(
             pinValue = pin,
             isPinValid = isPinValid,
             modifier =  Modifier.align(Alignment.End)
         )
-
     }
 }
 
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
 fun UICreatePin(navController: NavHostController) {
+    // this layout has header + main content
     Scaffold(
         topBar = {
+            // ordered as a column for horizontal line below the header
             Column {
                 TopAppBar(
                     title = {
@@ -180,6 +192,7 @@ fun UICreatePin(navController: NavHostController) {
 
         }
     ) { innerPadding ->
+        // render in main content
         MainBody(modifier = Modifier.padding(innerPadding))
     }
 }

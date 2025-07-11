@@ -25,12 +25,17 @@ import androidx.compose.ui.Alignment
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.unit.dp
 import androidx.navigation.NavController
+import com.example.b07proj.model.HandleAuth
 
 @OptIn(ExperimentalMaterial3Api::class)
 
 
 @Composable
-fun LandingPage(navController: NavController) {
+fun LandingPage(
+    navController: NavController,
+    auth: HandleAuth
+    ) {
+    val userEmail = auth.getCurrentUser()?.email
     Scaffold (
         topBar = {
             TopAppBar(
@@ -86,6 +91,12 @@ fun LandingPage(navController: NavController) {
                 fontWeight = FontWeight.Bold,
                 fontSize = 20.sp,
                 modifier = Modifier.padding(top = 10.dp)
+            )
+            Text(
+                text = "Logged in as: ${userEmail ?: "Guest"}",
+                color = MaterialTheme.colorScheme.onTertiary,
+                fontWeight = FontWeight.Bold,
+                fontSize = 20.sp
             )
             Button(
                 onClick = {
