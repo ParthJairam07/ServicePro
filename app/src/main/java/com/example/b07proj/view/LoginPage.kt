@@ -32,7 +32,7 @@ import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import com.example.b07proj.R
 
-
+//main login page that allows user to sign up or login
 @Composable
 fun LoginPage(navController: NavController) {
     UILogin(navController);
@@ -86,7 +86,7 @@ fun UILogin(navController: NavController) {
             verticalArrangement = Arrangement.spacedBy(20.dp)
         ) {
             val myFont = FontFamily(Font(R.font.afacad))
-            Button(onClick = { navController.navigate("user_login_page") },
+            Button(onClick = { navController.navigate("pin_page") },
                 colors = ButtonDefaults.buttonColors(containerColor = Color(0xFFFFD3A8)),
                 modifier = Modifier.height(80.dp).width(270.dp)
             ) {

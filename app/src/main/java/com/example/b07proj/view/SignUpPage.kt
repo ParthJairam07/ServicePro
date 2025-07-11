@@ -54,7 +54,7 @@ import androidx.compose.ui.unit.sp
 import androidx.navigation.NavHostController
 import com.example.b07proj.R
 
-
+//page for user to sign up
 @Composable
 fun SignUpPage(navController: NavHostController) {
     UISignUpPage(navController);

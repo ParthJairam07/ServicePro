@@ -52,6 +52,7 @@ import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import androidx.navigation.NavController
 
+//page for login with pin
 @Composable
 fun PinPage(navController: NavController) {
     UIPinPage(navController)

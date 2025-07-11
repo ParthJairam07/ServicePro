@@ -16,7 +16,6 @@ import com.example.b07proj.view.EmailLogin
 import com.example.b07proj.view.LandingPage
 import com.example.b07proj.view.LoginPage
 import com.example.b07proj.view.SignUpPage
-import com.example.b07proj.view.UserLoginPage
 
 class MainActivity : ComponentActivity() {
 
@@ -42,9 +41,6 @@ class MainActivity : ComponentActivity() {
                         }
                         composable("login_page"){
                             LoginPage(navController)
-                        }
-                        composable("user_login_page"){
-                            UserLoginPage(navController)
                         }
                         composable("sign_up_page"){
                             SignUpPage(navController)
