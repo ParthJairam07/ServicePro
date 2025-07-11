@@ -107,7 +107,7 @@ fun InputPinField(
 }
 
 @Composable
-fun ContinueButton(pinValue: String, isPinValid: Boolean, modifier: Modifier) {
+fun ContinueButton(pinValue: String, isPinValid: Boolean, modifier: Modifier, navController: NavHostController) {
     Button(
         onClick = {
             // send to logcat the pin and its vaildity
@@ -135,7 +135,7 @@ fun ContinueButton(pinValue: String, isPinValid: Boolean, modifier: Modifier) {
 }
 
 @Composable
-fun MainBody(modifier: Modifier = Modifier) {
+fun MainBody(modifier: Modifier = Modifier, navController: NavHostController) {
     var pin by remember { mutableStateOf("") }
     // generally layout is centered column, this takes up the whole screen and has padding
     Column(
@@ -161,7 +161,8 @@ fun MainBody(modifier: Modifier = Modifier) {
         ContinueButton(
             pinValue = pin,
             isPinValid = isPinValid,
-            modifier =  Modifier.align(Alignment.End)
+            modifier =  Modifier.align(Alignment.End),
+            navController = navController
         )
     }
 }
@@ -193,6 +194,9 @@ fun UICreatePin(navController: NavHostController) {
         }
     ) { innerPadding ->
         // render in main content
-        MainBody(modifier = Modifier.padding(innerPadding))
+        MainBody(
+            modifier = Modifier.padding(innerPadding),
+            navController = navController
+        )
     }
 }
