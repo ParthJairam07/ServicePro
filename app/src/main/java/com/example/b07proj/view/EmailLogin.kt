@@ -1,8 +1,6 @@
 package com.example.b07proj.view
 
-import android.os.Bundle
-import androidx.activity.compose.setContent
-import androidx.appcompat.app.AppCompatActivity
+import android.widget.Toast
 import androidx.compose.foundation.Image
 import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.Arrangement
@@ -35,6 +33,7 @@ import androidx.compose.ui.draw.scale
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.graphics.ColorFilter
 import androidx.compose.ui.graphics.RectangleShape
+import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.TextStyle
@@ -46,6 +45,8 @@ import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import androidx.navigation.NavHostController
 import com.example.b07proj.R
+import com.example.b07proj.model.HandleAuth
+import com.example.b07proj.presenter.AuthPresenter
 
 @Composable
 fun EmailLogin(navController: NavHostController) {
@@ -61,6 +62,23 @@ private val AppTextInputColors: TextFieldColors
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
 fun UIEmailLogin(navController: NavHostController) {
+    val context = LocalContext.current
+
+    val presenter = remember {
+        AuthPresenter(
+            auth = HandleAuth(),
+            view = object : SignUpView {
+                override fun onSignUpSuccess() {
+                    navController.navigate("landing_page")
+                }
+
+                override fun showError(message: String) {
+                    Toast.makeText(context, message, Toast.LENGTH_SHORT).show()
+                }
+            }
+        )
+    }
+
     Scaffold(
 
         topBar = {
@@ -169,9 +187,7 @@ fun UIEmailLogin(navController: NavHostController) {
                 {
                     Button(
                         onClick = {
-                            navController.navigate("Start_here")
-                            println(email)
-                            println(password)
+                            presenter.onLoginClick(email, password)
                         },
                         enabled = !email.isEmpty() && !password.isEmpty(),
                         colors = ButtonDefaults.buttonColors(containerColor = Color(0xFFA83E92)),

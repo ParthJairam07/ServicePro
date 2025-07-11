@@ -1,8 +1,6 @@
 package com.example.b07proj.view
 
-import android.os.Bundle
-import androidx.activity.compose.setContent
-import androidx.appcompat.app.AppCompatActivity
+import android.widget.Toast
 import androidx.compose.foundation.Image
 import androidx.compose.foundation.background
 import androidx.compose.foundation.clickable
@@ -25,7 +23,6 @@ import androidx.compose.material3.OutlinedTextFieldDefaults
 import androidx.compose.material3.RadioButton
 import androidx.compose.material3.Scaffold
 import androidx.compose.material3.Text
-import androidx.compose.material3.TextFieldColors
 import androidx.compose.material3.TopAppBar
 import androidx.compose.material3.TopAppBarDefaults
 import androidx.compose.runtime.Composable
@@ -39,6 +36,7 @@ import androidx.compose.ui.draw.scale
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.graphics.ColorFilter
 import androidx.compose.ui.graphics.RectangleShape
+import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.SpanStyle
@@ -53,6 +51,8 @@ import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import androidx.navigation.NavHostController
 import com.example.b07proj.R
+import com.example.b07proj.model.HandleAuth
+import com.example.b07proj.presenter.AuthPresenter
 
 //page for user to sign up
 @Composable
@@ -63,6 +63,23 @@ fun SignUpPage(navController: NavHostController) {
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
 fun UISignUpPage(navController: NavHostController) {
+    val context = LocalContext.current
+    //create presenter to handle authentication, i.e what page to show on sucess etc
+    val presenter = remember {
+        AuthPresenter(
+            auth = HandleAuth(),
+            view = object : SignUpView {
+                override fun onSignUpSuccess() {
+                    navController.navigate("landing_page")
+                }
+
+                override fun showError(message: String) {
+                    Toast.makeText(context, message, Toast.LENGTH_SHORT).show()
+                }
+            }
+        )
+    }
+
     Scaffold(
 
         topBar = {
@@ -219,9 +236,7 @@ fun UISignUpPage(navController: NavHostController) {
                 ) {
                     Button(
                         onClick = {
-                            navController.navigate("Start_here")
-                            println(selectedOption)
-                            println(selectedOption1)
+                            presenter.onSignUpClick(email, password)
                         },
                         enabled = selectedOption && selectedOption1 && !email.isEmpty() && !password.isEmpty(),
                         colors = ButtonDefaults.buttonColors(containerColor = Color(0xFFA83E92)),
