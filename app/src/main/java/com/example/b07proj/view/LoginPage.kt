@@ -35,7 +35,7 @@ import com.example.b07proj.R
 //main login page that allows user to sign up or login
 @Composable
 fun LoginPage(navController: NavController) {
-    UILogin(navController);
+    UILogin(navController)
 }
 
 

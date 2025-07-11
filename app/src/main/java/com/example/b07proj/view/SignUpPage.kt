@@ -57,7 +57,7 @@ import com.example.b07proj.R
 //page for user to sign up
 @Composable
 fun SignUpPage(navController: NavHostController) {
-    UISignUpPage(navController);
+    UISignUpPage(navController)
 }
 
 @OptIn(ExperimentalMaterial3Api::class)
@@ -219,11 +219,11 @@ fun UISignUpPage(navController: NavHostController) {
                 ) {
                     Button(
                         onClick = {
-                            navController.navigate("Start_here")
+                            navController.navigate("create_pin")
                             println(selectedOption)
                             println(selectedOption1)
                         },
-                        enabled = selectedOption && selectedOption1 && !email.isEmpty() && !password.isEmpty(),
+                        enabled = selectedOption && selectedOption1 && email.isNotEmpty() && password.isNotEmpty(),
                         colors = ButtonDefaults.buttonColors(containerColor = Color(0xFFA83E92)),
                         modifier = Modifier.height(40.dp).width(120.dp),
                         shape = RectangleShape,

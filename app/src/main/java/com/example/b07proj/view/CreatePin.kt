@@ -1,8 +1,5 @@
 package com.example.b07proj.view
-import android.os.Bundle
 import android.util.Log
-import androidx.activity.ComponentActivity
-import androidx.activity.compose.setContent
 import androidx.compose.foundation.Image
 import androidx.compose.foundation.layout.Column
 import androidx.compose.material3.Text
@@ -37,18 +34,14 @@ import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.input.KeyboardType
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
+import androidx.navigation.NavHostController
 import com.example.b07proj.R
 import com.example.b07proj.ui.theme.Primary40
 import com.example.b07proj.ui.theme.backgroundAccent
 
-
-class MainActivity : ComponentActivity() {
-    override fun onCreate(savedInstanceState: Bundle?) {
-        super.onCreate(savedInstanceState)
-        setContent {
-            RenderScreen()
-        }
-    }
+@Composable
+fun CreatePin(navController: NavHostController) {
+    UICreatePin(navController)
 }
 
 @Composable
@@ -165,7 +158,7 @@ fun MainBody(modifier: Modifier = Modifier) {
 
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
-fun RenderScreen() {
+fun UICreatePin(navController: NavHostController) {
     Scaffold(
         topBar = {
             Column {

@@ -49,7 +49,7 @@ import com.example.b07proj.R
 
 @Composable
 fun EmailLogin(navController: NavHostController) {
-    UIEmailLogin(navController);
+    UIEmailLogin(navController)
 }
 private val AppTextInputColors: TextFieldColors
     @Composable
@@ -173,7 +173,7 @@ fun UIEmailLogin(navController: NavHostController) {
                             println(email)
                             println(password)
                         },
-                        enabled = !email.isEmpty() && !password.isEmpty(),
+                        enabled = email.isNotEmpty() && password.isNotEmpty(),
                         colors = ButtonDefaults.buttonColors(containerColor = Color(0xFFA83E92)),
                         modifier = Modifier.height(40.dp).width(120.dp),
                         shape = RectangleShape,
