@@ -24,12 +24,13 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.unit.dp
+import androidx.navigation.NavController
 
 @OptIn(ExperimentalMaterial3Api::class)
 
 
 @Composable
-fun LandingPage() {
+fun LandingPage(navController: NavController) {
     Scaffold (
         topBar = {
             TopAppBar(
@@ -87,13 +88,15 @@ fun LandingPage() {
                 modifier = Modifier.padding(top = 10.dp)
             )
             Button(
-                onClick = {},
+                onClick = {
+                    navController.navigate("pin_page")
+                },
                 colors = ButtonDefaults.buttonColors(
-                    containerColor = MaterialTheme.colorScheme.onSecondary,
-                    contentColor = MaterialTheme.colorScheme.onTertiary
+                    containerColor = MaterialTheme.colorScheme.secondary,
+                    contentColor = Color.White
                 ),
                 modifier = Modifier
-                    .padding(top = 20.dp, start = 180.dp)
+                    .padding(top = 20.dp)
                     .width(150.dp)
             ) {
                 Text("Get Started")
