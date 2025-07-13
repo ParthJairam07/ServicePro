@@ -7,11 +7,9 @@ import androidx.compose.foundation.Image
 import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Column
-import androidx.compose.foundation.layout.absoluteOffset
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
-import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.layout.width
 import androidx.compose.material3.Button
 import androidx.compose.material3.ButtonDefaults
@@ -31,73 +29,117 @@ import androidx.compose.ui.text.font.FontFamily
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import com.example.b07proj.R
-
-//main login page that allows user to sign up or login
+import com.example.b07proj.ui.theme.Primary40
+// main login page that allows user to sign up or login
 @Composable
 fun LoginPage(navController: NavController) {
+    // call the UI layer for the login
     UILogin(navController)
 }
 
-
+// main UI function that uses Scaffold to organize the layout
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
 fun UILogin(navController: NavController) {
     Scaffold(
+        // create a topBar element which will consist of the logo
         topBar = {
             TopAppBar(
+                // set the colors to the default values that match the app
                 colors = TopAppBarDefaults.topAppBarColors(
                     containerColor = MaterialTheme.colorScheme.primaryContainer,
                     titleContentColor = MaterialTheme.colorScheme.primary,
                 ),
                 title = {
-                    Text("Logo here!")
-
+                    // set the logo through the Image() element and enter the correct description
+                    Image(
+                        painter = painterResource(R.drawable.templogo),
+                        contentDescription = stringResource(id = R.string.logoDescription),
+                    )
                 }
             )
         },
-    )  { padding ->
+    ) { padding ->
         Column(
             modifier = Modifier
+                // enter the appropriate elements, such as filling to the entire page, color and padding values
                 .fillMaxSize()
-                .background(Color(0xFF592C5F))
+                .background(color = Primary40)
                 .padding(padding)
                 .padding(16.dp)
         ) {
-            val myFont = FontFamily(Font(R.font.afacad))
-            Image(
-                modifier = Modifier.scale(2.0F).absoluteOffset(68.dp,50.dp),
-                painter = painterResource(id = R.drawable.appimage),
-                contentDescription = "B07 Project"
-            )
-            Text(
-                modifier = Modifier
-                    .absoluteOffset(100.dp,100.dp)
-                    .height(50.dp)
-                    .width(200.dp)
-                    .size(200.dp)
+            // render the app title image and welcome text
+            LoginTitle()
+        }
 
-                ,
-                text = "Welcome", fontFamily = myFont,
-                fontSize = 50.sp, color = Color.White
+        // render the login and signup buttons
+        LoginOptions(navController)
+    }
+}
+
+
+// create a function called LoginTitle for B07Proj image + welcome title
+@Composable
+fun LoginTitle() {
+    // set the fonts used for the UI in a variable
+    val myFont = FontFamily(Font(R.font.afacad))
+
+    // create the title for the page through the Text() element and project image
+    Image(
+        // set the appropriate UI location, the image and description
+        modifier = Modifier.scale(2.0F).padding(start = 75.dp, top = 40.dp),
+        painter = painterResource(id = R.drawable.appimage),
+        contentDescription = stringResource(id = R.string.title_image),
+    )
+    // set the title page text using the Text() element
+    Text(
+        modifier = Modifier.padding(start = 100.dp, top = 20.dp),
+        // create the text, font, size and color
+        text = stringResource(R.string.welcome_text),
+        fontFamily = myFont,
+        fontSize = 50.sp,
+        color = Color.White
+    )
+}
+
+// button section for login or signup, this takes in a navController in order to send the user to the appropriate page
+@Composable
+fun LoginOptions(navController: NavController) {
+    // create a column to incorporate the buttons
+    Column(
+        // create the padding and the vertical arrangement for the columns
+        modifier = Modifier.padding(start = 70.dp, top = 650.dp),
+        verticalArrangement = Arrangement.spacedBy(20.dp)
+    ) {
+        // set the font value
+        val myFont = FontFamily(Font(R.font.afacad))
+
+        // create a button to navigate to the pin page if the user already has an account
+        Button(
+            onClick = { navController.navigate("pin_page") },
+            colors = ButtonDefaults.buttonColors(containerColor = Color(0xFFFFD3A8)),
+            modifier = Modifier.height(80.dp).width(270.dp)
+        ) {
+            Text(
+                stringResource(R.string.login_text),
+                color = Color.Black,
+                fontSize = 30.sp,
+                fontFamily = myFont
             )
         }
-        Column(
-            modifier = Modifier.absoluteOffset(70.dp, 650.dp),
-            verticalArrangement = Arrangement.spacedBy(20.dp)
+
+        // create a button to navigate to the create account page if the user does not have an account
+        Button(
+            onClick = { navController.navigate("sign_up_page") },
+            colors = ButtonDefaults.buttonColors(containerColor = Color(0xFFFFD3A8)),
+            modifier = Modifier.height(80.dp).width(270.dp)
         ) {
-            val myFont = FontFamily(Font(R.font.afacad))
-            Button(onClick = { navController.navigate("pin_page") },
-                colors = ButtonDefaults.buttonColors(containerColor = Color(0xFFFFD3A8)),
-                modifier = Modifier.height(80.dp).width(270.dp)
-            ) {
-                Text("Login Now", color = Color.Black, fontSize = 30.sp, fontFamily = myFont)
-            }
-            Button(onClick = { navController.navigate("sign_up_page")  },
-                colors = ButtonDefaults.buttonColors(containerColor = Color(0xFFFFD3A8)),
-                modifier = Modifier.height(80.dp).width(270.dp)
-            ) {
-                Text("Sign Up", color = Color.Black, fontSize = 30.sp, fontFamily = myFont)
-            }
+            Text(
+                stringResource(id = R.string.signup_text),
+                color = Color.Black,
+                fontSize = 30.sp,
+                fontFamily = myFont
+            )
         }
     }
 }
