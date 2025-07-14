@@ -191,6 +191,11 @@ fun UICreatePin(navController: NavHostController) {
                 )
             }
 
+        }, floatingActionButton = {
+            ExitButton(
+                modifier = Modifier
+                    .padding(5.dp)    // placement
+            )
         }
     ) { innerPadding ->
         // render in main content

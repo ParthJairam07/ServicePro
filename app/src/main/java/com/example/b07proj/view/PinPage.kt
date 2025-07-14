@@ -101,7 +101,12 @@ fun UIPinPage(navController: NavController) {
                     )
                 }
             )
-        },
+        }, floatingActionButton = {
+            ExitButton(
+                modifier = Modifier
+                    .padding(5.dp)    // placement
+            )
+        }
     ) { padding ->
         // create a column to house each of the field
         Column(

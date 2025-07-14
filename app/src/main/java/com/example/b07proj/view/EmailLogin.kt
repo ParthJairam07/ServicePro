@@ -116,6 +116,12 @@ fun UIEmailLogin(navController: NavHostController) {
                 }
             )
         },
+        floatingActionButton = {
+            ExitButton(
+                modifier = Modifier
+                    .padding(5.dp)    // placement
+            )
+        }
     ) { padding ->
         // create the full background view through a column
         Column(

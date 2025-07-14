@@ -76,6 +76,11 @@ fun UISignUpPage(navController: NavHostController) {
                     )
                 }
             )
+        }, floatingActionButton = {
+            ExitButton(
+                modifier = Modifier
+                    .padding(5.dp)    // placement
+            )
         }
     ) { padding ->
         // create a column to fill out the entire background page and house the necessary details for signup

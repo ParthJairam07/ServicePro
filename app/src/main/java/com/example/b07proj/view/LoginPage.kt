@@ -30,6 +30,7 @@ import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import com.example.b07proj.R
 import com.example.b07proj.ui.theme.Primary40
+import com.example.b07proj.view.ExitButton // not needed
 // main login page that allows user to sign up or login
 @Composable
 fun LoginPage(navController: NavController) {
@@ -58,7 +59,12 @@ fun UILogin(navController: NavController) {
                     )
                 }
             )
-        },
+        }, floatingActionButton = {
+            ExitButton(
+                modifier = Modifier
+                    .padding(5.dp)    // placement
+            )
+        }
     ) { padding ->
         Column(
             modifier = Modifier

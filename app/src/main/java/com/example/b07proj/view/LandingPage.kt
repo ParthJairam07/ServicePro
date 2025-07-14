@@ -66,6 +66,11 @@ fun LandingPage(
                     )
                 }
             }
+        }, floatingActionButton = {
+            ExitButton(
+                modifier = Modifier
+                    .padding(5.dp)    // placement
+            )
         },
         containerColor = MaterialTheme.colorScheme.primary
 
