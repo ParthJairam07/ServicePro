@@ -1,14 +1,11 @@
-package com.example.b07proj
+package com.example.b07proj.view
 
-import android.os.Bundle
-import androidx.activity.ComponentActivity
-import androidx.activity.compose.setContent
 import androidx.compose.foundation.Image
 import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
-import androidx.compose.foundation.layout.absoluteOffset
+import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
@@ -18,7 +15,6 @@ import androidx.compose.foundation.shape.CircleShape
 import androidx.compose.foundation.text.KeyboardOptions
 import androidx.compose.material3.Button
 import androidx.compose.material3.ButtonDefaults
-import androidx.compose.material3.Icon
 import androidx.compose.material3.OutlinedTextField
 import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.material3.MaterialTheme
@@ -51,140 +47,199 @@ import androidx.compose.ui.text.style.TextDecoration
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import androidx.navigation.NavController
+import com.example.b07proj.R
+import com.example.b07proj.ui.theme.Primary40
+import com.example.b07proj.ui.theme.Primary50
+import com.example.b07proj.ui.theme.backgroundAccent
 
-//page for login with pin
+// page for login with pin, takes in a navigation controller to switch to other pages once the tasks have been completed
 @Composable
 fun PinPage(navController: NavController) {
     UIPinPage(navController)
 }
 
+// initialize global variable for font
+val myFont = FontFamily(Font(R.font.afacad))
 
-
+// define a custom TextField color scheme to be reused across the app.
 private val AppTextInputColors: TextFieldColors
+    // set the color of the border when clicked and non-clicked, the label color when clicked and unclicked and so on.
     @Composable
-    get() = OutlinedTextFieldDefaults.colors(focusedBorderColor = Color.White, unfocusedBorderColor = Color.hsl(hue = 30f, saturation = 0.8f, lightness = 0.85f), focusedTextColor = Color.White, unfocusedTextColor = Color.DarkGray, unfocusedLabelColor = Color.hsl(hue = 30f, saturation = 0.8f, lightness = 0.85f), focusedLabelColor = Color.White)
-
-
-
+    get() = OutlinedTextFieldDefaults.colors(
+        focusedBorderColor = Color.White,
+        unfocusedBorderColor = Primary50,
+        focusedTextColor = Color.White,
+        unfocusedTextColor = Color.DarkGray,
+        unfocusedLabelColor = Primary50,
+        focusedLabelColor = Color.White
+    )
 
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
 fun UIPinPage(navController: NavController) {
     Scaffold(
+        // create a topBar element which will consist of the logo
         topBar = {
             TopAppBar(
+                // set the colors to the default values that match the app
                 colors = TopAppBarDefaults.topAppBarColors(
                     containerColor = MaterialTheme.colorScheme.primaryContainer,
                     titleContentColor = MaterialTheme.colorScheme.primary,
                 ),
                 title = {
-                    Text("Logo here!")
-
+                    // set the logo through the Image() element and enter the correct description
+                    Image(
+                        painter = painterResource(R.drawable.templogo),
+                        contentDescription = stringResource(id = R.string.logoDescription),
+                    )
                 }
             )
-        },
-    )  { padding ->
+        }, floatingActionButton = {
+            ExitButton(
+                modifier = Modifier
+                    .padding(5.dp)    // placement
+            )
+        }
+    ) { padding ->
+        // create a column to house each of the field
         Column(
             modifier = Modifier
+                // create the full background view through a column
                 .fillMaxSize()
-                .background(Color(0xFF592C5F))
+                .background(color = Primary40)
                 .padding(padding)
                 .padding(16.dp)
         ) {
-            val myFont = FontFamily(Font(R.font.afacad))
             var pin by remember { mutableStateOf("") }
+            // call the heading function
+            PinHeading()
+            // call the inputField and pass in the pin variable and to change it on demand
+            PinInputField(pin = pin, onPinChange = { pin = it })
+            // call the emailLoginLink and pass in the navController to get to different parts of the UI
+            EmailLoginLink(navController)
+            // and the continue button
+            PinContinueButton(pin = pin, navController = navController)
+        }
+    }
+}
+
+
+// heading that says "Enter your Pin"
+@Composable
+fun PinHeading() {
+    Text(
+        // create the padding values, keep it one line, and text features
+        modifier = Modifier.padding(start = 50.dp, top = 100.dp),
+        softWrap = false,
+        text = stringResource(R.string.enter_pin),
+        fontFamily = myFont,
+        fontSize = 50.sp,
+        color = Color.White
+    )
+}
+
+// input field for entering a numeric pin, pass in the pin string and string to update the pin variable as the user enters
+@Composable
+fun PinInputField(pin: String, onPinChange: (String) -> Unit) {
+    // create a row in order to house the text field and the pin code
+    Row(
+        modifier = Modifier.padding(start = 40.dp, top = 50.dp)
+    ) {
+        OutlinedTextField(
+            // set the value of the text to be stored in the pin variables
+            value = pin,
+            // ensure that the characters only accounted for are digits and must be of length less than 6
+            onValueChange = { newValue ->
+                if (newValue.length <= 6 && newValue.all { it.isDigit() }) {
+                    onPinChange(newValue)
+                }
+            },
+            singleLine = true, // don't allow the enter key to create a new line
+            keyboardOptions = KeyboardOptions(keyboardType = KeyboardType.NumberPassword),
+            visualTransformation = PasswordVisualTransformation(), // hide the pin for privacy sake
+            label = { Text(stringResource(R.string.pin_text), fontFamily = myFont) },
+            placeholder = { Text(stringResource(R.string.example_pin), fontFamily = myFont) },
+            textStyle = TextStyle(
+                color = Color.White,
+                fontWeight = FontWeight.Bold,
+                fontFamily = myFont
+            ),
+            colors = AppTextInputColors, // set the colors of the text field to be the custom one initialized above
+            shape = CircleShape,
+            modifier = Modifier.width(260.dp)
+        )
+        Spacer(modifier = Modifier.width(10.dp))
+        // icon next to the input box
+        Image(
+            painter = painterResource(id = R.drawable.pincode),
+            contentDescription = stringResource(R.string.pincode_text),
+            colorFilter = ColorFilter.tint(color = Primary50),
+            modifier = Modifier
+                .size(58.dp) // consistent size
+                .padding(top = 22.dp, end = 22.dp)
+        )
+    }
+}
+
+// clickable text to login with email instead, pass navController to get to the email login page
+@Composable
+fun EmailLoginLink(navController: NavController) {
+    // create a column for the link to login with email and password
+    Column(
+        modifier = Modifier.padding(start = 54.dp, top = 5.dp)
+    ) {
+        // set the text clickable with the Surface() element to navigate to the email_login page
+        Surface(color = Color.Transparent, onClick = { navController.navigate("email_login") }) {
             Text(
-                modifier = Modifier
-                    .absoluteOffset(100.dp,100.dp)
-                    .height(50.dp)
-                    .width(200.dp)
-                    .size(200.dp)
-
-                ,
-                text = "Welcome", fontFamily = myFont,
-                fontSize = 50.sp, color = Color.White
+                stringResource(R.string.email_login),
+                fontFamily = myFont,
+                style = TextStyle(
+                    color = Primary50,
+                    fontSize = 20.sp,
+                    textDecoration = TextDecoration.Underline // underline to show it's a link
+                )
             )
+        }
+    }
+}
 
-            Row (
-                modifier = Modifier
-                    .absoluteOffset(0.dp, 160.dp),
-                horizontalArrangement = Arrangement.spacedBy(2.dp)
-            )
-            {
+// continue button to proceed after entering the pin, pass in the pin to check if it's valid, and navController to get to the next page
+@Composable
+fun PinContinueButton(pin: String, navController: NavController) {
+    // set a column for the Done button
+    Column(
+        modifier = Modifier.padding(start = 250.dp, top = 40.dp)
+    ) {
+        // create a boolean value that keeps the text of the button gray until the valid information is entered
+        val iconAndTextColor = if (pin.length >= 4) Primary50 else Color.DarkGray
+        // create a button field using the MVP design pattern where a onLoginClick method is being called and the pin are passed in
+        Button(
+            onClick = { navController.navigate("email_login") }, // TEMP NAV - can be updated to actual logic
+            enabled = pin.length >= 4, // only enable the button if the fields are non-empty
+            colors = ButtonDefaults.buttonColors(containerColor = backgroundAccent),
+            modifier = Modifier.height(45.dp).width(120.dp),
+            shape = RectangleShape,
+        ) {
+            // set a new row to house the Done text and arrow icon
+            Row(
+                horizontalArrangement = Arrangement.spacedBy(5.dp)
+            ) {
+                // enter the text for the Done button and set the padding values, and custom colors
+                Text(
+                    stringResource(id = R.string.continueButtonText),
+                    modifier = Modifier.padding(0.dp, 0.dp, bottom = 5.dp).padding(end = 15.dp),
+                    color = iconAndTextColor,
+                    fontSize = 20.sp,
+                    fontFamily = myFont
+                )
+                // set the arrow image for the Done button and tint it accordingly
                 Image(
-                    modifier = Modifier.scale(0.33F),
-                    painter = painterResource(id = R.drawable.pincode),
-                    contentDescription = stringResource(id = R.string.contentDescription),
-                    colorFilter = ColorFilter.tint(Color(0xFFFFD3A8))
-                )
-                OutlinedTextField(
-                    value = pin,
-                    keyboardOptions = KeyboardOptions(keyboardType = KeyboardType.NumberPassword),
-                    visualTransformation = PasswordVisualTransformation(),
-                    onValueChange = { it.also { pin = it } },
-                    modifier = Modifier
-                        .absoluteOffset((-30).dp, 30.dp),
-
-                    label = { Text("Enter Pin", fontFamily = myFont) },
-                    placeholder = { Text("example@gmail.com", fontFamily = myFont) },
-                    textStyle = TextStyle(
-                        color = Color.White,
-                        fontWeight = FontWeight.Bold,
-                        fontFamily = myFont
-                    ),
-                    colors = AppTextInputColors,
-                    shape = CircleShape
-
+                    painter = painterResource(R.drawable.sendorizontal),
+                    modifier = Modifier.scale(2.5F).padding(top = 5.dp),
+                    contentDescription = stringResource(id = R.string.arrow_content_description),
+                    colorFilter = ColorFilter.tint(color = iconAndTextColor)
                 )
             }
-            Column (
-                modifier = Modifier
-                    .absoluteOffset(64.dp,125.dp)
-
-            ) {
-                Surface(color = Color.Transparent, onClick = { navController.navigate("email_login") }) {
-                    Text(
-                        "Log in with Email and Password instead.",
-                        fontFamily = myFont,
-                        style = TextStyle(
-                            color = Color(0xFFFFD3A8),
-                            fontSize = 18.sp,
-                            textDecoration = TextDecoration.Underline
-                        )
-                    )
-
-                }
-
-            }
-            Column (
-                modifier = Modifier.absoluteOffset(240.dp, 230.dp)
-            ) {
-                Button(
-                    onClick = { navController.navigate("email_login")
-                        println(pin) },
-                    enabled = pin.length >= 4,
-                    colors = ButtonDefaults.buttonColors(containerColor = Color(0xFFA83E92)),
-                    modifier = Modifier.height(40.dp).width(120.dp),
-                    shape = RectangleShape,
-
-                    ) {
-                    Row (
-                        horizontalArrangement = Arrangement.spacedBy(5.dp)
-                    )
-                    {
-                        Text("Done",
-                            modifier = Modifier.absoluteOffset(0.dp,(-3).dp).padding(end=15.dp),
-                            color = Color(0xFFFFD3A8), fontSize = 20.sp, fontFamily = myFont)
-                        Icon(
-                            painter = painterResource(R.drawable.sendorizontal),
-                            modifier = Modifier.scale(2.5F).padding(top=3.dp),
-                            contentDescription = stringResource(id = R.string.contentDescription3),
-                            tint = Color(0xFFFFD3A8)
-                        )
-                    }
-                }
-            }
-
         }
     }
 }

@@ -11,11 +11,13 @@ import androidx.compose.ui.tooling.preview.Preview
 import androidx.navigation.compose.NavHost
 import androidx.navigation.compose.composable
 import androidx.navigation.compose.rememberNavController
+import com.example.b07proj.model.HandleAuth
 import com.example.b07proj.ui.theme.B07ProjTheme
 import com.example.b07proj.view.EmailLogin
 import com.example.b07proj.view.LandingPage
 import com.example.b07proj.view.LoginPage
 import com.example.b07proj.view.SignUpPage
+import com.example.b07proj.view.PinPage
 
 class MainActivity : ComponentActivity() {
 
@@ -25,7 +27,9 @@ class MainActivity : ComponentActivity() {
         enableEdgeToEdge()
 
         setContent {
-            B07ProjTheme() {
+            B07ProjTheme {
+                //create an instance of the auth
+                val auth = HandleAuth()
                 val navController = rememberNavController() // to navigate to screens
                 //host the navigation graph
                 NavHost(
@@ -34,10 +38,10 @@ class MainActivity : ComponentActivity() {
                     builder = {
                         //define the route
                         composable("landing_page"){
-                            LandingPage(navController)
+                            LandingPage(navController, auth)
                         }
                         composable("pin_page"){
-                            PinPage(navController);
+                            PinPage(navController)
                         }
                         composable("login_page"){
                             LoginPage(navController)
