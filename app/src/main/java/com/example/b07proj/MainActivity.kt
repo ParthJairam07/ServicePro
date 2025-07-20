@@ -27,7 +27,7 @@ class MainActivity : ComponentActivity() {
         enableEdgeToEdge()
 
         setContent {
-            B07ProjTheme() {
+            B07ProjTheme {
                 //create an instance of the auth
                 val auth = HandleAuth()
                 val navController = rememberNavController() // to navigate to screens
@@ -41,7 +41,7 @@ class MainActivity : ComponentActivity() {
                             LandingPage(navController, auth)
                         }
                         composable("pin_page"){
-                            PinPage(navController);
+                            PinPage(navController)
                         }
                         composable("login_page"){
                             LoginPage(navController)

@@ -110,7 +110,7 @@ fun InputPinField(
 fun ContinueButton(pinValue: String, isPinValid: Boolean, modifier: Modifier, navController: NavHostController) {
     Button(
         onClick = {
-            // send to logcat the pin and its vaildity
+            // send to logcat the pin and its validity
             Log.d("valid pin", "pin is: $pinValue, Valid?: $isPinValid")
             navController.navigate("landing_page") // this is temporary for now
         },
