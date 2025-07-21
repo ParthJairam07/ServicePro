@@ -59,7 +59,7 @@ fun PinPage(navController: NavController) {
 }
 
 // initialize global variable for font
-val myFont = FontFamily(Font(R.font.afacad))
+val myFont = FontFamily(Font(R.font.afacad_regular))
 
 // define a custom TextField color scheme to be reused across the app.
 private val AppTextInputColors: TextFieldColors

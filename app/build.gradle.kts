@@ -59,6 +59,8 @@ dependencies {
     debugImplementation(libs.androidx.ui.test.manifest)
     // Import the Firebase BoM
     implementation(platform("com.google.firebase:firebase-bom:33.16.0"))
+    implementation("androidx.compose.material:material")
+    implementation("androidx.compose.material:material-icons-extended")
     // Import material design 3
     implementation("androidx.compose.material3:material3:1.3.2")
     implementation("androidx.compose.material3:material3-window-size-class:1.3.2")

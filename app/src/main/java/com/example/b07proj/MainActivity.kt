@@ -18,6 +18,7 @@ import com.example.b07proj.view.LandingPage
 import com.example.b07proj.view.LoginPage
 import com.example.b07proj.view.SignUpPage
 import com.example.b07proj.view.PinPage
+import com.example.b07proj.view.SafetyPlanQuizPage1
 
 class MainActivity : ComponentActivity() {
 
@@ -34,7 +35,7 @@ class MainActivity : ComponentActivity() {
                 //host the navigation graph
                 NavHost(
                     navController = navController,
-                    startDestination = "login_page",
+                    startDestination = "safety_plan_quiz",
                     builder = {
                         //define the route
                         composable("landing_page"){
@@ -51,6 +52,9 @@ class MainActivity : ComponentActivity() {
                         }
                         composable("email_login"){
                             EmailLogin(navController)
+                        }
+                        composable("safety_plan_quiz") {
+                            SafetyPlanQuizPage1(navController)
                         }
                     }
                 )
