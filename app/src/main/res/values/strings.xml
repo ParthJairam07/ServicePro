@@ -3,8 +3,10 @@
     <string name='pinPromptTitle'>Create your pin</string>
     <string name='pinPromptInfo'>ⓘ Setting up your PIN enables you to log in quicker the next time you launch the app</string>
     <string name='pinPromptHeaderText'>Setup Process</string>
+    <string name='tipsHeader'>Here\'s your plan</string>
     <string name='inputPinInfo'>Choose a 4–6 digit PIN</string>
     <string name='continueButtonText'>Done</string>
+    <string name='BackButtonText'>Back</string>
     <string name="arrow_content_description">Arrow Icon in the Done button</string>
     <string name="contentDescription">27</string>
     <string name="contentDescription3">30\n</string>
