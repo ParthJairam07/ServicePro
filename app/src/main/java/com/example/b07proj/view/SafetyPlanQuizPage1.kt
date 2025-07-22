@@ -1,64 +1,49 @@
 package com.example.b07proj.view
 
 import androidx.compose.foundation.background
-import androidx.compose.foundation.layout.Arrangement
-import androidx.compose.foundation.layout.Column
-import androidx.compose.foundation.layout.PaddingValues
-import androidx.compose.foundation.layout.Row
-import androidx.compose.foundation.layout.Spacer
-import androidx.compose.foundation.layout.fillMaxSize
-import androidx.compose.foundation.layout.fillMaxWidth
-import androidx.compose.foundation.layout.height
-import androidx.compose.foundation.layout.padding
-import androidx.compose.foundation.layout.size
-import androidx.compose.foundation.layout.width
-import androidx.compose.material3.Icon
-import androidx.compose.material3.Scaffold
-import androidx.compose.material3.Text
-import androidx.compose.runtime.Composable
-import androidx.compose.ui.Alignment
-import androidx.compose.ui.Modifier
+import androidx.compose.foundation.layout.*
+import androidx.compose.material3.*
+import androidx.compose.runtime.*
+import androidx.compose.ui.*
 import androidx.compose.ui.graphics.Color
-import androidx.compose.ui.tooling.preview.Preview
-import androidx.compose.ui.unit.dp
+import androidx.compose.ui.platform.LocalContext
+import androidx.compose.ui.text.*
+import androidx.compose.ui.text.font.*
+import androidx.compose.ui.unit.*
 import androidx.navigation.NavHostController
-import androidx.navigation.compose.rememberNavController
+import com.example.b07proj.model.Question
+import com.example.b07proj.presenter.QuizPresenter
+import com.example.b07proj.ui.theme.BackgroundColor
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.outlined.Info
-import androidx.compose.material.icons.outlined.PersonOutline
+import androidx.compose.material.icons.outlined.Person
 import androidx.compose.material.icons.outlined.Settings
-import androidx.compose.material3.Button
-import androidx.compose.material3.ButtonDefaults
-import androidx.compose.material3.HorizontalDivider
-import androidx.compose.material3.RadioButton
+import androidx.compose.ui.tooling.preview.Preview
+import androidx.navigation.compose.rememberNavController
 import androidx.compose.ui.draw.scale
-import androidx.compose.ui.text.SpanStyle
-import androidx.compose.ui.text.TextStyle
-import androidx.compose.ui.text.buildAnnotatedString
-import androidx.compose.ui.text.font.FontWeight
-import androidx.compose.ui.text.withStyle
-import androidx.compose.ui.unit.sp
-import com.example.b07proj.ui.theme.BackgroundColor
 
-import androidx.compose.runtime.getValue
-import androidx.compose.runtime.mutableIntStateOf
-import androidx.compose.runtime.remember
-import androidx.compose.runtime.setValue
 
-// #TODO make this font static + accessable for any UI
-//val myFont = FontFamily(Font(R.font.afacad_regular))
-
-// Defines the screen for the safety plan quiz
 @Composable
 fun SafetyPlanQuizPage1(navController: NavHostController) {
-    UISafetyPlanQuiz(navController)
+    val context = LocalContext.current
+    val presenter = remember { QuizPresenter() }
+    SafetyPlanQuizScreen(navController, presenter)
 }
 
-// UI for the safety plan quiz
 @Composable
-fun UISafetyPlanQuiz(navController: NavHostController) {
+fun SafetyPlanQuizScreen(navController: NavHostController, presenter: QuizPresenter) {
+    // State to track current question and responses
+    var currentQuestionIndex by remember { mutableIntStateOf(1) } // Start with question1
+    val responses by remember { mutableStateOf(mutableMapOf<String, Any>()) } // Store responses
+    var showFollowUp by remember { mutableStateOf(false) } // Track follow-up for question5
+    var visibleQuestionIndices by remember { mutableStateOf(listOf(1)) } // starting with question1
+
+    // Get Warmup questions
+    val quizData = presenter.getQuizData(LocalContext.current)
+    val questions = quizData.questions.Warmup
+//    val currentQuestion = questions["question$currentQuestionIndex"]
+
     Scaffold(
-        // Top bar longs the logo and other buttons
         topBar = {
             Row(
                 verticalAlignment = Alignment.CenterVertically,
@@ -69,10 +54,8 @@ fun UISafetyPlanQuiz(navController: NavHostController) {
                     .padding(top = 24.dp)
                     .fillMaxWidth()
             ) {
-                // Temporary until we get the logo
                 Text("Logo goes here!")
-                Row() {
-                    // Settings button
+                Row {
                     Button(
                         onClick = {},
                         colors = ButtonDefaults.buttonColors(containerColor = Color.Transparent),
@@ -81,11 +64,10 @@ fun UISafetyPlanQuiz(navController: NavHostController) {
                     ) {
                         Icon(
                             imageVector = Icons.Outlined.Settings,
-                            contentDescription = "Home",
+                            contentDescription = "Settings",
                             tint = BackgroundColor
                         )
                     }
-                    // Profile button
                     Button(
                         onClick = {},
                         colors = ButtonDefaults.buttonColors(containerColor = Color.Transparent),
@@ -93,91 +75,210 @@ fun UISafetyPlanQuiz(navController: NavHostController) {
                         modifier = Modifier.size(36.dp, 32.dp)
                     ) {
                         Icon(
-                            imageVector = Icons.Outlined.PersonOutline,
-                            contentDescription = "Home",
+                            imageVector = Icons.Outlined.Person,
+                            contentDescription = "Profile",
                             tint = BackgroundColor
                         )
                     }
                 }
             }
-        },
+        }
     ) { padding ->
-        // Column for main page content
         Column(
             modifier = Modifier
                 .fillMaxSize()
                 .background(Color.White)
                 .padding(padding)
                 .padding(horizontal = 16.dp),
-            horizontalAlignment = Alignment.CenterHorizontally
+            horizontalAlignment = Alignment.Start
         ) {
-            // Before anything, divide the top bar from the main content
-            HorizontalDivider(color = Color.LightGray, thickness = 1.dp)
-            // Page header
-            ScreenHeader("Help Us Understand You")
-
-            // Row for icon and text telling user about data privacy
-            Row (
-                verticalAlignment = Alignment.CenterVertically
-            ) {
-                Icon(
-                    imageVector = Icons.Outlined.Info,
-                    contentDescription = "Home",
-                    modifier = Modifier.padding(end = 8.dp),
-                )
-                Spacer(Modifier.width(8.dp))
-                Text("The information you provide stays anonymous and local to your device.", style = TextStyle(fontFamily = myFont, fontWeight = FontWeight(600)))
-            }
-            Spacer(modifier = Modifier.height(24.dp))
-
-            // Relationship status question
-            Column(
-                horizontalAlignment = Alignment.Start,
-                modifier = Modifier
-                    .fillMaxWidth()
-                    .padding(horizontal = 16.dp)
-            ) {
-                // List of options. Should be read from json #TODO
-                val options = listOf("Still in a relationship", "Planning to leave", "Post-separation" )
-                var selectedOption by remember { mutableIntStateOf(-1) }
-
-                // Component for question
-                QuizQuestion("What is your current relationship status?", true)
-
-                // Component for each option
-                options.forEachIndexed { index, text ->
-                    QuizRadioOption(
-                        text = text,
-                        selectedOption == index,
-                        onClick = {
-                            selectedOption = index;
+            // Loop over all visible questions and show them
+            visibleQuestionIndices.forEach { questionIndex ->
+                val questionKey = "question$questionIndex"
+                val question = questions[questionKey]
+                if (question != null) {
+                    when (question.type) {
+                        "radio" -> RadioQuestion(
+                            question = question,
+                            onAnswer = { answer ->
+                                if (question.id == 5 && answer == "Yes") {
+                                    responses["5"] = mutableMapOf("hasChildren" to answer) // Start hash map
+                                    showFollowUp = true
+                                } else {
+                                    responses[question.id.toString()] = answer
+                                    showFollowUp = false
+                                    val nextIndex = questionIndex + 1
+                                    if (questions.containsKey("question$nextIndex") &&
+                                        !visibleQuestionIndices.contains(nextIndex)
+                                    ) {
+                                        visibleQuestionIndices = visibleQuestionIndices + nextIndex
+                                    }
+                                }
+                            }
+                        )
+                        "dropdown" -> DropdownQuestion(
+                            question = question,
+                            onAnswer = { answer ->
+                                responses[question.id.toString()] = answer
+                                val nextIndex = questionIndex + 1
+                                if (questions.containsKey("question$nextIndex") &&
+                                    !visibleQuestionIndices.contains(nextIndex)
+                                ) {
+                                    visibleQuestionIndices = visibleQuestionIndices + nextIndex
+                                }
+                            }
+                        )
+                        "freeform" -> FreeformQuestion(
+                            question = question,
+                            onAnswer = { answer ->
+                                responses[question.id.toString()] = answer
+                                val nextIndex = questionIndex + 1
+                                if (questions.containsKey("question$nextIndex") &&
+                                    !visibleQuestionIndices.contains(nextIndex)
+                                ) {
+                                    visibleQuestionIndices = visibleQuestionIndices + nextIndex
+                                }
+                            }
+                        )
+                    }
+                    // Follow-up for question 5
+                    if (question.id == 5 && showFollowUp) {
+                        val followUp = question.followUp?.get("Yes")
+                        if (followUp != null) {
+                            FreeformQuestion(
+                                question = Question(
+                                    id = question.id * 100,
+                                    question = followUp.sub_question,
+                                    type = followUp.input_type,
+                                    variable = followUp.variable,
+                                    options = null,
+                                    followUp = null
+                                ),
+                                onAnswer = { answer ->
+                                    val existing = responses["5"] as? MutableMap<String, Any> ?: mutableMapOf()
+                                    existing["codeWord"] = answer
+                                    responses["5"] = existing
+                                    showFollowUp = false
+                                    val nextIndex = questionIndex + 1
+                                    if (questions.containsKey("question$nextIndex") &&
+                                        !visibleQuestionIndices.contains(nextIndex)
+                                    ) {
+                                        visibleQuestionIndices = visibleQuestionIndices + nextIndex
+                                    }
+                                }
+                            )
                         }
-                    )
+                    }
                 }
             }
-            // Add a Row to host the Button and push it to the end
-            Row(
-                modifier = Modifier.fillMaxWidth(), // Make the Row take full width
-                horizontalArrangement = Arrangement.End // Align content of the Row to the End (right)
-            ) {
-                // "Done" button
-                Done(navController, "update this!")
+
+            Spacer(modifier = Modifier.height(24.dp))
+
+            // Show Done button after last question + follow-up handled
+            if (visibleQuestionIndices.size == questions.size && !showFollowUp) {
+                Row(
+                    modifier = Modifier.fillMaxWidth(),
+                    horizontalArrangement = Arrangement.End
+                ) {
+                    Done(navController, responses) { resps ->
+                        presenter.saveResponses(resps) {
+                            navController.navigate("landing_page") // your route
+                        }
+                    }
+                }
+            }
+        }
+    }
+
+}
+
+@Composable
+fun ScreenHeader(text: String) {
+    Text(
+        text = text,
+        style = TextStyle(
+            fontFamily = myFont,
+            fontWeight = FontWeight.Bold,
+            fontSize = 24.sp,
+            color = Color.Black
+        ),
+        modifier = Modifier.padding(vertical = 16.dp)
+    )
+}
+
+@Composable
+fun RadioQuestion(question: Question, onAnswer: (String) -> Unit) {
+    var selectedOption by remember { mutableIntStateOf(-1) }
+    QuizQuestion(question.question, required = true)
+    question.options?.forEachIndexed { index, text ->
+        QuizRadioOption(
+            text = text,
+            selected = selectedOption == index,
+            onClick = {
+                selectedOption = index
+                onAnswer(text)
+            }
+        )
+    }
+}
+
+@Composable
+fun DropdownQuestion(question: Question, onAnswer: (String) -> Unit) {
+    var expanded by remember { mutableStateOf(false) }
+    var selectedOption by remember { mutableStateOf("") }
+    QuizQuestion(question.question, required = true)
+    Box {
+        Button(onClick = { expanded = true }) {
+            Text(
+                selectedOption.ifEmpty { "Select an option" },
+                style = TextStyle(fontFamily = myFont)
+            )
+        }
+        DropdownMenu(
+            expanded = expanded,
+            onDismissRequest = { expanded = false }
+        ) {
+            question.options?.forEach { option ->
+                DropdownMenuItem(
+                    text = { Text(option, style = TextStyle(fontFamily = myFont)) },
+                    onClick = {
+                        selectedOption = option
+                        expanded = false
+                        onAnswer(option)
+                    }
+                )
             }
         }
     }
 }
 
-// Defines the question (in text) to be answered by the user
+@Composable
+fun FreeformQuestion(question: Question, onAnswer: (String) -> Unit) {
+    var text by remember { mutableStateOf("") }
+    QuizQuestion(question.question, required = true)
+    OutlinedTextField(
+        value = text,
+        onValueChange = { text = it },
+        modifier = Modifier.fillMaxWidth(),
+        textStyle = TextStyle(fontFamily = myFont)
+    )
+    Button(
+        onClick = { if (text.isNotEmpty()) onAnswer(text) },
+        modifier = Modifier.padding(top = 8.dp)
+    ) {
+        Text("Submit", style = TextStyle(fontFamily = myFont))
+    }
+}
+
 @Composable
 fun QuizQuestion(text: String, required: Boolean = false) {
     Text(
         buildAnnotatedString {
-            withStyle(style = SpanStyle(fontFamily = myFont, fontWeight = FontWeight.Bold, color = Color.Black, fontSize=16.sp)) {
+            withStyle(style = SpanStyle(fontFamily = myFont, fontWeight = FontWeight.Bold, color = Color.Black, fontSize = 16.sp)) {
                 append(text)
             }
-            if (required)
-            {
-                withStyle(style = SpanStyle(fontFamily = myFont, fontWeight = FontWeight.Bold, color = Color.Red, fontSize=16.sp)) {
+            if (required) {
+                withStyle(style = SpanStyle(fontFamily = myFont, fontWeight = FontWeight.Bold, color = Color.Red, fontSize = 16.sp)) {
                     append(" *")
                 }
             }
@@ -186,21 +287,19 @@ fun QuizQuestion(text: String, required: Boolean = false) {
     )
 }
 
-// Defines a single radio option for a multiple choice question
 @Composable
 fun QuizRadioOption(text: String, selected: Boolean, onClick: () -> Unit) {
     Row(
-        verticalAlignment = Alignment.CenterVertically,
+        verticalAlignment = Alignment.CenterVertically
     ) {
         RadioButton(
             modifier = Modifier
-                .size(28.dp)    // This also gets rid of the extra bloated space these things use
-                .scale(0.75f),  // This shrinks the radio button's size physically
+                .size(28.dp)
+                .scale(0.75f),
             onClick = onClick,
-            selected = selected,
+            selected = selected
         )
         Spacer(Modifier.width(8.dp))
-
         Text(
             text = text,
             style = TextStyle(fontFamily = myFont, fontWeight = FontWeight(500))
@@ -208,9 +307,22 @@ fun QuizRadioOption(text: String, selected: Boolean, onClick: () -> Unit) {
     }
 }
 
-// Preview the component within android studio
+@Composable
+fun Done(
+    navController: NavHostController,
+    responses: Map<String, Any>,
+    onDoneClicked: (Map<String, Any>) -> Unit
+) {
+    Button(
+        onClick = { onDoneClicked(responses) },
+        modifier = Modifier.padding(16.dp)
+    ) {
+        Text("Done", style = TextStyle(fontFamily = myFont))
+    }
+}
+
 @Preview(showBackground = true, name = "Safety Plan Quiz Preview")
 @Composable
 fun SafetyPlanQuizPreview() {
-    SafetyPlanQuizPage1(navController = rememberNavController()) // Use rememberNavController for preview
+    SafetyPlanQuizPage1(navController = rememberNavController())
 }

@@ -34,7 +34,7 @@ This file defines common components for reuse throughout all UI
 
 // Defines the screen header text that most screens have at the top.
 @Composable
-fun ScreenHeader(text: String) {
+fun ScreenHeaderTop(text: String) {
     val myFont = FontFamily(Font(R.font.afacad))
     Text(
         text = text,
