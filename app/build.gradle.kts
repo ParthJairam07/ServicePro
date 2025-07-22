@@ -3,6 +3,8 @@ plugins {
     alias(libs.plugins.kotlin.compose)
     id("com.android.application")
     id("com.google.gms.google-services")
+    kotlin("plugin.serialization") version "1.9.10"
+
 }
 
 android {
@@ -59,6 +61,8 @@ dependencies {
     debugImplementation(libs.androidx.ui.test.manifest)
     // Import the Firebase BoM
     implementation(platform("com.google.firebase:firebase-bom:33.16.0"))
+    implementation("com.google.firebase:firebase-firestore-ktx")
+
     implementation("androidx.compose.material:material")
     implementation("androidx.compose.material:material-icons-extended")
     // Import material design 3
@@ -82,5 +86,7 @@ dependencies {
 
     // for parsing JSON
     implementation("com.google.code.gson:gson:2.10.1")
+    implementation("org.jetbrains.kotlinx:kotlinx-serialization-json:1.6.3")
+
 
 }
