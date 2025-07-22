@@ -19,6 +19,7 @@ import com.example.b07proj.view.LoginPage
 import com.example.b07proj.view.SignUpPage
 import com.example.b07proj.view.PinPage
 import com.example.b07proj.view.SafetyPlanQuizPage1
+import com.example.b07proj.view.RenderTips
 
 class MainActivity : ComponentActivity() {
 
@@ -55,6 +56,9 @@ class MainActivity : ComponentActivity() {
                         }
                         composable("safety_plan_quiz") {
                             SafetyPlanQuizPage1(navController)
+                        }
+                        composable("safety_plan_tips") {
+                            RenderTips(navController)
                         }
                     }
                 )
