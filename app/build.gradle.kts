@@ -79,4 +79,8 @@ dependencies {
 
     // Jetpack Compose integration
     implementation("androidx.navigation:navigation-compose:$nav_version")
+
+    // for parsing JSON
+    implementation("com.google.code.gson:gson:2.10.1")
+
 }
