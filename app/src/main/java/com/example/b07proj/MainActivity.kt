@@ -12,14 +12,18 @@ import androidx.navigation.compose.NavHost
 import androidx.navigation.compose.composable
 import androidx.navigation.compose.rememberNavController
 import com.example.b07proj.model.HandleAuth
+import com.example.b07proj.presenter.QuizPresenter
 import com.example.b07proj.ui.theme.B07ProjTheme
 import com.example.b07proj.view.EmailLogin
 import com.example.b07proj.view.LandingPage
+import com.example.b07proj.view.LoggedInTopBar
 import com.example.b07proj.view.LoginPage
 import com.example.b07proj.view.SignUpPage
 import com.example.b07proj.view.PinPage
 import com.example.b07proj.view.SafetyPlanQuizPage1
 import com.example.b07proj.view.RenderTips
+import com.example.b07proj.view.SafetyPlanQuizScreen2
+import com.example.b07proj.view.outputMap
 
 class MainActivity : ComponentActivity() {
 
@@ -36,11 +40,14 @@ class MainActivity : ComponentActivity() {
                 //host the navigation graph
                 NavHost(
                     navController = navController,
-                    startDestination = "email_login",
+                    startDestination = "loggedintopbar",
                     builder = {
                         //define the route
                         composable("landing_page"){
                             LandingPage(navController, auth)
+                        }
+                        composable("edit_quiz_screen") {
+                            SafetyPlanQuizScreen2( navController, QuizPresenter())
                         }
                         composable("pin_page"){
                             PinPage(navController)
@@ -53,6 +60,9 @@ class MainActivity : ComponentActivity() {
                         }
                         composable("email_login"){
                             EmailLogin(navController)
+                        }
+                        composable("loggedintopbar"){
+                            LoggedInTopBar(navController)
                         }
                         composable("safety_plan_quiz") {
                             SafetyPlanQuizPage1(navController)

@@ -35,4 +35,6 @@
     <string name="rad_but_1_text"><![CDATA[I agree to the terms and services (if there is one >~<)]]></string>
     <string name="disclaimer_text">I understand this application is not a substitute for emergency services and that safety plans are personal and not guaranteed to prevent harm.</string>
     <string name="password_error2">Password must be alphanumeric</string>
+    <string name="menuIcon">Icon for MenuBar</string>
+    <string name="editIcon">Edit Icon</string>
 </resources>

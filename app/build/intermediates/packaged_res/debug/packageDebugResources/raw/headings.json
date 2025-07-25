@@ -1,0 +1,32 @@
+{
+  "answers": {
+    "1": "Relationship Status",
+    "2": "City",
+    "3": "Safe Room",
+    "4": "Household Members",
+    "5": {
+      "hasChildren": "Children",
+      "codeWord": "Code Word"
+    },
+    "6": "Type of Abuse",
+    "7": "Logging Incidents",
+    "8": "Emergency Contact",
+    "9": "Leaving Date",
+    "10": "Go-bag Prepared",
+    "11": "Money Location",
+    "12": {
+      "placeToStay": "Place to Stay",
+      "tempShelter": "Temporary Shelter"
+    },
+    "13": "Post-Incident Contact",
+    "14": {
+      "order": "Protection Order",
+      "orderType": "Legal Order Type"
+    },
+    "15": {
+      "tools": "Safety Tools",
+      "equipment": "Equipment Type"
+    },
+    "16": "Type of Support"
+  }
+}
