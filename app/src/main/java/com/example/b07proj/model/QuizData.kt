@@ -1,4 +1,3 @@
-// app/src/main/kotlin/com/example/b07proj/model/QuizData.kt
 package com.example.b07proj.model
 
 import kotlinx.serialization.SerialName
@@ -15,7 +14,8 @@ data class QuizData(
 data class Questions(
     val Warmup: Map<String, Question>,
     val BranchQuestions: Map<String, Map<String, Question>>,
-    val FollowUp: Map<String, Question>? = emptyMap()
+    @SerialName("Follow-up")
+    val FollowUp: Map<String, Question> = emptyMap()
 )
 
 @Serializable

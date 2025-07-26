@@ -23,6 +23,7 @@ import com.example.b07proj.view.PinPage
 import com.example.b07proj.view.SafetyPlanQuizPage1
 import com.example.b07proj.view.RenderTips
 import com.example.b07proj.view.SafetyPlanQuizPage2
+import com.example.b07proj.view.SafetyPlanQuizPage3
 import com.example.b07proj.view.outputMap
 
 class MainActivity : ComponentActivity() {
@@ -72,6 +73,9 @@ class MainActivity : ComponentActivity() {
                         }
                         composable("safetyPlanQuizPage2") {
                             SafetyPlanQuizPage2(navController)
+                        }
+                        composable("safetyPlanQuizPage3") {
+                            SafetyPlanQuizPage3(navController)
                         }
                     }
                 )
