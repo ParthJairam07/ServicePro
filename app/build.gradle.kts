@@ -3,6 +3,8 @@ plugins {
     alias(libs.plugins.kotlin.compose)
     id("com.android.application")
     id("com.google.gms.google-services")
+    kotlin("plugin.serialization") version "1.9.10"
+
 }
 
 android {
@@ -74,6 +76,9 @@ dependencies {
     // https://firebase.google.com/docs/android/setup#available-libraries
     implementation("com.firebaseui:firebase-ui-auth:9.0.0")
     implementation("com.google.android.material:material:1.12.0") // Use the latest version
+    implementation("com.google.firebase:firebase-auth")
+    implementation("com.google.firebase:firebase-firestore")
+
 
     val nav_version = "2.9.1"
 
@@ -82,5 +87,7 @@ dependencies {
 
     // for parsing JSON
     implementation("com.google.code.gson:gson:2.10.1")
+    implementation("org.jetbrains.kotlinx:kotlinx-serialization-json:1.6.3")
+
 
 }

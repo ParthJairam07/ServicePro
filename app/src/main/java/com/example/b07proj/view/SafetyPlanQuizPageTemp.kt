@@ -266,7 +266,7 @@ fun SafetyPlanQuizScreen2(
                             horizontalArrangement = Arrangement.End
                         ) {
                             Done(navController, responses) { resps ->
-                                presenter.saveResponses(resps) {
+                                presenter.saveResponses(resps, "branch") {
                                     navController.navigate("landing_page") // your route
                                 }
                             }
@@ -280,7 +280,7 @@ fun SafetyPlanQuizScreen2(
                         horizontalArrangement = Arrangement.End
                     ) {
                         Done2(responses) { resps ->
-                            presenter.saveResponses(resps) {
+                            presenter.saveResponses(resps, "branch") {
                                 navController.navigate("landing_page")
                             }
                         }
@@ -299,7 +299,7 @@ fun SafetyPlanQuizScreen2(
                     horizontalArrangement = Arrangement.End
                 ) {
                     Done2( responses) { resps ->
-                        presenter.saveResponses(resps) {
+                        presenter.saveResponses(resps, "warmup") {
                             navController.navigate("landing_page") // your route
                         }
                     }

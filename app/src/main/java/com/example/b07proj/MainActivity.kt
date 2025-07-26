@@ -22,7 +22,7 @@ import com.example.b07proj.view.SignUpPage
 import com.example.b07proj.view.PinPage
 import com.example.b07proj.view.SafetyPlanQuizPage1
 import com.example.b07proj.view.RenderTips
-import com.example.b07proj.view.SafetyPlanQuizScreen2
+import com.example.b07proj.view.SafetyPlanQuizPage2
 import com.example.b07proj.view.outputMap
 
 class MainActivity : ComponentActivity() {
@@ -40,14 +40,14 @@ class MainActivity : ComponentActivity() {
                 //host the navigation graph
                 NavHost(
                     navController = navController,
-                    startDestination = "loggedintopbar",
+                    startDestination = "email_login",
                     builder = {
                         //define the route
                         composable("landing_page"){
                             LandingPage(navController, auth)
                         }
                         composable("edit_quiz_screen") {
-                            SafetyPlanQuizScreen2( navController, QuizPresenter())
+                            SafetyPlanQuizPage2(navController)
                         }
                         composable("pin_page"){
                             PinPage(navController)
@@ -69,6 +69,9 @@ class MainActivity : ComponentActivity() {
                         }
                         composable("safety_plan_tips") {
                             RenderTips(navController)
+                        }
+                        composable("safetyPlanQuizPage2") {
+                            SafetyPlanQuizPage2(navController)
                         }
                     }
                 )

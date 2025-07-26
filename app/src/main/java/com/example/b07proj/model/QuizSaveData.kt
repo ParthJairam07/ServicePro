@@ -1,7 +1,6 @@
 package com.example.b07proj.model
 
 import android.content.Context
-import com.example.b07proj.model.QuizDataSource
 import com.google.firebase.auth.FirebaseAuth
 import com.google.firebase.firestore.FirebaseFirestore
 
@@ -10,25 +9,29 @@ class QuizSaveData {
         return QuizDataSource.loadQuizData(context)
     }
 
-    fun saveQuizDataWarmup(responses: Map<String, Any>, onComplete: (Boolean) -> Unit) {
+    fun saveQuizResponses(
+        responses: Map<String, Any>,
+        collectionName: String,
+        onComplete: (Boolean) -> Unit
+    ) {
         val user = FirebaseAuth.getInstance().currentUser
-        println("User: ${user?.uid}, ${user?.email}")
-        println("Responses: $responses")
         if (user != null && responses.isNotEmpty()) {
             FirebaseFirestore.getInstance()
                 .collection("users")
                 .document(user.uid)
                 .collection("quiz_responses")
-                .document("warmup")
+                .document(collectionName)
                 .set(responses)
                 .addOnSuccessListener {
+                    println("Successfully saved $collectionName responses: $responses")
                     onComplete(true)
                 }
                 .addOnFailureListener { e ->
-                    println("Error saving quiz responses: ${e.message}")
+                    println("Error saving $collectionName responses: ${e.message}")
                     onComplete(false)
                 }
         } else {
+            println("Save failed: User is null or responses are empty")
             onComplete(false)
         }
     }

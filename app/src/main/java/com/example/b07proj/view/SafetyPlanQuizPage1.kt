@@ -21,6 +21,8 @@ import androidx.compose.material.icons.outlined.Settings
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.navigation.compose.rememberNavController
 import androidx.compose.ui.draw.scale
+import kotlinx.coroutines.launch
+
 
 
 @Composable
@@ -32,16 +34,13 @@ fun SafetyPlanQuizPage1(navController: NavHostController) {
 
 @Composable
 fun SafetyPlanQuizScreen(navController: NavHostController, presenter: QuizPresenter) {
-    // State to track current question and responses
-    var currentQuestionIndex by remember { mutableIntStateOf(1) } // Start with question1
-    val responses by remember { mutableStateOf(mutableMapOf<String, Any>()) } // Store responses
-    var showFollowUp by remember { mutableStateOf(false) } // Track follow-up for question5
-    var visibleQuestionIndices by remember { mutableStateOf(listOf(1)) } // starting with question1
-
-    // Get Warmup questions
+    var visibleQuestionIndices by remember { mutableStateOf(listOf(1)) }
+    var showFollowUp by remember { mutableStateOf(false) }
+    val responses = remember { mutableStateMapOf<String, Any>() }
+    val scope = rememberCoroutineScope()
+    val snackbarHostState = remember { SnackbarHostState() }
     val quizData = presenter.getQuizData(LocalContext.current)
     val questions = quizData.questions.Warmup
-//    val currentQuestion = questions["question$currentQuestionIndex"]
 
     Scaffold(
         topBar = {
@@ -92,7 +91,6 @@ fun SafetyPlanQuizScreen(navController: NavHostController, presenter: QuizPresen
                 .padding(horizontal = 16.dp),
             horizontalAlignment = Alignment.Start
         ) {
-            // Loop over all visible questions and show them
             visibleQuestionIndices.forEach { questionIndex ->
                 val questionKey = "question$questionIndex"
                 val question = questions[questionKey]
@@ -102,7 +100,7 @@ fun SafetyPlanQuizScreen(navController: NavHostController, presenter: QuizPresen
                             question = question,
                             onAnswer = { answer ->
                                 if (question.id == 5 && answer == "Yes") {
-                                    responses["5"] = mutableMapOf("hasChildren" to answer) // Start hash map
+                                    responses["5"] = mutableMapOf("hasChildren" to answer)
                                     showFollowUp = true
                                 } else {
                                     responses[question.id.toString()] = answer
@@ -140,8 +138,11 @@ fun SafetyPlanQuizScreen(navController: NavHostController, presenter: QuizPresen
                                 }
                             }
                         )
+                        // You can add more types here if needed like "checkbox", "date"
+                        else -> Text("Unsupported question type: ${question.type}")
                     }
-                    // Follow-up for question 5
+
+                    // Follow-up question for question 5
                     if (question.id == 5 && showFollowUp) {
                         val followUp = question.followUp?.get("Yes")
                         if (followUp != null) {
@@ -174,152 +175,29 @@ fun SafetyPlanQuizScreen(navController: NavHostController, presenter: QuizPresen
 
             Spacer(modifier = Modifier.height(24.dp))
 
-            // Show Done button after last question + follow-up handled
             if (visibleQuestionIndices.size == questions.size && !showFollowUp) {
                 Row(
                     modifier = Modifier.fillMaxWidth(),
                     horizontalArrangement = Arrangement.End
                 ) {
                     Done(navController, responses) { resps ->
-                        presenter.saveResponses(resps) {
-                            navController.navigate("landing_page") // your route
+                        presenter.saveResponses(resps, "warmup") { success ->
+                            if (success) {
+                                navController.navigate("safetyPlanQuizPage2")
+                            } else {
+                                scope.launch {
+                                    snackbarHostState.showSnackbar("Failed to save responses")
+                                }
+                            }
                         }
                     }
                 }
             }
         }
     }
-
 }
 
-@Composable
-fun ScreenHeader(text: String) {
-    Text(
-        text = text,
-        style = TextStyle(
-            fontFamily = myFont,
-            fontWeight = FontWeight.Bold,
-            fontSize = 24.sp,
-            color = Color.Black
-        ),
-        modifier = Modifier.padding(vertical = 16.dp)
-    )
-}
 
-@Composable
-fun RadioQuestion(question: Question, onAnswer: (String) -> Unit) {
-    var selectedOption by remember { mutableIntStateOf(-1) }
-    QuizQuestion(question.question, required = true)
-    question.options?.forEachIndexed { index, text ->
-        QuizRadioOption(
-            text = text,
-            selected = selectedOption == index,
-            onClick = {
-                selectedOption = index
-                onAnswer(text)
-            }
-        )
-    }
-}
-
-@Composable
-fun DropdownQuestion(question: Question, onAnswer: (String) -> Unit) {
-    var expanded by remember { mutableStateOf(false) }
-    var selectedOption by remember { mutableStateOf("") }
-    QuizQuestion(question.question, required = true)
-    Box {
-        Button(onClick = { expanded = true }) {
-            Text(
-                selectedOption.ifEmpty { "Select an option" },
-                style = TextStyle(fontFamily = myFont)
-            )
-        }
-        DropdownMenu(
-            expanded = expanded,
-            onDismissRequest = { expanded = false }
-        ) {
-            question.options?.forEach { option ->
-                DropdownMenuItem(
-                    text = { Text(option, style = TextStyle(fontFamily = myFont)) },
-                    onClick = {
-                        selectedOption = option
-                        expanded = false
-                        onAnswer(option)
-                    }
-                )
-            }
-        }
-    }
-}
-
-@Composable
-fun FreeformQuestion(question: Question, onAnswer: (String) -> Unit) {
-    var text by remember { mutableStateOf("") }
-    QuizQuestion(question.question, required = true)
-    OutlinedTextField(
-        value = text,
-        onValueChange = { text = it },
-        modifier = Modifier.fillMaxWidth(),
-        textStyle = TextStyle(fontFamily = myFont)
-    )
-    Button(
-        onClick = { if (text.isNotEmpty()) onAnswer(text) },
-        modifier = Modifier.padding(top = 8.dp)
-    ) {
-        Text("Submit", style = TextStyle(fontFamily = myFont))
-    }
-}
-
-@Composable
-fun QuizQuestion(text: String, required: Boolean = false) {
-    Text(
-        buildAnnotatedString {
-            withStyle(style = SpanStyle(fontFamily = myFont, fontWeight = FontWeight.Bold, color = Color.Black, fontSize = 16.sp)) {
-                append(text)
-            }
-            if (required) {
-                withStyle(style = SpanStyle(fontFamily = myFont, fontWeight = FontWeight.Bold, color = Color.Red, fontSize = 16.sp)) {
-                    append(" *")
-                }
-            }
-        },
-        modifier = Modifier.padding(bottom = 8.dp)
-    )
-}
-
-@Composable
-fun QuizRadioOption(text: String, selected: Boolean, onClick: () -> Unit) {
-    Row(
-        verticalAlignment = Alignment.CenterVertically
-    ) {
-        RadioButton(
-            modifier = Modifier
-                .size(28.dp)
-                .scale(0.75f),
-            onClick = onClick,
-            selected = selected
-        )
-        Spacer(Modifier.width(8.dp))
-        Text(
-            text = text,
-            style = TextStyle(fontFamily = myFont, fontWeight = FontWeight(500))
-        )
-    }
-}
-
-@Composable
-fun Done(
-    navController: NavHostController,
-    responses: Map<String, Any>,
-    onDoneClicked: (Map<String, Any>) -> Unit
-) {
-    Button(
-        onClick = { onDoneClicked(responses) },
-        modifier = Modifier.padding(16.dp)
-    ) {
-        Text("Done", style = TextStyle(fontFamily = myFont))
-    }
-}
 
 @Preview(showBackground = true, name = "Safety Plan Quiz Preview")
 @Composable
