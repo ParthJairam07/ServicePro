@@ -359,8 +359,18 @@ fun SafetyPlanQuizScreenBranch(navController: NavHostController, presenter: Quiz
                                     horizontalArrangement = Arrangement.End
                                 ) {
                                     Done(navController, responses) { responses ->
-                                        Log.d("SafetyPlanQuizPage2", "Saving branch responses: $responses")
-                                        presenter.saveResponses(responses, "branch") { success ->
+                                        Log.d("SafetyPlanQuizPage2", "Original responses: $responses")
+                                        // Reformat responses for question 12
+                                        val reformattedResponses = responses.toMutableMap()
+                                        if (responses["12"] == "Yes" && responses.containsKey("temp_shelter")) {
+                                            reformattedResponses["12"] = mapOf(
+                                                "answer" to "Yes",
+                                                "shelter_name" to (responses["temp_shelter"] as String)
+                                            )
+                                            reformattedResponses.remove("temp_shelter")
+                                        }
+                                        Log.d("SafetyPlanQuizPage2", "Saving branch responses: $reformattedResponses")
+                                        presenter.saveResponses(reformattedResponses, "branch") { success ->
                                             if (success) {
                                                 navController.navigate("safetyPlanQuizPage3")
                                             } else {
