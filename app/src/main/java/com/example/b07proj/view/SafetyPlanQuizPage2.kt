@@ -176,15 +176,22 @@ fun SafetyPlanQuizScreenBranch(navController: NavHostController, presenter: Quiz
                             Button(
                                 onClick = {
                                     userId?.let {
-                                        db.collection("users").document(it).collection("quiz_responses").document("warmup")
+                                        db.collection("users").document(it)
+                                            .collection("quiz_responses").document("warmup")
                                             .get()
                                             .addOnSuccessListener { document ->
                                                 val status = document.getString("question1")
-                                                Log.d("SafetyPlanQuizPage2", "Retry fetched status: $status")
+                                                Log.d(
+                                                    "SafetyPlanQuizPage2",
+                                                    "Retry fetched status: $status"
+                                                )
                                                 selectedStatus.value = status
                                             }
                                             .addOnFailureListener { e ->
-                                                Log.e("SafetyPlanQuizPage2", "Retry error: ${e.message}")
+                                                Log.e(
+                                                    "SafetyPlanQuizPage2",
+                                                    "Retry error: ${e.message}"
+                                                )
                                                 scope.launch {
                                                     snackbarHostState.showSnackbar("Retry failed")
                                                 }
@@ -196,6 +203,7 @@ fun SafetyPlanQuizScreenBranch(navController: NavHostController, presenter: Quiz
                                 Text("Retry", style = TextStyle(fontFamily = myFont))
                             }
                         }
+
                         questions.isEmpty() -> {
                             Text(
                                 "No questions available for status: ${selectedStatus.value}",
@@ -206,7 +214,10 @@ fun SafetyPlanQuizScreenBranch(navController: NavHostController, presenter: Quiz
                                 horizontalArrangement = Arrangement.End
                             ) {
                                 Done(navController, responses) { responses ->
-                                    Log.d("SafetyPlanQuizPage2", "Saving branch responses: $responses")
+                                    Log.d(
+                                        "SafetyPlanQuizPage2",
+                                        "Saving branch responses: $responses"
+                                    )
                                     presenter.saveResponses(responses, "branch") { success ->
                                         if (success) {
                                             navController.navigate("safetyPlanQuizPage3")
@@ -219,20 +230,33 @@ fun SafetyPlanQuizScreenBranch(navController: NavHostController, presenter: Quiz
                                 }
                             }
                         }
+
                         else -> {
                             // Render all visible questions
                             visibleQuestionIndices.forEach { questionIndex ->
                                 val question = questions["question$questionIndex"]
-                                Log.d("SafetyPlanQuizPage2", "Rendering question at index $questionIndex: $question")
+                                Log.d(
+                                    "SafetyPlanQuizPage2",
+                                    "Rendering question at index $questionIndex: $question"
+                                )
                                 if (question != null) {
-                                    Log.d("SafetyPlanQuizPage2", "Rendering question: ${question.question}, Type: ${question.type}, ID: ${question.id}")
+                                    Log.d(
+                                        "SafetyPlanQuizPage2",
+                                        "Rendering question: ${question.question}, Type: ${question.type}, ID: ${question.id}"
+                                    )
                                     when (question.type) {
                                         "radio" -> RadioQuestion(
                                             question = question,
                                             onAnswer = { answer ->
                                                 responses[question.id.toString()] = answer
-                                                Log.d("SafetyPlanQuizPage2", "Radio answer for ID ${question.id}: $answer")
-                                                if (question.followUp != null && question.followUp.containsKey(answer)) {
+                                                Log.d(
+                                                    "SafetyPlanQuizPage2",
+                                                    "Radio answer for ID ${question.id}: $answer"
+                                                )
+                                                if (question.followUp != null && question.followUp.containsKey(
+                                                        answer
+                                                    )
+                                                ) {
                                                     followUpStates["question${question.id}"] = true
                                                 } else {
                                                     followUpStates["question${question.id}"] = false
@@ -240,82 +264,131 @@ fun SafetyPlanQuizScreenBranch(navController: NavHostController, presenter: Quiz
                                                     if (questions.containsKey("question$nextIndex") &&
                                                         !visibleQuestionIndices.contains(nextIndex)
                                                     ) {
-                                                        visibleQuestionIndices = visibleQuestionIndices + nextIndex
-                                                        Log.d("SafetyPlanQuizPage2", "Added next index: $nextIndex")
+                                                        visibleQuestionIndices =
+                                                            visibleQuestionIndices + nextIndex
+                                                        Log.d(
+                                                            "SafetyPlanQuizPage2",
+                                                            "Added next index: $nextIndex"
+                                                        )
                                                     }
                                                 }
                                             }
                                         )
+
                                         "dropdown" -> DropdownQuestion(
                                             question = question,
                                             onAnswer = { answer ->
                                                 responses[question.id.toString()] = answer
-                                                Log.d("SafetyPlanQuizPage2", "Dropdown answer for ID ${question.id}: $answer")
+                                                Log.d(
+                                                    "SafetyPlanQuizPage2",
+                                                    "Dropdown answer for ID ${question.id}: $answer"
+                                                )
                                                 val nextIndex = questionIndex + 1
                                                 if (questions.containsKey("question$nextIndex") &&
                                                     !visibleQuestionIndices.contains(nextIndex)
                                                 ) {
-                                                    visibleQuestionIndices = visibleQuestionIndices + nextIndex
-                                                    Log.d("SafetyPlanQuizPage2", "Added next index: $nextIndex")
+                                                    visibleQuestionIndices =
+                                                        visibleQuestionIndices + nextIndex
+                                                    Log.d(
+                                                        "SafetyPlanQuizPage2",
+                                                        "Added next index: $nextIndex"
+                                                    )
                                                 }
                                             }
                                         )
+
                                         "freeform" -> FreeformQuestion(
                                             question = question,
                                             onAnswer = { answer ->
                                                 responses[question.id.toString()] = answer
-                                                Log.d("SafetyPlanQuizPage2", "Freeform answer for ID ${question.id}: $answer")
+                                                Log.d(
+                                                    "SafetyPlanQuizPage2",
+                                                    "Freeform answer for ID ${question.id}: $answer"
+                                                )
                                                 val nextIndex = questionIndex + 1
                                                 if (questions.containsKey("question$nextIndex") &&
                                                     !visibleQuestionIndices.contains(nextIndex)
                                                 ) {
-                                                    visibleQuestionIndices = visibleQuestionIndices + nextIndex
-                                                    Log.d("SafetyPlanQuizPage2", "Added next index: $nextIndex")
+                                                    visibleQuestionIndices =
+                                                        visibleQuestionIndices + nextIndex
+                                                    Log.d(
+                                                        "SafetyPlanQuizPage2",
+                                                        "Added next index: $nextIndex"
+                                                    )
                                                 }
                                             }
                                         )
+
                                         "date" -> DateQuestion(
                                             question = question,
                                             onAnswer = { answer ->
                                                 responses[question.id.toString()] = answer
-                                                Log.d("SafetyPlanQuizPage2", "Date answer for ID ${question.id}: $answer")
+                                                Log.d(
+                                                    "SafetyPlanQuizPage2",
+                                                    "Date answer for ID ${question.id}: $answer"
+                                                )
                                                 val nextIndex = questionIndex + 1
                                                 if (questions.containsKey("question$nextIndex") &&
                                                     !visibleQuestionIndices.contains(nextIndex)
                                                 ) {
-                                                    visibleQuestionIndices = visibleQuestionIndices + nextIndex
-                                                    Log.d("SafetyPlanQuizPage2", "Added next index: $nextIndex")
+                                                    visibleQuestionIndices =
+                                                        visibleQuestionIndices + nextIndex
+                                                    Log.d(
+                                                        "SafetyPlanQuizPage2",
+                                                        "Added next index: $nextIndex"
+                                                    )
                                                 }
                                             }
                                         )
+
                                         "checkbox" -> CheckboxQuestion(
                                             question = question,
                                             onAnswer = { answers ->
                                                 responses[question.id.toString()] = answers
-                                                Log.d("SafetyPlanQuizPage2", "Checkbox answer for ID ${question.id}: $answers")
+                                                Log.d(
+                                                    "SafetyPlanQuizPage2",
+                                                    "Checkbox answer for ID ${question.id}: $answers"
+                                                )
                                                 val nextIndex = questionIndex + 1
                                                 if (questions.containsKey("question$nextIndex") &&
                                                     !visibleQuestionIndices.contains(nextIndex)
                                                 ) {
-                                                    visibleQuestionIndices = visibleQuestionIndices + nextIndex
-                                                    Log.d("SafetyPlanQuizPage2", "Added next index: $nextIndex")
+                                                    visibleQuestionIndices =
+                                                        visibleQuestionIndices + nextIndex
+                                                    Log.d(
+                                                        "SafetyPlanQuizPage2",
+                                                        "Added next index: $nextIndex"
+                                                    )
                                                 }
                                             }
                                         )
+
                                         else -> {
-                                            Log.e("SafetyPlanQuizPage2", "Unknown question type: ${question.type}")
+                                            Log.e(
+                                                "SafetyPlanQuizPage2",
+                                                "Unknown question type: ${question.type}"
+                                            )
                                             Text(
                                                 "Error: Unknown question type '${question.type}'",
-                                                style = TextStyle(fontFamily = myFont, color = Color.Red)
+                                                style = TextStyle(
+                                                    fontFamily = myFont,
+                                                    color = Color.Red
+                                                )
                                             )
                                         }
                                     }
                                     // Handle follow-up questions
-                                    Log.d("SafetyPlanQuizPage2", "Follow-up states: $followUpStates")
+                                    Log.d(
+                                        "SafetyPlanQuizPage2",
+                                        "Follow-up states: $followUpStates"
+                                    )
                                     if (followUpStates["question${question.id}"] == true && question.followUp != null) {
                                         val answer = responses[question.id.toString()] as? String
                                         val followUp = answer?.let { question.followUp[it] }
-                                        Log.d("SafetyPlanQuizPage2", "Follow-up question for answer '$answer': $followUp")
+                                        Log.d(
+                                            "SafetyPlanQuizPage2",
+                                            "Follow-up question for answer '$answer': $followUp"
+                                        )
                                         if (followUp != null) {
                                             FreeformQuestion(
                                                 question = Question(
@@ -327,15 +400,23 @@ fun SafetyPlanQuizScreenBranch(navController: NavHostController, presenter: Quiz
                                                     followUp = null
                                                 ),
                                                 onAnswer = { answer ->
-                                                    responses[followUp.variable ?: "followup${question.id}"] = answer
-                                                    Log.d("SafetyPlanQuizPage2", "Follow-up answer for ${followUp.variable}: $answer")
+                                                    responses[followUp.variable
+                                                        ?: "followup${question.id}"] = answer
+                                                    Log.d(
+                                                        "SafetyPlanQuizPage2",
+                                                        "Follow-up answer for ${followUp.variable}: $answer"
+                                                    )
                                                     followUpStates["question${question.id}"] = false
                                                     val nextIndex = questionIndex + 1
                                                     if (questions.containsKey("question$nextIndex") &&
                                                         !visibleQuestionIndices.contains(nextIndex)
                                                     ) {
-                                                        visibleQuestionIndices = visibleQuestionIndices + nextIndex
-                                                        Log.d("SafetyPlanQuizPage2", "Added next index: $nextIndex")
+                                                        visibleQuestionIndices =
+                                                            visibleQuestionIndices + nextIndex
+                                                        Log.d(
+                                                            "SafetyPlanQuizPage2",
+                                                            "Added next index: $nextIndex"
+                                                        )
                                                     }
                                                 }
                                             )
@@ -343,7 +424,10 @@ fun SafetyPlanQuizScreenBranch(navController: NavHostController, presenter: Quiz
                                     }
                                     Spacer(modifier = Modifier.height(16.dp))
                                 } else {
-                                    Log.e("SafetyPlanQuizPage2", "Question at index $questionIndex not found in questions map")
+                                    Log.e(
+                                        "SafetyPlanQuizPage2",
+                                        "Question at index $questionIndex not found in questions map"
+                                    )
                                     Text(
                                         "Error: Question $questionIndex not found",
                                         style = TextStyle(fontFamily = myFont, color = Color.Red)
@@ -359,18 +443,57 @@ fun SafetyPlanQuizScreenBranch(navController: NavHostController, presenter: Quiz
                                     horizontalArrangement = Arrangement.End
                                 ) {
                                     Done(navController, responses) { responses ->
-                                        Log.d("SafetyPlanQuizPage2", "Original responses: $responses")
-                                        // Reformat responses for question 12
+                                        Log.d(
+                                            "SafetyPlanQuizPage2",
+                                            "Original responses: $responses"
+                                        )
+                                        // Reformat responses based on status
                                         val reformattedResponses = responses.toMutableMap()
-                                        if (responses["12"] == "Yes" && responses.containsKey("temp_shelter")) {
-                                            reformattedResponses["12"] = mapOf(
-                                                "answer" to "Yes",
-                                                "shelter_name" to (responses["temp_shelter"] as String)
-                                            )
-                                            reformattedResponses.remove("temp_shelter")
+                                        when (selectedStatus.value) {
+                                            "Planning to leave" -> {
+                                                if (responses["12"] == "Yes" && responses.containsKey(
+                                                        "temp_shelter"
+                                                    )
+                                                ) {
+                                                    reformattedResponses["12"] = mapOf(
+                                                        "answer" to "Yes",
+                                                        "shelter_name" to (responses["temp_shelter"] as String)
+                                                    )
+                                                    reformattedResponses.remove("temp_shelter")
+                                                }
+                                            }
+
+                                            "Post-separation" -> {
+                                                if (responses["14"] == "Yes" && responses.containsKey(
+                                                        "legal_order"
+                                                    )
+                                                ) {
+                                                    reformattedResponses["14"] = mapOf(
+                                                        "answer" to "Yes",
+                                                        "legal_order" to (responses["legal_order"] as String)
+                                                    )
+                                                    reformattedResponses.remove("legal_order")
+                                                }
+                                                if (responses["15"] == "Yes" && responses.containsKey(
+                                                        "equipment"
+                                                    )
+                                                ) {
+                                                    reformattedResponses["15"] = mapOf(
+                                                        "answer" to "Yes",
+                                                        "equipment" to (responses["equipment"] as String)
+                                                    )
+                                                    reformattedResponses.remove("equipment")
+                                                }
+                                            }
                                         }
-                                        Log.d("SafetyPlanQuizPage2", "Saving branch responses: $reformattedResponses")
-                                        presenter.saveResponses(reformattedResponses, "branch") { success ->
+                                        Log.d(
+                                            "SafetyPlanQuizPage2",
+                                            "Saving branch responses: $reformattedResponses"
+                                        )
+                                        presenter.saveResponses(
+                                            reformattedResponses,
+                                            "branch"
+                                        ) { success ->
                                             if (success) {
                                                 navController.navigate("safetyPlanQuizPage3")
                                             } else {
@@ -390,7 +513,6 @@ fun SafetyPlanQuizScreenBranch(navController: NavHostController, presenter: Quiz
     }
 }
 
-@Preview(showBackground = true, name = "Safety Plan Quiz Page 2 Preview")
 @Composable
 fun SafetyPlanQuizPage2Preview() {
     SafetyPlanQuizPage2(navController = rememberNavController())
