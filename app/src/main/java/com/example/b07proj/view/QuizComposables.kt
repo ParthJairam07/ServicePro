@@ -152,7 +152,7 @@ fun DateQuestion(question: Question, onAnswer: (String) -> Unit) {
 }
 
 @Composable
-fun CheckboxQuestion(question: Question, onAnswer: (List<String>) -> Unit) {
+fun CheckboxQuestion(question: Question, onAnswer: (String) -> Unit) {
     var selectedOptions by remember { mutableStateOf(setOf<String>()) }
     QuizQuestion(question.question, required = true)
     question.options?.forEach { option ->
@@ -170,8 +170,10 @@ fun CheckboxQuestion(question: Question, onAnswer: (List<String>) -> Unit) {
                     } else {
                         selectedOptions - option
                     }
-                    onAnswer(selectedOptions.toList())
-                    Log.d("CheckboxQuestion", "Selected options: $selectedOptions")
+
+                    val result = selectedOptions.joinToString(", ")
+                    onAnswer(result)
+                    Log.d("CheckboxQuestion", "Selected options: $result")
                 },
                 modifier = Modifier.size(28.dp)
             )

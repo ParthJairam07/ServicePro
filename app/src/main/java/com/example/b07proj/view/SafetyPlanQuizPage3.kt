@@ -155,7 +155,7 @@ fun SafetyPlanQuizScreenFollowUp(navController: NavHostController, presenter: Qu
                                 Log.d("SafetyPlanQuizPage3", "Saving follow-up responses: $responses")
                                 presenter.saveResponses(responses, "followup") { success ->
                                     if (success) {
-                                        navController.navigate("landing_page")
+                                        navController.navigate("safety_plan_tips")
                                     } else {
                                         scope.launch {
                                             snackbarHostState.showSnackbar("Failed to save responses")

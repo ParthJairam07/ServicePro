@@ -52,6 +52,12 @@ import androidx.compose.foundation.layout.size
 import androidx.compose.ui.text.font.Font
 import androidx.compose.ui.text.font.FontFamily
 import com.example.b07proj.ui.theme.backgroundAccent
+import com.google.firebase.auth.FirebaseAuth
+import com.google.firebase.firestore.FirebaseFirestore
+import com.google.gson.GsonBuilder
+import kotlinx.coroutines.tasks.await
+
+// This page displays the tips of a logged in user
 
 
 // get user answers in a usable form for lazyColumn
@@ -59,29 +65,46 @@ object AnswersProvider {
 
     // to help GSON as a blueprint how exactly the JSON is structured
     private data class AnswersWrapper(val answers: Map<String, JsonElement>)
+    // Get real user JSON user answers, and convert in similar format as getAnswersJSONFake() returns
+    private suspend fun getUserQuestionnaireAnswers() : String {
+        // using FirebaseAuth to get the profile of user currently signed in
+        val user = FirebaseAuth.getInstance().currentUser
+        // use gson to format into JSON in a pretty (human readable) way
+        val gson = GsonBuilder().setPrettyPrinting().create()
 
-    // return raw JSON user answers
-    private fun getAnswersJSON() : String {
-        // fake answer for now
-        return """
-            {
-              "answers": {
-                "1": "Still in a relationship",
-                "2": "Vancouver",
-                "3": "Laundry Room",
-                "4": "Family",
-                "5": {
-                  "hasChildren": true,
-                  "codeWord": "red robin"
-                },
-                "6": "Emotional, Financial",
-                "7": "Yes",
-                "8": "Sarah",
-                "16": "Counselling"
-              }
+        if (user != null) {
+            // Building the path to the data, first top level collection "users"
+            try {
+                // build a path to collection "quiz_responses" in firebase
+                val responses = FirebaseFirestore.getInstance()
+                    .collection("users")
+                    .document(user.uid)
+                    .collection("quiz_responses")
+                    .get()
+                    .await()
+                // making map containing all the answers
+                val allAnswersMap = mutableMapOf<String, Any?>()
+                // for each document, put its all the data into allAnswersMap
+                for (document in responses.documents) {
+                    document.data?.let {
+                        allAnswersMap.putAll(it)
+                    }
+                }
+                // wrap answers on top of the mapping
+                val finalJSONStructure = mapOf("answers" to allAnswersMap)
+                // convert to JSON
+                return gson.toJson(finalJSONStructure)
+
             }
-        """
+            catch (e: Exception) {
+                println("Failed to fetch responses: ${e.message}")
+                return "{}"
+            }
+        }
+        // if no user then no JSON
+        return "{}"
     }
+
     // take JSON answers, returns map
     private fun parseAnswersJSON(jsonString: String) : Map<String, JsonElement> {
         // deserializes the JSON read
@@ -90,8 +113,8 @@ object AnswersProvider {
         return wrapper.answers
     }
     // public function to get user answers
-    fun getUserAnswers(): Map<String, JsonElement> {
-        val jsonString = getAnswersJSON()
+    suspend fun getUserAnswers(): Map<String, JsonElement> {
+        val jsonString = getUserQuestionnaireAnswers()
         return parseAnswersJSON(jsonString)
     }
 }
@@ -207,10 +230,10 @@ private fun extractAnswerData(questionIdStr: String, answerElement: JsonElement)
         val obj = answerElement.asJsonObject
         // switch statement for more complex questions
         return when (questionIdStr) {
-            "5" -> Pair(if (obj.get("hasChildren")?.asBoolean == true) "Yes" else "No", obj.get("codeWord")?.asString)
-            "12" -> Pair(if (obj.get("hasSafePlace")?.asBoolean == true) "Yes" else "No", obj.get("tempShelter")?.asString)
-            "14" -> Pair(if (obj.get("hasProtectionOrder")?.asBoolean == true) "Yes" else "No", obj.get("legalOrder")?.asString)
-            "15" -> Pair(if (obj.get("hasSafetyTools")?.asBoolean == true) "Yes" else "No", obj.get("equipment")?.asString)
+            "5" -> Pair(if (obj.get("hasChildren")?.asString == "Yes") "Yes" else "No", obj.get("codeWord")?.asString)
+            "12" -> Pair(if (obj.get("answer")?.asString == "Yes") "Yes" else "No", obj.get("shelter_name")?.asString)
+            "14" -> Pair(if (obj.get("answer")?.asString == "Yes") "Yes" else "No", obj.get("legal_order")?.asString)
+            "15" -> Pair(if (obj.get("answer")?.asBoolean == true) "Yes" else "No", obj.get("equipment")?.asString)
             else -> Pair("Error: Unknown Object", null)
         }
     }
@@ -367,7 +390,7 @@ fun BackButton(navController: NavHostController) {
         Text(
             text = stringResource(R.string.BackButtonText),
 
-        )
+            )
     }
 }
 // used in navigation

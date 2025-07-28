@@ -13,3 +13,5 @@
 .externalNativeBuild
 .cxx
 local.properties
+/app/build
+problems-report.html
