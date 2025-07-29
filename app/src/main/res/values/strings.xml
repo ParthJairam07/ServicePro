@@ -4,6 +4,14 @@
     <string name='pinPromptInfo'>ⓘ Setting up your PIN enables you to log in quicker the next time you launch the app</string>
     <string name='pinPromptHeaderText'>Setup Process</string>
     <string name='tipsHeader'>Here\'s your plan</string>
+    <string name='StorageHeader'>Here\'s your Storage</string>
+    <string name='DocumentButtonText'>View Your Documents</string>
+    <string name='DocumentHeader'>My Documents</string>
+    <string name='EmergencyContactsButtonText'>Emergency Contact List</string>
+    <string name='addDocumentButtonText'>Add Documents, IDs, etc.</string>
+    <string name='addDocumentButtonDescription'>Upload file icon file button</string>
+    <string name='SafeLocationsButtonText'>See your Safe Locations</string>
+    <string name='MedicationsButtonText'>View your Medications</string>
     <string name='inputPinInfo'>Choose a 4–6 digit PIN</string>
     <string name='continueButtonText'>Done</string>
     <string name='BackButtonText'>Back</string>

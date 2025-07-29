@@ -4,15 +4,10 @@ import android.os.Bundle
 import androidx.activity.ComponentActivity
 import androidx.activity.compose.setContent
 import androidx.activity.enableEdgeToEdge
-import androidx.compose.material3.Text
-import androidx.compose.runtime.Composable
-import androidx.compose.ui.Modifier
-import androidx.compose.ui.tooling.preview.Preview
 import androidx.navigation.compose.NavHost
 import androidx.navigation.compose.composable
 import androidx.navigation.compose.rememberNavController
 import com.example.b07proj.model.HandleAuth
-import com.example.b07proj.presenter.QuizPresenter
 import com.example.b07proj.ui.theme.B07ProjTheme
 import com.example.b07proj.view.EmailLogin
 import com.example.b07proj.view.LandingPage
@@ -20,12 +15,16 @@ import com.example.b07proj.view.LoggedInTopBar
 import com.example.b07proj.view.LoginPage
 import com.example.b07proj.view.SignUpPage
 import com.example.b07proj.view.PinPage
+import com.example.b07proj.view.RenderAddDocumentsPage
+import com.example.b07proj.view.RenderDocumentPage
+import com.example.b07proj.view.RenderEmergencyContactPage
+import com.example.b07proj.view.RenderMedicationPage
+import com.example.b07proj.view.RenderSafeLocationsPage
 import com.example.b07proj.view.SafetyPlanQuizPage1
 import com.example.b07proj.view.RenderTips
 import com.example.b07proj.view.SafetyPlanQuizPage2
 import com.example.b07proj.view.SafetyPlanQuizPage3
-import com.example.b07proj.view.outputMap
-
+import com.example.b07proj.view.RenderStoragePage
 class MainActivity : ComponentActivity() {
 
 
@@ -41,7 +40,7 @@ class MainActivity : ComponentActivity() {
                 //host the navigation graph
                 NavHost(
                     navController = navController,
-                    startDestination = "email_login",
+                    startDestination = "storagePage",
                     builder = {
                         //define the route
                         composable("landing_page"){
@@ -63,7 +62,7 @@ class MainActivity : ComponentActivity() {
                             EmailLogin(navController)
                         }
                         composable("loggedintopbar"){
-                            LoggedInTopBar(navController)
+                            LoggedInTopBar(navController) {}
                         }
                         composable("safety_plan_quiz") {
                             SafetyPlanQuizPage1(navController)
@@ -77,25 +76,28 @@ class MainActivity : ComponentActivity() {
                         composable("safetyPlanQuizPage3") {
                             SafetyPlanQuizPage3(navController)
                         }
+                        composable("storagePage") {
+                            RenderStoragePage(navController)
+                        }
+                        composable("documents_screen") {
+                            RenderDocumentPage(navController)
+                        }
+                        composable("contacts_screen") {
+                            RenderEmergencyContactPage(navController)
+                        }
+                        composable("locations_screen") {
+                            RenderSafeLocationsPage(navController)
+                        }
+                        composable("meds_screen") {
+                            RenderMedicationPage(navController)
+                        }
+                        composable("add_documents") {
+                            RenderAddDocumentsPage(navController)
+                        }
+
                     }
                 )
             }
         }
-    }
-}
-
-@Composable
-fun Greeting(name: String, modifier: Modifier = Modifier) {
-    Text(
-        text = "Hello $name!",
-        modifier = modifier
-    )
-}
-
-@Preview(showBackground = true)
-@Composable
-fun GreetingPreview() {
-    B07ProjTheme {
-        Greeting("Android")
     }
 }
