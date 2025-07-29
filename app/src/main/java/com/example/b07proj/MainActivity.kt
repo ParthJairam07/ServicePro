@@ -15,6 +15,7 @@ import com.example.b07proj.model.HandleAuth
 import com.example.b07proj.presenter.QuizPresenter
 import com.example.b07proj.ui.theme.B07ProjTheme
 import com.example.b07proj.view.EmailLogin
+import com.example.b07proj.view.HomePage
 import com.example.b07proj.view.LandingPage
 import com.example.b07proj.view.LoggedInTopBar
 import com.example.b07proj.view.LoginPage
@@ -41,7 +42,7 @@ class MainActivity : ComponentActivity() {
                 //host the navigation graph
                 NavHost(
                     navController = navController,
-                    startDestination = "email_login",
+                    startDestination = "home_page",
                     builder = {
                         //define the route
                         composable("landing_page"){
@@ -63,7 +64,7 @@ class MainActivity : ComponentActivity() {
                             EmailLogin(navController)
                         }
                         composable("loggedintopbar"){
-                            LoggedInTopBar(navController)
+                            LoggedInTopBar(navController) {}
                         }
                         composable("safety_plan_quiz") {
                             SafetyPlanQuizPage1(navController)
@@ -76,6 +77,9 @@ class MainActivity : ComponentActivity() {
                         }
                         composable("safetyPlanQuizPage3") {
                             SafetyPlanQuizPage3(navController)
+                        }
+                        composable("home_page") {
+                            HomePage(navController)
                         }
                     }
                 )
