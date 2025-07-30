@@ -5,9 +5,15 @@ import android.app.PendingIntent
 import android.content.Context
 import android.content.Intent
 import android.os.SystemClock
+import java.util.Calendar
+import androidx.core.content.edit
+
+const val PREFS_NAME = "app_prefs"
+const val KEY_ALARM_HOUR = "alarm_hour"
+const val KEY_ALARM_INTERVAL_MS = "alarm_interval_ms"
 
 class PeriodicReminderManager private constructor(context: Context) {
-
+    private val context: Context = context.applicationContext
     private val alarmManager: AlarmManager =
         context.getSystemService(Context.ALARM_SERVICE) as AlarmManager
     private val pendingIntent: PendingIntent =
@@ -27,20 +33,42 @@ class PeriodicReminderManager private constructor(context: Context) {
         alarmManager.cancel(pendingIntent)
     }
 
-    fun setAlarmInterval(intervalMS: Long) {
+    fun setAlarmInterval(intervalMS: Long, hourOfDay: Int) {
+        val calendar: Calendar = Calendar.getInstance().apply {
+            timeInMillis = System.currentTimeMillis()
+            set(Calendar.HOUR_OF_DAY, hourOfDay)
+            set(Calendar.MINUTE, 0)
+            set(Calendar.SECOND, 0)
+            set(Calendar.MILLISECOND, 0)
+        }
         // Remove any existing alarm
         alarmManager.cancel(pendingIntent)
 
         // Set to new time!
         alarmManager.setRepeating(
             AlarmManager.RTC_WAKEUP,
-            SystemClock.elapsedRealtime() + intervalMS,
+            calendar.timeInMillis /* System.currentTimeMillis() */,
             intervalMS,
             pendingIntent
         )
-        println("fwaf")
-
+        saveAlarmTimePreference(context, hourOfDay, intervalMS)
     }
+
+    private fun saveAlarmTimePreference(context: Context, hour: Int, intervalMS: Long ) {
+
+        println("?? hour: $hour")
+        println("?? intervalMS: $intervalMS")
+
+        val prefs = context.getSharedPreferences(PREFS_NAME, Context.MODE_PRIVATE)
+        prefs.edit {
+            putInt(KEY_ALARM_HOUR, hour)
+            putLong(KEY_ALARM_INTERVAL_MS, intervalMS)
+        }
+
+        val a = context.getSharedPreferences(PREFS_NAME, Context.MODE_PRIVATE).getLong(KEY_ALARM_INTERVAL_MS, AlarmManager.INTERVAL_DAY)
+        println("?? a: $a")
+    }
+
 
     // Required for singleton! However we expose a way to initialize the manager "once"
     companion object {

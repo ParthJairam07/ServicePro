@@ -118,7 +118,7 @@ fun LoggedInTopBar(navController: NavHostController) {
         Scaffold(
             // create a topBar element which will consist of the logo
             topBar = {
-                TopBar(scope, drawerState)
+                TopBar(scope, drawerState, navController)
 
             }
         ) { innerPadding -> // pass in padding to allow fields within the UI to be spaced from the topBar
@@ -536,7 +536,7 @@ fun getId(context: Context, text: String): String {
 // this function is the TopBar, taking in the scope and state of menu bar
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
-fun TopBar(scope: CoroutineScope, drawerState: DrawerState ) {
+fun TopBar(scope: CoroutineScope, drawerState: DrawerState, navController: NavHostController ) {
     CenterAlignedTopAppBar(
         title = {
             // display the logo image in the center of the top bar
@@ -564,7 +564,7 @@ fun TopBar(scope: CoroutineScope, drawerState: DrawerState ) {
         },
         actions = {
             // placeholder for a settings icon on the right side (does nothing for now)
-            IconButton(onClick = { /* erm */ }) {
+            IconButton(onClick = { navController.navigate("settings_page") }) {
                 Icon(
                     imageVector = Icons.Outlined.Settings,
                     contentDescription = "Settings",
