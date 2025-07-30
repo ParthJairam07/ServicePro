@@ -45,7 +45,7 @@ class MainActivity : ComponentActivity() {
                 //host the navigation graph
                 NavHost(
                     navController = navController,
-                    startDestination = "settings_page",
+                    startDestination = "login_page",
                     builder = {
                         //define the route
                         composable("landing_page"){
