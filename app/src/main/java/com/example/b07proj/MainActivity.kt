@@ -12,6 +12,7 @@ import androidx.navigation.compose.NavHost
 import androidx.navigation.compose.composable
 import androidx.navigation.compose.rememberNavController
 import com.example.b07proj.model.HandleAuth
+import com.example.b07proj.notifs.DEEP_LINK_NEXT_SCREEN_KEY
 import com.example.b07proj.presenter.QuizPresenter
 import com.example.b07proj.ui.theme.B07ProjTheme
 import com.example.b07proj.view.EmailLogin
@@ -24,6 +25,7 @@ import com.example.b07proj.view.SafetyPlanQuizPage1
 import com.example.b07proj.view.RenderTips
 import com.example.b07proj.view.SafetyPlanQuizPage2
 import com.example.b07proj.view.SafetyPlanQuizPage3
+import com.example.b07proj.view.SettingsPage
 import com.example.b07proj.view.outputMap
 
 class MainActivity : ComponentActivity() {
@@ -33,6 +35,8 @@ class MainActivity : ComponentActivity() {
         super.onCreate(savedInstanceState)
         enableEdgeToEdge()
 
+        val deepLinkDestination = intent.getStringExtra(DEEP_LINK_NEXT_SCREEN_KEY)
+
         setContent {
             B07ProjTheme {
                 //create an instance of the auth
@@ -41,7 +45,7 @@ class MainActivity : ComponentActivity() {
                 //host the navigation graph
                 NavHost(
                     navController = navController,
-                    startDestination = "email_login",
+                    startDestination = "settings_page",
                     builder = {
                         //define the route
                         composable("landing_page"){
@@ -60,7 +64,7 @@ class MainActivity : ComponentActivity() {
                             SignUpPage(navController)
                         }
                         composable("email_login"){
-                            EmailLogin(navController)
+                            EmailLogin(navController, deepLinkDestination ?: "safety_plan_quiz")
                         }
                         composable("loggedintopbar"){
                             LoggedInTopBar(navController)
@@ -76,6 +80,9 @@ class MainActivity : ComponentActivity() {
                         }
                         composable("safetyPlanQuizPage3") {
                             SafetyPlanQuizPage3(navController)
+                        }
+                        composable("settings_page") {
+                            SettingsPage(navController)
                         }
                     }
                 )

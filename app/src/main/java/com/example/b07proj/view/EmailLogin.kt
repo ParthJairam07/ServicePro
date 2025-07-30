@@ -53,9 +53,9 @@ import com.example.b07proj.ui.theme.backgroundAccent
 
 // renders for the email login page
 @Composable
-fun EmailLogin(navController: NavHostController) {
+fun EmailLogin(navController: NavHostController, nextPage: String) {
     // call the UIEmailLogin() function which loads the full UI onto the app
-    UIEmailLogin(navController)
+    UIEmailLogin(navController, nextPage)
 }
 
 // define a custom TextField color scheme to be reused across the app.
@@ -74,7 +74,7 @@ private val AppTextInputColors: TextFieldColors
 // create a function for the UI of the login
 @OptIn(ExperimentalMaterial3Api::class) // allow usage of experimental Material3 APIs like Scaffold
 @Composable
-fun UIEmailLogin(navController: NavHostController) {
+fun UIEmailLogin(navController: NavHostController, nextPage: String) {
     // get the current context of the app to use for things like Toasts
     val context = LocalContext.current
 
@@ -87,7 +87,7 @@ fun UIEmailLogin(navController: NavHostController) {
             view = object : SignUpView {
                 // override function onSignUpSuccess to navigate to landing_page once successful
                 override fun onSignUpSuccess() {
-                    navController.navigate("safety_plan_quiz")
+                    navController.navigate(nextPage)
                 }
 
                 // override a method to display an error message to the user
