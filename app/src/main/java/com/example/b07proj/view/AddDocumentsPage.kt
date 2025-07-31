@@ -166,10 +166,6 @@ fun AddDocumentsPage(
                 ) {
                     Text("Upload and Save Entire Document", style = TextStyle(fontFamily = myFont))
                 }
-
-                if (isLoading) {
-                    CircularProgressIndicator()
-                }
             }
 
         }

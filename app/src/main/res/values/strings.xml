@@ -8,6 +8,9 @@
     <string name='DocumentButtonText'>View Your Documents</string>
     <string name='DocumentHeader'>My Documents</string>
     <string name='EmergencyContactsButtonText'>Emergency Contact List</string>
+    <string name='EmergencyContactsHeader'>Your Emergency Contacts</string>
+    <string name='addEmergencyContactsButton'>Add Emergency Contacts</string>
+    <string name='addContactHeader'>Create a new emergency contact</string>
     <string name='addDocumentHeader'>Upload File</string>
     <string name='addDocumentButtonText'>Add Documents, IDs, etc.</string>
     <string name='addDocumentButtonDescription'>Upload file icon file button</string>

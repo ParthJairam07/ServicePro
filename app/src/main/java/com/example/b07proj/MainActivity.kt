@@ -15,6 +15,7 @@ import com.example.b07proj.view.LoggedInTopBar
 import com.example.b07proj.view.LoginPage
 import com.example.b07proj.view.SignUpPage
 import com.example.b07proj.view.PinPage
+import com.example.b07proj.view.RenderAddContactsPage
 import com.example.b07proj.view.RenderAddDocumentsPage
 import com.example.b07proj.view.RenderDocumentPage
 import com.example.b07proj.view.RenderEmergencyContactPage
@@ -93,6 +94,9 @@ class MainActivity : ComponentActivity() {
                         }
                         composable("add_documents") {
                             RenderAddDocumentsPage(navController)
+                        }
+                        composable("add_contacts") {
+                            RenderAddContactsPage(navController)
                         }
 
                     }
