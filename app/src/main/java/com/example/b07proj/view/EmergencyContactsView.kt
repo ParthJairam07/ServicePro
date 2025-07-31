@@ -4,6 +4,7 @@ import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.PaddingValues
+import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
@@ -11,10 +12,15 @@ import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.lazy.items
+import androidx.compose.material.icons.Icons
+import androidx.compose.material.icons.filled.Delete
+import androidx.compose.material.icons.filled.Email
+import androidx.compose.material.icons.filled.Phone
 import androidx.compose.material3.Button
 import androidx.compose.material3.Card
 import androidx.compose.material3.CircularProgressIndicator
-import androidx.compose.material3.ExperimentalMaterial3Api
+import androidx.compose.material3.Icon
+import androidx.compose.material3.IconButton
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
@@ -25,9 +31,8 @@ import androidx.compose.runtime.remember
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.res.stringResource
-import androidx.compose.ui.text.font.Font
-import androidx.compose.ui.text.font.FontFamily
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
@@ -43,7 +48,6 @@ fun RenderEmergencyContactPage(navController: NavHostController) {
     EmergencyContactPage(navController)
 }
 
-@OptIn(ExperimentalMaterial3Api::class)
 @Composable
 fun EmergencyContactPage(navController: NavHostController) {
     var isLoading by remember { mutableStateOf(true) }
@@ -160,33 +164,61 @@ fun ContactCard(contact: EmergencyContact) {
     Card(
             modifier = Modifier.fillMaxWidth()
     ) {
-        Column(
-            modifier = Modifier.padding(16.dp)
+        Row(
+            modifier = Modifier.fillMaxWidth(),
+            verticalAlignment = Alignment.CenterVertically,
+            horizontalArrangement = Arrangement.SpaceBetween
         ) {
-            Text(
-                text = contact.contactName,
-                fontFamily = myFont,
-                fontWeight = FontWeight.Bold
-            )
-            Spacer(modifier = Modifier.height(4.dp))
-            Text(
-                text = contact.contactRelation,
-                fontFamily = myFont,
-                color = MaterialTheme.colorScheme.onSurfaceVariant
-            )
-            Spacer(modifier = Modifier.height(8.dp))
-            Text(
-                text = "Phone: ${contact.contactPhoneNumber}",
-                fontFamily = myFont
-            )
+            Column(
+                modifier = Modifier.padding(16.dp)
+            ) {
+                Text(
+                    text = contact.contactName,
+                    fontFamily = myFont,
+                    fontWeight = FontWeight.Bold
+                )
+                Text(
+                    text = contact.contactRelation,
+                    fontFamily = myFont,
+                    color = MaterialTheme.colorScheme.onSurfaceVariant
+                )
+                Spacer(modifier = Modifier.height(8.dp))
+                Row {
+                    Icon(
+                        // Phone
+                        Icons.Default.Phone,
+                        contentDescription = "Phone",
+                        tint = Color.Black,
+                        modifier = Modifier.padding(end = 8.dp)
+                    )
+                    Text(
+                        text = contact.contactPhoneNumber,
+                        fontFamily = myFont
+                    )
+                }
 
-            Text(
-                text = "Email: ${contact.contactEmail}",
-                fontFamily = myFont
+                Row {
+                    // Email
+                    Icon(
+                        Icons.Default.Email,
+                        contentDescription = "Email",
+                        tint = Color.Black,
+                        modifier = Modifier.padding(end = 8.dp)
+                    )
+                    Text(
+                        text = contact.contactEmail,
+                        fontFamily = myFont
 
-            )
+                    )
+                }
+            }
+            IconButton(onClick = {}) {
+                Icon(
+                    imageVector = Icons.Default.Delete,
+                    contentDescription = "Delete Contact",
+                    tint = MaterialTheme.colorScheme.error // Use error color for destructive actions
+                )
+            }
         }
-
     }
-
 }
