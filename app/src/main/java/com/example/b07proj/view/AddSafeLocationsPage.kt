@@ -169,6 +169,7 @@ fun AddSafeLocationsPage(navController: NavHostController) {
 
                 // submission button
                 Button(
+                    enabled = answers.size == 3 && answers.all { item -> item.value.isNotEmpty() },
                     onClick = {
                         Log.d("AddSafeLocationsPage", "Valid answers: $answers")
                         presenter.saveDataItem(Categories.SAFE_LOCATIONS, answers.toMap(), locationId)

@@ -178,6 +178,7 @@ fun AddMedicationPage(navController: NavHostController) {
 
                 // submission button
                 Button(
+                    enabled = answers.size == 3 && answers.all { item -> item.value.isNotEmpty() },
                     onClick = {
                         Log.d("AddMedicationPage", "Valid answers: $answers")
                         presenter.saveDataItem(Categories.MEDICATIONS, answers.toMap(), medicationId)

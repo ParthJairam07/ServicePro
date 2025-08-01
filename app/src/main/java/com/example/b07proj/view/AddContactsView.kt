@@ -195,6 +195,7 @@ fun AddContactsPage(navController: NavHostController) {
 
                 // submission button
                 Button(
+                    enabled = answers.size == 4 && answers.all { item -> item.value.isNotEmpty() },
                     onClick = {
                         // get answer phone number and email (we need to check them)
                         val phoneNumber = answers[phoneNumberQuestion2.variable].orEmpty()
