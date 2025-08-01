@@ -15,6 +15,7 @@ import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.DisposableEffect
+import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateMapOf
 import androidx.compose.runtime.mutableStateOf
@@ -43,42 +44,57 @@ fun RenderAddContactsPage(navController: NavHostController) {
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
 fun AddContactsPage(navController: NavHostController) {
+    // our answers for each question are stored here
     val answers = remember { mutableStateMapOf<String, String>() }
+    // mapping the question to if a specific error it came across from user input (ex invalid email format)
     val errors = remember { mutableStateMapOf<String, Boolean>() }
-    // To determine if we show the spinner or not
+    // To determine if we show the spinner or not when fetching/storing data
     var isLoading by remember { mutableStateOf(false) }
+    // for Android OS
     val context = LocalContext.current
+
+    // presenter type of AddContactsContract.Presenter (interface), call constructor with null (meaning there is no view yet to pair with)
     val presenter : AddContactsContract.Presenter = remember { AddContactsPresenter(null) }
 
 
+    // get contactId from navigation arguments, note if will be null if we are adding
+    val contactId = navController.currentBackStackEntry?.arguments?.getString("contactId")
     // Provide the view contract
     val view = remember {
         object : AddContactsContract.View {
             override fun showLoading() {
                 isLoading = true
             }
-
             override fun hideLoading() {
                 isLoading = false
             }
             override fun navigateBack() {
                 navController.popBackStack()
             }
-
             override fun showSuccess(message: String) {
                 Toast.makeText(context, message, Toast.LENGTH_SHORT).show()
             }
-
             override fun showError(message: String) {
                 Toast.makeText(context, message, Toast.LENGTH_LONG).show()
             }
+            override fun displayContactDetails(contactData: Map<String, String>) {
+                // for editing we clear all the previous answers and load in the fetched data
+                answers.clear()
+                answers.putAll(contactData)
+            }
         }
     }
-    // connecting presenter and view together
+    // connecting presenter and view together (before presenter had view as null)
     DisposableEffect(presenter) {
         (presenter as AddContactsPresenter).view = view
         onDispose {
             presenter.onViewDestroyed()
+        }
+    }
+    // launch effect to fetch data when screen was opened in edit mode
+    LaunchedEffect(key1 = contactId) {
+        if (contactId != null) {
+            presenter.loadContactDetails(contactId)
         }
     }
 
@@ -129,7 +145,9 @@ fun AddContactsPage(navController: NavHostController) {
                     fontFamily = myFont,
                     textAlign = TextAlign.Center
                 )
+
                 Spacer(modifier = Modifier.height(24.dp))
+
                 // First question, free form question
                 FreeformQuestion2(
                     question = freeformQuestion1,
@@ -137,7 +155,9 @@ fun AddContactsPage(navController: NavHostController) {
                     // answers["contact_name"]:(users answer)
                     onValueChange = { newText -> answers[freeformQuestion1.variable] = newText }
                 )
+
                 Spacer(modifier = Modifier.height(24.dp))
+
                 // Contact primary phone number
                 PhoneNumberQuestion(
                     question = phoneNumberQuestion2,
@@ -147,13 +167,17 @@ fun AddContactsPage(navController: NavHostController) {
                     },
                     isError = errors[phoneNumberQuestion2.variable] == true
                 )
+
                 Spacer(modifier = Modifier.height(24.dp))
+
                 // question for relation to user
                 DropdownQuestion(
                     question = dropdownQuestion3,
                     onAnswer = { newText -> answers[dropdownQuestion3.variable as String] = newText }
                 )
+
                 Spacer(modifier = Modifier.height(24.dp))
+
                 // question for providing email address of contact
                 EmailQuestion(
                     question = emailQuestion4,
@@ -163,23 +187,28 @@ fun AddContactsPage(navController: NavHostController) {
                     },
                     isError = errors[emailQuestion4.variable] == true
                 )
+
                 Spacer(modifier = Modifier.height(24.dp))
 
                 // submission button
                 Button(
                     onClick = {
+                        // get answer phone number and email (we need to check them)
                         val phoneNumber = answers[phoneNumberQuestion2.variable].orEmpty()
                         val emailAddress = answers[emailQuestion4.variable].orEmpty()
+
                         val isPhoneValid = isPhoneNumberValid(phoneNumber)
                         val isEmailValid = isEmailValid(emailAddress)
+
                         // update errors boolean values at each question.variable
+                        // ex: if isPhoneNumberValid was false then errors["phoneNumber"] should be true
                         errors[phoneNumberQuestion2.variable] = !isPhoneValid
                         errors[emailQuestion4.variable] = !isEmailValid
 
-                        // we only proceed if both are valid ie true
+                        // we only proceed if both are valid ie both true
                         if (isPhoneValid && isEmailValid ) {
                             Log.d("AddContactsPage", "Valid phone number and email: $answers")
-                            presenter.addContact(answers.toMap())
+                            presenter.saveContact(answers.toMap(), contactId)
                         }
                         else {
                             Log.d("AddContactsPage", "Valid phone number or email incorrect logic: $answers")
@@ -187,7 +216,13 @@ fun AddContactsPage(navController: NavHostController) {
                     },
                     modifier = Modifier.fillMaxWidth().padding(top = 16.dp)
                 ) {
-                    Text("Add Contact")
+                    // change button text depending on if we editing or adding contact
+                    val buttonText = if (contactId == null) {
+                        "Add Contact"
+                    } else {
+                        "Update Contact"
+                    }
+                    Text(buttonText)
                 }
             }
         }

@@ -4,9 +4,11 @@ import android.os.Bundle
 import androidx.activity.ComponentActivity
 import androidx.activity.compose.setContent
 import androidx.activity.enableEdgeToEdge
+import androidx.navigation.NavType
 import androidx.navigation.compose.NavHost
 import androidx.navigation.compose.composable
 import androidx.navigation.compose.rememberNavController
+import androidx.navigation.navArgument
 import com.example.b07proj.model.HandleAuth
 import com.example.b07proj.ui.theme.B07ProjTheme
 import com.example.b07proj.view.EmailLogin
@@ -95,7 +97,17 @@ class MainActivity : ComponentActivity() {
                         composable("add_documents") {
                             RenderAddDocumentsPage(navController)
                         }
-                        composable("add_contacts") {
+                        // this page is for adding new contacts or editing ones, we need
+                        // to pass in optional argument contactId to edit
+                        composable(
+                            "add_or_edit_contacts?contactId={contactId}",
+                            arguments = listOf(
+                                navArgument("contactId") {
+                                    type = NavType.StringType
+                                    nullable = true
+                                }
+                            )
+                        ) { backStackEntry ->
                             RenderAddContactsPage(navController)
                         }
 

@@ -52,12 +52,16 @@ fun RenderEmergencyContactPage(navController: NavHostController) {
 
 @Composable
 fun EmergencyContactPage(navController: NavHostController) {
+    // To determine if we show the spinner or not when fetching/storing data
     var isLoading by remember { mutableStateOf(true) }
+    // the list of contacts to display
     var contacts by remember { mutableStateOf<List<EmergencyContact>>(emptyList()) }
+    // any error we got when fetching data
     var errorMessage by remember { mutableStateOf<String?>(null) }
+    // if empty contact list from users
     var showEmptyState by remember { mutableStateOf(false) }
 
-    // set up presenter
+    // set up presenter (our view is null for now)
     val presenter = remember { ViewContactsPresenter(null) }
     // implement contract for view
     val view = remember {
@@ -71,6 +75,7 @@ fun EmergencyContactPage(navController: NavHostController) {
             }
 
             override fun displayContacts(fetchedContacts: List<EmergencyContact>) {
+                // update contacts list
                 contacts = fetchedContacts
                 showEmptyState = false
                 errorMessage = null
@@ -85,8 +90,18 @@ fun EmergencyContactPage(navController: NavHostController) {
                 errorMessage = message
                 showEmptyState = false
             }
+
+            override fun onContactDeleted(contactId: String) {
+                // when we deleted a contact, remove that contact off the list and update
+                val updatedList = contacts.filterNot { it.id == contactId }
+                contacts = updatedList
+                if (updatedList.isEmpty()) {
+                    showEmptyState = true
+                }
+            }
         }
     }
+    // now we can connect the view to the presenter
     DisposableEffect(presenter) {
         presenter.view = view
         // Load data when the view is ready
@@ -95,12 +110,14 @@ fun EmergencyContactPage(navController: NavHostController) {
             presenter.onViewDestroyed()
         }
     }
+    // the actual UI
     LoggedInTopBar(navController) {
         Box(
             modifier = Modifier.fillMaxSize().padding(16.dp),
             contentAlignment = Alignment.Center
         ) {
             when {
+                // different states we have separate UIs for them
                 isLoading -> CircularProgressIndicator()
                 errorMessage != null -> Text("Error: $errorMessage")
                 showEmptyState -> {
@@ -119,6 +136,7 @@ fun EmergencyContactPage(navController: NavHostController) {
                         AddContactsButton(navController)
                     }
                 }
+                // this means we have a contact list (at least 1)
                 else -> {
 
                     LazyColumn(
@@ -127,6 +145,7 @@ fun EmergencyContactPage(navController: NavHostController) {
                         verticalArrangement = Arrangement.spacedBy(12.dp),
                         horizontalAlignment = Alignment.CenterHorizontally
                     ) {
+                        // header
                         item {
                             Text(
                                 text = stringResource(R.string.EmergencyContactsHeader),
@@ -137,10 +156,20 @@ fun EmergencyContactPage(navController: NavHostController) {
                             )
                             Spacer(modifier = Modifier.height(16.dp))
                         }
-                        items(contacts)  { contact ->
-                            ContactCard(contact = contact)
-
+                        // list of contacts spawn here, each contact in contacts we have a ContactCard for
+                        items(contacts, key = {it.id})  { contact ->
+                            ContactCard(
+                                contact = contact,
+                                onDelete = {
+                                    presenter.deleteContact(contact.id)
+                                },
+                                // if we are editing pass in the contact id associated with it
+                                onEdit = {
+                                    navController.navigate("add_or_edit_contacts?contactId=${contact.id}")
+                                }
+                            )
                         }
+                        // the add contact button at the bottom of the list
                         item {
                             Spacer(modifier = Modifier.height(16.dp))
                             AddContactsButton(navController)
@@ -155,14 +184,15 @@ fun EmergencyContactPage(navController: NavHostController) {
 @Composable
 fun AddContactsButton(navController: NavHostController) {
     Button(
-        onClick = { navController.navigate("add_contacts") },
+        onClick = { navController.navigate("add_or_edit_contacts") },
         modifier = Modifier.fillMaxWidth()
     ) {
         Text(stringResource(R.string.addEmergencyContactsButton))
     }
 }
 @Composable
-fun ContactCard(contact: EmergencyContact) {
+fun ContactCard(contact: EmergencyContact, onDelete: () -> Unit, onEdit: () -> Unit) {
+    // UI for a single "Contact card"
     Card(
             modifier = Modifier.fillMaxWidth()
     ) {
@@ -174,17 +204,20 @@ fun ContactCard(contact: EmergencyContact) {
             Column(
                 modifier = Modifier.padding(16.dp)
             ) {
+                // contact name
                 Text(
                     text = contact.contactName,
                     fontFamily = myFont,
                     fontWeight = FontWeight.Bold
                 )
+                // user relation to contact
                 Text(
                     text = contact.contactRelation,
                     fontFamily = myFont,
                     color = MaterialTheme.colorScheme.onSurfaceVariant
                 )
                 Spacer(modifier = Modifier.height(8.dp))
+                // contact phone number
                 Row {
                     Icon(
                         // Phone
@@ -198,7 +231,6 @@ fun ContactCard(contact: EmergencyContact) {
                         fontFamily = myFont
                     )
                 }
-
                 Row {
                     // Email
                     Icon(
@@ -222,15 +254,15 @@ fun ContactCard(contact: EmergencyContact) {
                     horizontalAlignment = Alignment.End
 
             ) {
-                IconButton(onClick = {}) {
+                // edit and delete button
+                IconButton(onClick = { onEdit() }) {
                     Icon(
                         imageVector = Icons.Default.Edit,
                         contentDescription = "Edit Contact",
                         tint = MaterialTheme.colorScheme.secondary
                     )
                 }
-//                Spacer(modifier = Modifier.width(16.dp))
-                IconButton(onClick = {}) {
+                IconButton(onClick = { onDelete() }) {
                     Icon(
                         imageVector = Icons.Default.Delete,
                         contentDescription = "Delete Contact",
