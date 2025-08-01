@@ -35,13 +35,16 @@ fun AddDocumentsPage(
     navController: NavHostController,
     presenter: DocumentPresenter = remember { DocumentPresenter() }
 ) {
+    //to keep track of the input fields
     var documentName by remember { mutableStateOf("") }
     var documentDescription by remember { mutableStateOf("") }
     var documentDate by remember { mutableStateOf("") }
     var selectedFileUri by remember { mutableStateOf<Uri?>(null) }
 
+    // coroutine scope to launch coroutines
     val coroutineScope = rememberCoroutineScope()
     val context = LocalContext.current
+    // launcher for file picker
     val filePickerLauncher = rememberLauncherForActivityResult(
         contract = ActivityResultContracts.GetContent(),
         onResult = { uri: Uri? -> selectedFileUri = uri }
@@ -49,7 +52,7 @@ fun AddDocumentsPage(
 
     val isLoading by presenter.isLoading.collectAsState()
     val uploadSuccess by presenter.uploadSuccess.collectAsState()
-
+    // Observe upload success
     LaunchedEffect(uploadSuccess) {
         uploadSuccess?.let { success ->
             if (success) {
@@ -78,7 +81,7 @@ fun AddDocumentsPage(
                 fontFamily = myFont,
                 textAlign = TextAlign.Center
             )
-
+            // Types of questions
             val nameQuestion = Question(
                 id = 999,
                 question = "What is the name of the document?",
@@ -124,7 +127,7 @@ fun AddDocumentsPage(
             Button(onClick = { filePickerLauncher.launch("*/*") }) {
                 Text("Select Document", style = TextStyle(fontFamily = myFont))
             }
-
+            // Display selected file name
             selectedFileUri?.let { uri ->
                 Text(
                     text = "Selected: ${uri.path?.substringAfterLast('/')}",
@@ -140,6 +143,7 @@ fun AddDocumentsPage(
             } else {
                 Button(
                     onClick = {
+                        // launch coroutine to upload and save document
                         coroutineScope.launch {
                             presenter.uploadAndSaveDocument(
                                 fileUri = selectedFileUri!!,
