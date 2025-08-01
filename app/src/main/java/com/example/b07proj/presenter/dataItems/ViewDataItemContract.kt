@@ -1,14 +1,13 @@
-package com.example.b07proj.presenter.contacts
+package com.example.b07proj.presenter.dataItems
 
-import com.example.b07proj.model.EmergencyContact
 // a contract between presenter and view for when viewing contacts
-interface ViewContactsContract {
+interface ViewDataItemContract {
     // presenter -> view
 
-    interface View {
+    interface View <T> {
         fun showLoading()
         fun hideLoading()
-        fun displayContacts(fetchedContacts: List<EmergencyContact>)
+        fun displayContacts(fetchedContacts: List<T>)
         fun displayEmptyState() // when there is no contacts
         fun displayError(message: String)
         // when we delete a contact, tell view to update its list of contacts (remove the deleted one)
@@ -16,10 +15,11 @@ interface ViewContactsContract {
 
     }
     // view -> presenter
-    interface Presenter {
-        fun loadContacts()
+    interface Presenter<T> {
+
+        fun loadContacts(category: Categories, itemClass: Class<T>)
         // tell presenter to delete a certain contact based on contactId
-        fun deleteContact(contactId: String)
+        fun deleteContact(categories: Categories, contactId: String)
         fun onViewDestroyed()
     }
 

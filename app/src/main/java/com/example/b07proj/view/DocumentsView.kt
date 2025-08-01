@@ -22,7 +22,7 @@ import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.style.TextOverflow
 import androidx.compose.ui.unit.dp
 import androidx.navigation.NavHostController
-import com.example.b07proj.model.DocumentData
+import com.example.b07proj.model.dataCategories.DocumentData
 import com.example.b07proj.presenter.DocumentPresenter
 
 

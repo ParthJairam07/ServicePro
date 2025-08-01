@@ -32,9 +32,11 @@ import androidx.compose.ui.unit.sp
 import androidx.navigation.NavHostController
 import com.example.b07proj.R
 import com.example.b07proj.model.Question
-import com.example.b07proj.presenter.contacts.AddContactsContract
-import com.example.b07proj.presenter.contacts.AddContactsPresenter
+import com.example.b07proj.presenter.dataItems.AddDataItemContract
+import com.example.b07proj.presenter.dataItems.AddDataItemPresenter
+import com.example.b07proj.presenter.dataItems.Categories
 import com.example.b07proj.ui.theme.backgroundAccent
+
 
 @Composable
 fun RenderAddContactsPage(navController: NavHostController) {
@@ -54,14 +56,14 @@ fun AddContactsPage(navController: NavHostController) {
     val context = LocalContext.current
 
     // presenter type of AddContactsContract.Presenter (interface), call constructor with null (meaning there is no view yet to pair with)
-    val presenter : AddContactsContract.Presenter = remember { AddContactsPresenter(null) }
+    val presenter : AddDataItemContract.Presenter = remember { AddDataItemPresenter(null) }
 
 
     // get contactId from navigation arguments, note if will be null if we are adding
-    val contactId = navController.currentBackStackEntry?.arguments?.getString("contactId")
+    val contactId = navController.currentBackStackEntry?.arguments?.getString("dataItemId")
     // Provide the view contract
     val view = remember {
-        object : AddContactsContract.View {
+        object : AddDataItemContract.View {
             override fun showLoading() {
                 isLoading = true
             }
@@ -77,16 +79,16 @@ fun AddContactsPage(navController: NavHostController) {
             override fun showError(message: String) {
                 Toast.makeText(context, message, Toast.LENGTH_LONG).show()
             }
-            override fun displayContactDetails(contactData: Map<String, String>) {
+            override fun displayDataItemDetails(itemData: Map<String, String>) {
                 // for editing we clear all the previous answers and load in the fetched data
                 answers.clear()
-                answers.putAll(contactData)
+                answers.putAll(itemData)
             }
         }
     }
     // connecting presenter and view together (before presenter had view as null)
     DisposableEffect(presenter) {
-        (presenter as AddContactsPresenter).view = view
+        (presenter as AddDataItemPresenter).view = view
         onDispose {
             presenter.onViewDestroyed()
         }
@@ -94,7 +96,7 @@ fun AddContactsPage(navController: NavHostController) {
     // launch effect to fetch data when screen was opened in edit mode
     LaunchedEffect(key1 = contactId) {
         if (contactId != null) {
-            presenter.loadContactDetails(contactId)
+            presenter.loadDataItemDetails(Categories.EMERGENCY_CONTACTS, contactId)
         }
     }
 
@@ -209,7 +211,7 @@ fun AddContactsPage(navController: NavHostController) {
                         // we only proceed if both are valid ie both true
                         if (isPhoneValid && isEmailValid ) {
                             Log.d("AddContactsPage", "Valid phone number and email: $answers")
-                            presenter.saveContact(answers.toMap(), contactId)
+                            presenter.saveDataItem(Categories.EMERGENCY_CONTACTS, answers.toMap(), contactId)
                         }
                         else {
                             Log.d("AddContactsPage", "Valid phone number or email incorrect logic: $answers")

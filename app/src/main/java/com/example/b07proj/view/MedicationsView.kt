@@ -15,6 +15,7 @@ import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.lazy.items
 import androidx.compose.material.icons.Icons
+import androidx.compose.material.icons.filled.CalendarMonth
 import androidx.compose.material.icons.filled.Delete
 import androidx.compose.material.icons.filled.Edit
 import androidx.compose.material3.Button
@@ -32,16 +33,17 @@ import androidx.compose.runtime.remember
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import androidx.navigation.NavHostController
 import com.example.b07proj.R
-import com.example.b07proj.model.EmergencyContact
-import com.example.b07proj.model.Medication
-import com.example.b07proj.presenter.contacts.ViewContactsContract
-import com.example.b07proj.presenter.contacts.ViewContactsPresenter
+import com.example.b07proj.model.dataCategories.Medication
+import com.example.b07proj.presenter.dataItems.Categories
+import com.example.b07proj.presenter.dataItems.ViewDataItemContract
+import com.example.b07proj.presenter.dataItems.ViewContactsPresenter
 import com.example.b07proj.ui.theme.backgroundAccent
 
 @Composable
@@ -52,15 +54,15 @@ fun RenderMedicationPage(navController: NavHostController) {
 @Composable
 fun MedicationPage(navController: NavHostController) {
     var isLoading by remember { mutableStateOf(true) }
-    var medications by remember { mutableStateOf<List<EmergencyContact>>(emptyList()) }
+    var medications by remember { mutableStateOf<List<Medication>>(emptyList()) }
     var errorMessage by remember { mutableStateOf<String?>(null) }
     var showEmptyState by remember { mutableStateOf(false) }
 
     // set up presenter
-    val presenter = remember { ViewContactsPresenter(null) }
+    val presenter = remember { ViewContactsPresenter<Medication>(null) }
     // implement contract for view
     val view = remember {
-        object : ViewContactsContract.View {
+        object : ViewDataItemContract.View<Medication> {
             override fun showLoading() {
                 isLoading = true
             }
@@ -69,8 +71,8 @@ fun MedicationPage(navController: NavHostController) {
                 isLoading = false
             }
 
-            override fun displayContacts(fetchedMedication: List<EmergencyContact>) {
-                medications = fetchedMedication
+            override fun displayContacts(fetchedContacts: List<Medication>) {
+                medications = fetchedContacts
                 showEmptyState = false
                 errorMessage = null
             }
@@ -97,7 +99,7 @@ fun MedicationPage(navController: NavHostController) {
     DisposableEffect(presenter) {
         presenter.view = view
         // Load data when the view is ready
-        presenter.loadContacts()
+        presenter.loadContacts(Categories.MEDICATIONS, Medication::class.java)
         onDispose {
             presenter.onViewDestroyed()
         }
@@ -147,13 +149,13 @@ fun MedicationPage(navController: NavHostController) {
                         // list of contacts spawn here, each contact in contacts we have a ContactCard for
                         items(medications, key = {it.id})  { contact ->
                             MedicationCard(
-                                contact = contact,
+                                medication = contact,
                                 onDelete = {
-                                    presenter.deleteContact(contact.id)
+                                    presenter.deleteContact(Categories.MEDICATIONS, contact.id)
                                 },
                                 // if we are editing pass in the contact id associated with it
                                 onEdit = {
-                                    navController.navigate("add_or_edit_contacts?contactId=${contact.id}")
+                                    navController.navigate("add_or_edit_medications?dataItemId=${contact.id}")
                                 }
                             )
                         }
@@ -180,10 +182,7 @@ fun AddMedicationsButton(navController: NavHostController) {
 
 
 @Composable
-fun MedicationCard(contact: EmergencyContact, onDelete: () -> Unit, onEdit: () -> Unit) {
-    // TODO: Make this the argument instead of a local variable
-    val medication: Medication = Medication()
-
+fun MedicationCard(medication: Medication, onDelete: () -> Unit, onEdit: () -> Unit) {
     Card(
         modifier = Modifier.fillMaxWidth()
     ) {
@@ -196,29 +195,29 @@ fun MedicationCard(contact: EmergencyContact, onDelete: () -> Unit, onEdit: () -
                 modifier = Modifier.padding(16.dp)
             ) {
                 Text(
-                    text = medication.name,
+                    text = medication.medicationName,
                     fontFamily = myFont,
                     fontWeight = FontWeight.Bold
                 )
                 Text(
-                    text = medication.dosage,
+                    text = medication.medicationDosage,
                     fontFamily = myFont,
                     color = MaterialTheme.colorScheme.onSurfaceVariant
                 )
-//                Spacer(modifier = Modifier.height(8.dp))
-//                Row {
-//                    Icon(
-//                        // Phone
-//                        Icons.Default.Phone,
-//                        contentDescription = "Phone",
-//                        tint = Color.Black,
-//                        modifier = Modifier.padding(end = 8.dp)
-//                    )
-//                    Text(
-//                        text = contact.contactPhoneNumber,
-//                        fontFamily = myFont
-//                    )
-//                }
+                Spacer(modifier = Modifier.height(8.dp))
+                Row {
+                    Icon(
+                        // Phone
+                        Icons.Default.CalendarMonth,
+                        contentDescription = "Calendar",
+                        tint = Color.Black,
+                        modifier = Modifier.padding(end = 8.dp)
+                    )
+                    Text(
+                        text = medication.medicationExpiry,
+                        fontFamily = myFont
+                    )
+                }
             }
             Column(
                 modifier = Modifier

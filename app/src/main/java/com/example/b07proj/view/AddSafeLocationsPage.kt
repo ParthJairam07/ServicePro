@@ -31,8 +31,9 @@ import androidx.compose.ui.unit.sp
 import androidx.navigation.NavHostController
 import com.example.b07proj.R
 import com.example.b07proj.model.Question
-import com.example.b07proj.presenter.contacts.AddContactsContract
-import com.example.b07proj.presenter.contacts.AddContactsPresenter
+import com.example.b07proj.presenter.dataItems.AddDataItemContract
+import com.example.b07proj.presenter.dataItems.AddDataItemPresenter
+import com.example.b07proj.presenter.dataItems.Categories
 import com.example.b07proj.ui.theme.backgroundAccent
 
 // Renderer for add safe locations page
@@ -44,17 +45,16 @@ fun RenderAddSafeLocationsPage(navController: NavHostController) {
 @Composable
 fun AddSafeLocationsPage(navController: NavHostController) {
     val answers = remember { mutableStateMapOf<String, String>() }
-    val errors = remember { mutableStateMapOf<String, Boolean>() }
     // To determine if we show the spinner or not
     var isLoading by remember { mutableStateOf(false) }
     val context = LocalContext.current
-    val presenter : AddContactsContract.Presenter = remember { AddContactsPresenter(null) }
+    val presenter : AddDataItemContract.Presenter = remember { AddDataItemPresenter(null) }
 
-    // get contactId from navigation arguments, note if will be null if we are adding
-    val contactId = navController.currentBackStackEntry?.arguments?.getString("contactId")
+    // get locationId from navigation arguments, note if will be null if we are adding
+    val locationId = navController.currentBackStackEntry?.arguments?.getString("dataItemId")
     // Provide the view contract
     val view = remember {
-        object : AddContactsContract.View {
+        object : AddDataItemContract.View {
             override fun showLoading() {
                 isLoading = true
             }
@@ -74,24 +74,24 @@ fun AddSafeLocationsPage(navController: NavHostController) {
                 Toast.makeText(context, message, Toast.LENGTH_LONG).show()
             }
 
-            override fun displayContactDetails(contactData: Map<String, String>) {
+            override fun displayDataItemDetails(itemData: Map<String, String>) {
                 // for editing we clear all the previous answers and load in the fetched data
                 answers.clear()
-                answers.putAll(contactData)
+                answers.putAll(itemData)
             }
         }
     }
     // connecting presenter and view together
     DisposableEffect(presenter) {
-        (presenter as AddContactsPresenter).view = view
+        (presenter as AddDataItemPresenter).view = view
         onDispose {
             presenter.onViewDestroyed()
         }
     }
     // launch effect to fetch data when screen was opened in edit mode
-    LaunchedEffect(key1 = contactId) {
-        if (contactId != null) {
-            presenter.loadContactDetails(contactId)
+    LaunchedEffect(key1 = locationId) {
+        if (locationId != null) {
+            presenter.loadDataItemDetails(Categories.SAFE_LOCATIONS, locationId)
         }
     }
     // Question objects for each questions for safe location
@@ -143,7 +143,6 @@ fun AddSafeLocationsPage(navController: NavHostController) {
                 FreeformQuestion2(
                     question = freeformQuestion1,
                     value = answers[freeformQuestion1.variable!!].orEmpty(),
-                    // answers["contact_name"]:(users answer)
                     onValueChange = { newText -> answers[freeformQuestion1.variable] = newText },
                     label = "Address"
                 )
@@ -153,7 +152,6 @@ fun AddSafeLocationsPage(navController: NavHostController) {
                 FreeformQuestion2(
                     question = freeformQuestion2,
                     value = answers[freeformQuestion2.variable!!].orEmpty(),
-                    // answers["contact_phone_number"]:(users answer)
                     onValueChange = { newText -> answers[freeformQuestion2.variable] = newText },
                     label = "Description"
                 )
@@ -164,7 +162,6 @@ fun AddSafeLocationsPage(navController: NavHostController) {
                 FreeformQuestion2(
                     question = freeformQuestion3,
                     value = answers[freeformQuestion3.variable!!].orEmpty(),
-                    // answers["contact_phone_number"]:(users answer)
                     onValueChange = { newText -> answers[freeformQuestion3.variable] = newText },
                     label = "Name"
                 )
@@ -173,18 +170,8 @@ fun AddSafeLocationsPage(navController: NavHostController) {
                 // submission button
                 Button(
                     onClick = {
-//                        val address = answers[freeformQuestion1.variable].orEmpty()
-//                        val description = answers[freeformQuestion2.variable].orEmpty()
-
-                        // we only proceed if both are valid ie true
-                        // TODO: Since we arent using a phone number or email, we don't need the below check!
-                        if (true) {
-                            Log.d("AddSafeLocationsPage", "Valid answers: $answers")
-                            presenter.saveContact(answers.toMap(), contactId)
-                        }
-                        else {
-                            Log.d("AddSafeLocationsPage", "Valid phone number or email incorrect logic: $answers")
-                        }
+                        Log.d("AddSafeLocationsPage", "Valid answers: $answers")
+                        presenter.saveDataItem(Categories.SAFE_LOCATIONS, answers.toMap(), locationId)
                     },
                     modifier = Modifier.fillMaxWidth().padding(top = 16.dp)
                 ) {

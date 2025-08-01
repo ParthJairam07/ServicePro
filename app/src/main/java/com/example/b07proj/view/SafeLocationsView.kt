@@ -1,6 +1,5 @@
 package com.example.b07proj.view
 
-import android.location.Location
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
@@ -40,10 +39,10 @@ import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import androidx.navigation.NavHostController
 import com.example.b07proj.R
-import com.example.b07proj.model.EmergencyContact
-import com.example.b07proj.model.SafeLocation
-import com.example.b07proj.presenter.contacts.ViewContactsContract
-import com.example.b07proj.presenter.contacts.ViewContactsPresenter
+import com.example.b07proj.model.dataCategories.SafeLocation
+import com.example.b07proj.presenter.dataItems.Categories
+import com.example.b07proj.presenter.dataItems.ViewDataItemContract
+import com.example.b07proj.presenter.dataItems.ViewContactsPresenter
 import com.example.b07proj.ui.theme.backgroundAccent
 
 @Composable
@@ -56,17 +55,17 @@ fun SafeLocationPage(navController: NavHostController) {
     // To determine if we show the spinner or not when fetching/storing data
     var isLoading by remember { mutableStateOf(true) }
     // the list of locations to display
-    var locations by remember { mutableStateOf<List<EmergencyContact>>(emptyList()) }
+    var locations by remember { mutableStateOf<List<SafeLocation>>(emptyList()) }
     // any error we got when fetching data
     var errorMessage by remember { mutableStateOf<String?>(null) }
     // if empty contact list from users
     var showEmptyState by remember { mutableStateOf(false) }
 
     // set up presenter
-    val presenter = remember { ViewContactsPresenter(null) }
+    val presenter = remember { ViewContactsPresenter<SafeLocation>(null) }
     // implement contract for view
     val view = remember {
-        object : ViewContactsContract.View {
+        object : ViewDataItemContract.View<SafeLocation> {
             override fun showLoading() {
                 isLoading = true
             }
@@ -75,8 +74,8 @@ fun SafeLocationPage(navController: NavHostController) {
                 isLoading = false
             }
 
-            override fun displayContacts(fetchedLocations: List<EmergencyContact>) {
-                locations = fetchedLocations
+            override fun displayContacts(fetchedContacts: List<SafeLocation>) {
+                locations = fetchedContacts
                 showEmptyState = false
                 errorMessage = null
             }
@@ -106,7 +105,7 @@ fun SafeLocationPage(navController: NavHostController) {
     DisposableEffect(presenter) {
         presenter.view = view
         // Load data when the view is ready
-        presenter.loadContacts()
+        presenter.loadContacts(Categories.SAFE_LOCATIONS, SafeLocation::class.java)
         onDispose {
             presenter.onViewDestroyed()
         }
@@ -154,13 +153,13 @@ fun SafeLocationPage(navController: NavHostController) {
                         }
                         items(locations, key = {it.id})  { contact ->
                             LocationCard(
-                                contact = contact,
+                                location = contact,
                                 onDelete = {
-                                    presenter.deleteContact(contact.id)
+                                    presenter.deleteContact(Categories.SAFE_LOCATIONS, contact.id)
                                 },
                                 // if we are editing pass in the contact id associated with it
                                 onEdit = {
-                                    navController.navigate("add_or_edit_contacts?contactId=${contact.id}")
+                                    navController.navigate("add_or_edit_safe_locations?dataItemId=${contact.id}")
                                 }
                             )
                         }
@@ -179,17 +178,14 @@ fun SafeLocationPage(navController: NavHostController) {
 @Composable
 fun AddLocationsButton(navController: NavHostController) {
     Button(
-        onClick = { navController.navigate("add_safe_locations") },
+        onClick = { navController.navigate("add_or_edit_safe_locations") },
         modifier = Modifier.fillMaxWidth()
     ) {
         Text(stringResource(R.string.addSafeLocationButton))
     }
 }
 @Composable
-fun LocationCard(contact: EmergencyContact, onDelete: () -> Unit, onEdit: () -> Unit) {
-    // TODO: Make this the argument instead of a local variable
-    val location: SafeLocation = SafeLocation() // Replace arg with above
-
+fun LocationCard(location: SafeLocation, onDelete: () -> Unit, onEdit: () -> Unit) {
     // UI for a single "Safe Location Card"
     Card(
         modifier = Modifier.fillMaxWidth()
@@ -204,7 +200,7 @@ fun LocationCard(contact: EmergencyContact, onDelete: () -> Unit, onEdit: () -> 
             ) {
                 // Name
                 Text(
-                    text = location.name,
+                    text = location.safeLocationName,
                     fontFamily = myFont,
                     fontWeight = FontWeight.Bold
                 )
@@ -218,14 +214,14 @@ fun LocationCard(contact: EmergencyContact, onDelete: () -> Unit, onEdit: () -> 
                         modifier = Modifier.padding(end = 8.dp)
                     )
                     Text(
-                        text = location.address,
+                        text = location.safeLocationAddress,
                         fontFamily = myFont,
                         color = MaterialTheme.colorScheme.onSurfaceVariant
                     )
                 }
                 // Notes
                 Text(
-                    text = location.notes,
+                    text = location.safeLocationDescription,
                     fontFamily = myFont,
                     fontWeight = FontWeight.Bold
                 )

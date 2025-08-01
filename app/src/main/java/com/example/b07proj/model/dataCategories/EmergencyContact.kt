@@ -1,4 +1,4 @@
-package com.example.b07proj.model
+package com.example.b07proj.model.dataCategories
 
 import com.google.firebase.firestore.DocumentId
 // data class for emergency contacts

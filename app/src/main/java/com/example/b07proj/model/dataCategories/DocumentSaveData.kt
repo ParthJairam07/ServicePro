@@ -1,4 +1,4 @@
-package com.example.b07proj.model
+package com.example.b07proj.model.dataCategories
 
 import android.net.Uri
 import android.util.Log

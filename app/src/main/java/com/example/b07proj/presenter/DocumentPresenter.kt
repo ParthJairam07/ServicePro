@@ -1,14 +1,13 @@
 package com.example.b07proj.presenter
 
 import android.net.Uri
-import com.example.b07proj.model.DocumentData
-import com.example.b07proj.model.DocumentRepository
+import com.example.b07proj.model.dataCategories.DocumentData
+import com.example.b07proj.model.dataCategories.DocumentRepository
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.StateFlow
 import kotlinx.coroutines.flow.asStateFlow
-import kotlinx.coroutines.launch
 
 class DocumentPresenter(
     private val repository: DocumentRepository = DocumentRepository()

@@ -40,9 +40,10 @@ import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import androidx.navigation.NavHostController
 import com.example.b07proj.R
-import com.example.b07proj.model.EmergencyContact
-import com.example.b07proj.presenter.contacts.ViewContactsContract
-import com.example.b07proj.presenter.contacts.ViewContactsPresenter
+import com.example.b07proj.model.dataCategories.EmergencyContact
+import com.example.b07proj.presenter.dataItems.Categories
+import com.example.b07proj.presenter.dataItems.ViewDataItemContract
+import com.example.b07proj.presenter.dataItems.ViewContactsPresenter
 import com.example.b07proj.ui.theme.backgroundAccent
 
 @Composable
@@ -62,10 +63,10 @@ fun EmergencyContactPage(navController: NavHostController) {
     var showEmptyState by remember { mutableStateOf(false) }
 
     // set up presenter (our view is null for now)
-    val presenter = remember { ViewContactsPresenter(null) }
+    val presenter = remember { ViewContactsPresenter<EmergencyContact>(null) }
     // implement contract for view
     val view = remember {
-        object : ViewContactsContract.View {
+        object : ViewDataItemContract.View<EmergencyContact> {
             override fun showLoading() {
                 isLoading = true
             }
@@ -105,7 +106,7 @@ fun EmergencyContactPage(navController: NavHostController) {
     DisposableEffect(presenter) {
         presenter.view = view
         // Load data when the view is ready
-        presenter.loadContacts()
+        presenter.loadContacts(Categories.EMERGENCY_CONTACTS, EmergencyContact::class.java)
         onDispose {
             presenter.onViewDestroyed()
         }
@@ -161,11 +162,11 @@ fun EmergencyContactPage(navController: NavHostController) {
                             ContactCard(
                                 contact = contact,
                                 onDelete = {
-                                    presenter.deleteContact(contact.id)
+                                    presenter.deleteContact(Categories.EMERGENCY_CONTACTS, contact.id)
                                 },
                                 // if we are editing pass in the contact id associated with it
                                 onEdit = {
-                                    navController.navigate("add_or_edit_contacts?contactId=${contact.id}")
+                                    navController.navigate("add_or_edit_contacts?dataItemId=${contact.id}")
                                 }
                             )
                         }

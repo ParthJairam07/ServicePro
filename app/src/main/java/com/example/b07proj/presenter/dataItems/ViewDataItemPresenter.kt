@@ -1,11 +1,23 @@
-package com.example.b07proj.presenter.contacts
+package com.example.b07proj.presenter.dataItems
 
 
-import com.example.b07proj.model.EmergencyContact
 import com.google.firebase.auth.FirebaseAuth
 import com.google.firebase.firestore.FirebaseFirestore
+
+enum class Categories {
+    EMERGENCY_CONTACTS,
+    MEDICATIONS,
+    SAFE_LOCATIONS
+}
+// Associates categories with collection name
+val categoryCollectionMap = mapOf(
+    Categories.EMERGENCY_CONTACTS to "emergency_contacts",
+    Categories.MEDICATIONS to "medications",
+    Categories.SAFE_LOCATIONS to "safe_locations"
+)
+
 // implementing the contract for view -> presenter
-class ViewContactsPresenter(var view: ViewContactsContract.View?) : ViewContactsContract.Presenter {
+class ViewContactsPresenter<T>(var view: ViewDataItemContract.View<T>?) : ViewDataItemContract.Presenter<T> {
 
     // used for getting all contacts from data base
     private val contacts = FirebaseFirestore.getInstance()
@@ -14,7 +26,7 @@ class ViewContactsPresenter(var view: ViewContactsContract.View?) : ViewContacts
     // the user uid
     private val userUid : String? get() = auth.currentUser?.uid
 
-    override fun loadContacts() {
+    override fun loadContacts(category: Categories, itemClass: Class<T>) {
         // start showing we are currently loading in contacts
         view?.showLoading()
         // get current user of whoever auth
@@ -26,9 +38,16 @@ class ViewContactsPresenter(var view: ViewContactsContract.View?) : ViewContacts
             return
         }
         // get user emergency contact list
+        val categoryCollection = categoryCollectionMap[category]
+
+        if (categoryCollection == null) {
+            view?.displayError("Error getting data item: Invalid category")
+            return;
+        }
+
         contacts.collection("users")
             .document(user.uid)
-            .collection("emergency_contacts")
+            .collection(categoryCollection)
             .get()
             .addOnSuccessListener { querySnapshot  ->
                 view?.hideLoading()
@@ -38,7 +57,7 @@ class ViewContactsPresenter(var view: ViewContactsContract.View?) : ViewContacts
                 }
                 else {
                     // let firestore convert each document into a EmergencyContact object
-                    val contacts = querySnapshot.toObjects(EmergencyContact::class.java)
+                    val contacts = querySnapshot.toObjects(itemClass)
                     // call view to display the contacts now
                     view?.displayContacts(contacts)
 
@@ -47,32 +66,40 @@ class ViewContactsPresenter(var view: ViewContactsContract.View?) : ViewContacts
             .addOnFailureListener { exception ->
                 // failure means we finish loading and display an error
                 view?.hideLoading()
-                view?.displayError("Error getting contacts: ${exception.message}")
+                view?.displayError("Error getting data item: ${exception.message}")
             }
     }
     // delete contact based on contactId
-    override fun deleteContact(contactId: String) {
+    override fun deleteContact(categories: Categories, contactId: String) {
         // auth checking
         val currentUserId = userUid
         if (currentUserId == null) {
             view?.displayError("Failed to get current user id")
             return
         }
-        // if we didnt get a proper id display error
+        // if we didn't get a proper id display error
         if (contactId.isEmpty()) {
             view?.displayError("Invalid id for item")
             return
         }
+        // get user emergency contact list
+        val categoryCollection = categoryCollectionMap[categories]
+
+        if (categoryCollection == null) {
+            view?.displayError("Error getting data item: Invalid category")
+            return;
+        }
+
         // get specific document to delete
         contacts.collection("users").document(currentUserId)
-            .collection("emergency_contacts").document(contactId)
+            .collection(categoryCollection).document(contactId)
             .delete()
             .addOnSuccessListener {
                 // tell view that the contact is deleted
                 view?.onContactDeleted(contactId)
             }
             .addOnFailureListener { exception ->
-                view?.displayError("Error deleting contact: ${exception.message}")
+                view?.displayError("Error deleting data item: ${exception.message}")
             }
 
     }
