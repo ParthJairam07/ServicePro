@@ -11,6 +11,12 @@
     <string name='EmergencyContactsHeader'>Your Emergency Contacts</string>
     <string name='addEmergencyContactsButton'>Add Emergency Contacts</string>
     <string name='addContactHeader'>Create a new emergency contact</string>
+    <string name='SafeLocationsHeader'>Your Safe Locations</string>
+    <string name='addSafeLocationButton'>Add a new safe location</string>
+    <string name='addSafeLocationHeader'>Add a new safe location</string>
+    <string name='MedicationsHeader'>Your Medication</string>
+    <string name='addMedicationButton'>Add a mediation</string>
+    <string name='addMedicationHeader'>Add a mediation</string>
     <string name='addDocumentHeader'>Upload File</string>
     <string name='addDocumentButtonText'>Add Documents, IDs, etc.</string>
     <string name='addDocumentButtonDescription'>Upload file icon file button</string>
