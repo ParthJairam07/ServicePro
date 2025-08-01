@@ -29,7 +29,9 @@ import com.example.b07proj.presenter.DocumentPresenter
 @Composable
 fun RenderDocumentPage(navController: NavHostController) {
     val presenter = remember { DocumentPresenter() }
-    DocumentPage(navController = navController, presenter = presenter)
+    LoggedInTopBar(navController = navController) {
+        DocumentPage(navController = navController, presenter = presenter)
+    }
 }
 
 
