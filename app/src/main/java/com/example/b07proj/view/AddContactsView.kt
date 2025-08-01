@@ -153,7 +153,8 @@ fun AddContactsPage(navController: NavHostController) {
                     question = freeformQuestion1,
                     value = answers[freeformQuestion1.variable!!].orEmpty(),
                     // answers["contact_name"]:(users answer)
-                    onValueChange = { newText -> answers[freeformQuestion1.variable] = newText }
+                    onValueChange = { newText -> answers[freeformQuestion1.variable] = newText },
+                    label = "Name"
                 )
 
                 Spacer(modifier = Modifier.height(24.dp))

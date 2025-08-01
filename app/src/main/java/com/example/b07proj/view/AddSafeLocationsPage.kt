@@ -98,7 +98,7 @@ fun AddSafeLocationsPage(navController: NavHostController) {
     // Ask for address of safe location as freeform string
     val freeformQuestion1 = Question(
         id = 670,
-        question = "What is its address?",
+        question = "What is the address of the safe location?",
         type = "freeform",
         variable = "safeLocationAddress"
     )
@@ -108,6 +108,12 @@ fun AddSafeLocationsPage(navController: NavHostController) {
         question = "Describe the safe location",
         type = "freeform",
         variable = "safeLocationDescription",
+    )
+    val freeformQuestion3 = Question(
+        id = 672,
+        question = "What is the name of the safe location?",
+        type = "freeform",
+        variable = "safeLocationName",
     )
 
     Box(
@@ -138,7 +144,8 @@ fun AddSafeLocationsPage(navController: NavHostController) {
                     question = freeformQuestion1,
                     value = answers[freeformQuestion1.variable!!].orEmpty(),
                     // answers["contact_name"]:(users answer)
-                    onValueChange = { newText -> answers[freeformQuestion1.variable] = newText }
+                    onValueChange = { newText -> answers[freeformQuestion1.variable] = newText },
+                    label = "Address"
                 )
                 Spacer(modifier = Modifier.height(24.dp))
 
@@ -147,7 +154,19 @@ fun AddSafeLocationsPage(navController: NavHostController) {
                     question = freeformQuestion2,
                     value = answers[freeformQuestion2.variable!!].orEmpty(),
                     // answers["contact_phone_number"]:(users answer)
-                    onValueChange = { newText -> answers[freeformQuestion2.variable] = newText }
+                    onValueChange = { newText -> answers[freeformQuestion2.variable] = newText },
+                    label = "Description"
+                )
+
+                Spacer(modifier = Modifier.height(24.dp))
+
+                // third question for safe location name
+                FreeformQuestion2(
+                    question = freeformQuestion3,
+                    value = answers[freeformQuestion3.variable!!].orEmpty(),
+                    // answers["contact_phone_number"]:(users answer)
+                    onValueChange = { newText -> answers[freeformQuestion3.variable] = newText },
+                    label = "Name"
                 )
                 Spacer(modifier = Modifier.height(24.dp))
 

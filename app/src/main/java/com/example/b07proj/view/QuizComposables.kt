@@ -190,11 +190,11 @@ fun CheckboxQuestion(question: Question, onAnswer: (String) -> Unit) {
 }
 
 @Composable
-fun FreeformQuestion2(question: Question, value: String, onValueChange: (String) -> Unit) {
+fun FreeformQuestion2(question: Question, value: String, onValueChange: (String) -> Unit, label: String) {
     QuizQuestion(question.question, required = true)
     OutlinedTextField(
         value = value,
-        label = { Text("Name") },
+        label = { Text(label) },
         onValueChange = onValueChange,
         modifier = Modifier.fillMaxWidth(),
         textStyle = TextStyle(fontFamily = myFont)

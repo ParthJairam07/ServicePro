@@ -19,6 +19,8 @@ import com.example.b07proj.view.SignUpPage
 import com.example.b07proj.view.PinPage
 import com.example.b07proj.view.RenderAddContactsPage
 import com.example.b07proj.view.RenderAddDocumentsPage
+import com.example.b07proj.view.RenderAddMedicationPage
+import com.example.b07proj.view.RenderAddSafeLocationsPage
 import com.example.b07proj.view.RenderDocumentPage
 import com.example.b07proj.view.RenderEmergencyContactPage
 import com.example.b07proj.view.RenderMedicationPage
@@ -90,6 +92,12 @@ class MainActivity : ComponentActivity() {
                         }
                         composable("locations_screen") {
                             RenderSafeLocationsPage(navController)
+                        }
+                        composable("add_safe_locations") {
+                            RenderAddSafeLocationsPage(navController)
+                        }
+                        composable("add_or_edit_medications") {
+                            RenderAddMedicationPage(navController)
                         }
                         composable("meds_screen") {
                             RenderMedicationPage(navController)

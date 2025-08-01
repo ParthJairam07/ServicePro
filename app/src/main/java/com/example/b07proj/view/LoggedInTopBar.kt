@@ -63,7 +63,6 @@ import androidx.navigation.NavHostController
 import com.example.b07proj.R
 import com.example.b07proj.presenter.QuizPresenter
 import com.example.b07proj.ui.theme.BackgroundColor
-import com.example.b07proj.ui.theme.Primary40
 import com.example.b07proj.ui.theme.Primary50
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.launch
