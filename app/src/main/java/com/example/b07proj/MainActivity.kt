@@ -36,8 +36,6 @@ import com.example.b07proj.view.RenderStoragePage
 import com.example.b07proj.view.CreatePin
 import com.example.b07proj.view.DirectLinks
 import com.example.b07proj.view.SettingsPage
-import com.example.b07proj.view.SettingsPage
-import com.example.b07proj.view.outputMap
 
 class MainActivity : ComponentActivity() {
 
@@ -69,7 +67,7 @@ class MainActivity : ComponentActivity() {
                             SafetyPlanQuizPage2(navController)
                         }
                         composable("pin_page") {
-                            PinPage(navController)
+                            PinPage(navController, deepLinkDestination ?: "home_page")
                         }
                         composable("login_page") {
                             LoginPage(navController)
@@ -78,7 +76,7 @@ class MainActivity : ComponentActivity() {
                             SignUpPage(navController)
                         }
                         composable("email_login") {
-                            EmailLogin(navController, deepLinkDestination ?: "safety_plan_quiz")
+                            EmailLogin(navController, deepLinkDestination ?: "home_page")
                         }
                         composable("loggedintopbar") {
                             LoggedInTopBar(navController) {}

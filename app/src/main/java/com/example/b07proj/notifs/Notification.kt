@@ -4,7 +4,6 @@ import android.Manifest
 import android.app.NotificationChannel
 import android.app.NotificationManager
 import android.app.PendingIntent
-import android.content.BroadcastReceiver
 import android.content.Context
 import android.content.Intent
 import android.content.pm.PackageManager
@@ -22,7 +21,7 @@ const val REMINDER_NOTIFICATION_ID = 1
 
 // These are required to tell MainActivity, when tapping the notification, to go to the tips page RIGHT after!
 const val DEEP_LINK_NEXT_SCREEN_KEY = "deep_link_destination"
-const val NOTIF_PAGE_TO = "tips_page"
+const val NOTIF_PAGE_TO = "safety_plan_tips"
 
 
 fun createNotifChannel(context: Context) {
@@ -61,8 +60,8 @@ fun sendNotificationOnAppCreate(context: Context) {
     // Create the notif that's shown on android
     val builder = NotificationCompat.Builder(context, REMINDER_CHANNEL_ID)
         .setSmallIcon(R.drawable.ic_launcher_foreground) // **REPLACE with your actual small icon**
-        .setContentTitle("Make sure you look at your plan!")
-        .setContentText("Looking at your plan again can make sure you are still prepared!")
+        .setContentTitle("Make sure you review or update at your plan!")
+        .setContentText("Looking at your plan again can make sure you are still prepared")
         .setPriority(NotificationCompat.PRIORITY_DEFAULT)
         .setContentIntent(pendingIntent) // Use the pending intent to open the app when pressed
         .setAutoCancel(true) // Remove notification when tapped (otherwise it would stick around. ew)

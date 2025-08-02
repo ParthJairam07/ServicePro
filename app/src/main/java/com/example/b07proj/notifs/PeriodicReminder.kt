@@ -4,12 +4,12 @@ import android.app.AlarmManager
 import android.app.PendingIntent
 import android.content.Context
 import android.content.Intent
-import android.os.SystemClock
 import java.util.Calendar
 import androidx.core.content.edit
 
 const val PREFS_NAME = "app_prefs"
 const val KEY_ALARM_HOUR = "alarm_hour"
+const val KEY_ALARM_MIN = "alarm_min"
 const val KEY_ALARM_INTERVAL_MS = "alarm_interval_ms"
 
 class PeriodicReminderManager private constructor(context: Context) {
@@ -33,11 +33,11 @@ class PeriodicReminderManager private constructor(context: Context) {
         alarmManager.cancel(pendingIntent)
     }
 
-    fun setAlarmInterval(intervalMS: Long, hourOfDay: Int) {
+    fun setAlarmInterval(intervalMS: Long, hourOfDay: Int, minOfDay: Int) {
         val calendar: Calendar = Calendar.getInstance().apply {
             timeInMillis = System.currentTimeMillis()
             set(Calendar.HOUR_OF_DAY, hourOfDay)
-            set(Calendar.MINUTE, 0)
+            set(Calendar.MINUTE, minOfDay)
             set(Calendar.SECOND, 0)
             set(Calendar.MILLISECOND, 0)
         }
@@ -51,16 +51,17 @@ class PeriodicReminderManager private constructor(context: Context) {
             intervalMS,
             pendingIntent
         )
-        saveAlarmTimePreference(context, hourOfDay, intervalMS)
+        saveAlarmTimePreference(context, hourOfDay, minOfDay, intervalMS)
     }
 
-    private fun saveAlarmTimePreference(context: Context, hour: Int, intervalMS: Long ) {
+    private fun saveAlarmTimePreference(context: Context, hour: Int, min: Int, intervalMS: Long ) {
 
         println("?? hour: $hour")
         println("?? intervalMS: $intervalMS")
 
         val prefs = context.getSharedPreferences(PREFS_NAME, Context.MODE_PRIVATE)
         prefs.edit {
+            putInt(KEY_ALARM_MIN, min)
             putInt(KEY_ALARM_HOUR, hour)
             putLong(KEY_ALARM_INTERVAL_MS, intervalMS)
         }

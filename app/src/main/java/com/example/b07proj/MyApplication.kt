@@ -14,6 +14,6 @@ class MyApplication : Application() {
         PeriodicReminderManager.init(this)
 
         // For testing
-        // PeriodicReminderManager.instance?.setAlarmInterval(/* AlarmManager.INTERVAL_DAY */ 5000L, 15)
+//        PeriodicReminderManager.instance?.setAlarmInterval(/* AlarmManager.INTERVAL_DAY */ 5000L, 15, 30)
     }
 }
