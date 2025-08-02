@@ -70,7 +70,7 @@ fun UIEmailLogin(navController: NavHostController) {
             view = object : SignUpView {
                 override fun onSignUpSuccess() {
                     // Navigate and clear the back stack so user can't go back to login
-                    navController.navigate("storagePage") {
+                    navController.navigate("home_page") {
                         popUpTo(navController.graph.startDestinationId) {
                             inclusive = true
                         }

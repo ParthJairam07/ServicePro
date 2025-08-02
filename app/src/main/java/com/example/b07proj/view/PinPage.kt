@@ -240,7 +240,7 @@ fun PinContinueButton(pin: String, navController: NavController) {
                     Log.d("PinLogin", "PIN Correct! Logging in user: $userUUID")
                     // You can now pass the userUUID to your home screen or store it in a ViewModel
 
-                    navController.navigate("storagePage") // Navigate to your main app screen
+                    navController.navigate("home_page") // Navigate to your main app screen
                 } else {
                     // FAILURE!
                     Log.w("PinLogin", "Incorrect PIN entered.")

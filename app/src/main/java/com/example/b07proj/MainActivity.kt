@@ -32,6 +32,7 @@ import com.example.b07proj.view.SafetyPlanQuizPage2
 import com.example.b07proj.view.SafetyPlanQuizPage3
 import com.example.b07proj.view.RenderStoragePage
 import com.example.b07proj.view.CreatePin
+import com.example.b07proj.view.DirectLinks
 
 class MainActivity : ComponentActivity() {
 
@@ -47,7 +48,7 @@ class MainActivity : ComponentActivity() {
                 //host the navigation graph
                 NavHost(
                     navController = navController,
-                    startDestination = "sign_up_page",
+                    startDestination = "login_page",
                     builder = {
                         //define the route
                         composable("landing_page") {
@@ -107,6 +108,9 @@ class MainActivity : ComponentActivity() {
                         }
                         composable("home_page") {
                             HomePage(navController)
+                        }
+                        composable("direct_links") {
+                            DirectLinks()
                         }
                         // this page is for adding new contacts or editing ones, we need
                         // to pass in optional argument contactId to edit

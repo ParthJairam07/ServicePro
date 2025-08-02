@@ -75,29 +75,19 @@ fun UIHomePage(navController: NavHostController) {
                     )
 
                     Spacer(modifier = Modifier.size(32.dp))
-
                     HomePageButton(
-                        "Retake\nQuiz",
-                        Icons.Outlined.Edit,
+                        "Access Storage",
+                        Icons.Outlined.Description,
                         navController,
-                        "edit_quiz_screen"
+                        "storagePage"
                     )
                 }
                 Column {
                     HomePageButton(
-                        "Access Documents",
-                        Icons.Outlined.Description,
-                        navController,
-                        "documents_screen"
-                    )
-
-                    Spacer(modifier = Modifier.size(32.dp))
-
-                    HomePageButton(
                         "Get Local Support",
                         Icons.Outlined.Support,
                         navController,
-                        "contacts_screen"
+                        "direct_links"
                     )
                 }
             }
@@ -116,7 +106,7 @@ fun HomePageButton(action: String, icon: ImageVector, navController: NavHostCont
         border = BorderStroke(3.dp, Primary40),
         colors = ButtonDefaults.outlinedButtonColors(contentColor = Primary40),
         modifier = Modifier.
-            size(width = 120.dp, height = 120.dp),
+        size(width = 120.dp, height = 120.dp),
         contentPadding = PaddingValues(0.dp),
         shape = RoundedCornerShape(16.dp)
     )
