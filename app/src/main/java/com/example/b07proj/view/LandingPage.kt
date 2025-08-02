@@ -32,10 +32,9 @@ import com.example.b07proj.model.HandleAuth
 
 @Composable
 fun LandingPage(
-    navController: NavController,
-    auth: HandleAuth
+    navController: NavController
     ) {
-    val userEmail = auth.getCurrentUser()?.email
+    //val userEmail = auth.getCurrentUser()?.email
     Scaffold (
         topBar = {
             TopAppBar(
@@ -98,7 +97,7 @@ fun LandingPage(
                 modifier = Modifier.padding(top = 10.dp)
             )
             Text(
-                text = "Logged in as: ${userEmail ?: "Guest"}",
+                text = "Logged in as:  Guest",
                 color = MaterialTheme.colorScheme.onTertiary,
                 fontWeight = FontWeight.Bold,
                 fontSize = 20.sp
