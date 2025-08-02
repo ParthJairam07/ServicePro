@@ -1,4 +1,5 @@
 package com.example.b07proj.view
+import android.content.Context
 import android.util.Log
 import androidx.compose.foundation.Image
 import androidx.compose.foundation.layout.Column
@@ -26,6 +27,7 @@ import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.scale
 import androidx.compose.ui.graphics.Color
+import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.font.Font
@@ -36,9 +38,17 @@ import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import androidx.navigation.NavHostController
 import com.example.b07proj.R
+import com.example.b07proj.model.PinManager
 import com.example.b07proj.ui.theme.Primary40
 import com.example.b07proj.ui.theme.backgroundAccent
+import com.google.firebase.auth.FirebaseAuth
+import org.json.JSONObject
 
+
+
+// Define constants for SharedPreferences
+private const val PREFS_FILENAME = "com.example.b07proj.secure_user_prefs"
+private const val KEY_ENCRYPTED_USER_DATA = "encrypted_user_data"
 
 // renders Create PIN screen
 @Composable
@@ -108,11 +118,41 @@ fun InputPinField(
 
 @Composable
 fun ContinueButton(pinValue: String, isPinValid: Boolean, modifier: Modifier, navController: NavHostController) {
+    val context = LocalContext.current
     Button(
         onClick = {
-            // send to logcat the pin and its validity
-            Log.d("valid pin", "pin is: $pinValue, Valid?: $isPinValid")
-            navController.navigate("landing_page") // this is temporary for now
+            // check if pin is valid
+            if (isPinValid) {
+             val userUUID = FirebaseAuth.getInstance().currentUser?.uid
+                if (userUUID != null) {
+
+                    // 1. Create JSON object and convert to string
+                    val jsonData = JSONObject().apply {
+                        put("pin", pinValue)
+                        put("uuid", userUUID)
+                    }
+                    val jsonString = jsonData.toString()
+
+                    val encryptedData = PinManager.encrypt(jsonString)
+                    if (encryptedData != null) {
+                        // 3. Store the single encrypted string in SharedPreferences
+                        val sharedPreferences = context.getSharedPreferences(PREFS_FILENAME, Context.MODE_PRIVATE)
+                        with(sharedPreferences.edit()) {
+                            putString(KEY_ENCRYPTED_USER_DATA, encryptedData)
+                            apply()
+                        }
+                        Log.d("PinSetup", "Secure data encrypted and saved successfully.")
+                        Log.d("PinTest", "------ STARTING TEST ------")
+                        Log.d("PinTest", "Original Data: $jsonString")
+                        Log.d("PinTest", "Encrypted Data: $encryptedData")
+                        navController.navigate("safety_plan_quiz")
+                    } else {
+                        Log.e("PinSetup", "Failed to encrypt data.")
+                        // Handle encryption failure (e.g., show an error toast)
+                    }
+
+                }
+            }
         },
         // button will be glowing depending on if the pin is valid
         enabled = isPinValid,

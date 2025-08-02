@@ -79,7 +79,9 @@ dependencies {
     implementation("com.google.firebase:firebase-auth")
     implementation("com.google.firebase:firebase-firestore")
     implementation("com.google.firebase:firebase-storage")
-
+    implementation("androidx.credentials:credentials:1.3.0")
+    implementation("androidx.credentials:credentials-play-services-auth:1.3.0")
+    implementation("com.google.android.libraries.identity.googleid:googleid:1.1.1")
 
 
     val nav_version = "2.9.1"
@@ -90,6 +92,9 @@ dependencies {
     // for parsing JSON
     implementation("com.google.code.gson:gson:2.10.1")
     implementation("org.jetbrains.kotlinx:kotlinx-serialization-json:1.6.3")
+
+    //For pin
+    implementation("androidx.security:security-crypto:1.1.0-alpha06")
 
 
 }
