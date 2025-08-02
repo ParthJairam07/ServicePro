@@ -1,9 +1,10 @@
 package com.example.b07proj.model
 
-import com.google.firebase.Firebase
+import android.util.Log
 import com.google.firebase.auth.FirebaseAuth
 import com.google.firebase.auth.FirebaseUser
 import com.google.firebase.auth.auth
+import com.google.firebase.Firebase
 
 class HandleAuth {
     private val auth: FirebaseAuth = Firebase.auth
@@ -28,6 +29,7 @@ class HandleAuth {
         onSuccess: () -> Unit,
         onFailure: (String) -> Unit
     ) {
+        Log.d("HandleAuth", "Logging in with email: $email")
         auth.signInWithEmailAndPassword(email, password)
             .addOnCompleteListener { task ->
                 if (task.isSuccessful) {

@@ -3,8 +3,28 @@
     <string name='pinPromptTitle'>Create your pin</string>
     <string name='pinPromptInfo'>ⓘ Setting up your PIN enables you to log in quicker the next time you launch the app</string>
     <string name='pinPromptHeaderText'>Setup Process</string>
+    <string name='tipsHeader'>Here\'s your plan</string>
+    <string name='StorageHeader'>Here\'s your Storage</string>
+    <string name='DocumentButtonText'>View Your Documents</string>
+    <string name='DocumentHeader'>My Documents</string>
+    <string name='EmergencyContactsButtonText'>Emergency Contact List</string>
+    <string name='EmergencyContactsHeader'>Your Emergency Contacts</string>
+    <string name='addEmergencyContactsButton'>Add Emergency Contacts</string>
+    <string name='addContactHeader'>Create a new emergency contact</string>
+    <string name='SafeLocationsHeader'>Your Safe Locations</string>
+    <string name='addSafeLocationButton'>Add a new safe location</string>
+    <string name='addSafeLocationHeader'>Add a new safe location</string>
+    <string name='MedicationsHeader'>Your Medication</string>
+    <string name='addMedicationButton'>Add a mediation</string>
+    <string name='addMedicationHeader'>Add a mediation</string>
+    <string name='addDocumentHeader'>Upload File</string>
+    <string name='addDocumentButtonText'>Add Documents, IDs, etc.</string>
+    <string name='addDocumentButtonDescription'>Upload file icon file button</string>
+    <string name='SafeLocationsButtonText'>See your Safe Locations</string>
+    <string name='MedicationsButtonText'>View your Medications</string>
     <string name='inputPinInfo'>Choose a 4–6 digit PIN</string>
     <string name='continueButtonText'>Done</string>
+    <string name='BackButtonText'>Back</string>
     <string name="arrow_content_description">Arrow Icon in the Done button</string>
     <string name="contentDescription">27</string>
     <string name="contentDescription3">30\n</string>
@@ -33,4 +53,6 @@
     <string name="rad_but_1_text"><![CDATA[I agree to the terms and services (if there is one >~<)]]></string>
     <string name="disclaimer_text">I understand this application is not a substitute for emergency services and that safety plans are personal and not guaranteed to prevent harm.</string>
     <string name="password_error2">Password must be alphanumeric</string>
+    <string name="menuIcon">Icon for MenuBar</string>
+    <string name="editIcon">Edit Icon</string>
 </resources>

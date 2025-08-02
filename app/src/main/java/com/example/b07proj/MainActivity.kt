@@ -4,20 +4,33 @@ import android.os.Bundle
 import androidx.activity.ComponentActivity
 import androidx.activity.compose.setContent
 import androidx.activity.enableEdgeToEdge
-import androidx.compose.material3.Text
-import androidx.compose.runtime.Composable
-import androidx.compose.ui.Modifier
-import androidx.compose.ui.tooling.preview.Preview
+import androidx.navigation.NavType
 import androidx.navigation.compose.NavHost
 import androidx.navigation.compose.composable
 import androidx.navigation.compose.rememberNavController
+import androidx.navigation.navArgument
 import com.example.b07proj.model.HandleAuth
 import com.example.b07proj.ui.theme.B07ProjTheme
 import com.example.b07proj.view.EmailLogin
 import com.example.b07proj.view.LandingPage
+import com.example.b07proj.view.LoggedInTopBar
 import com.example.b07proj.view.LoginPage
 import com.example.b07proj.view.SignUpPage
 import com.example.b07proj.view.PinPage
+import com.example.b07proj.view.RenderAddContactsPage
+import com.example.b07proj.view.RenderAddDocumentsPage
+import com.example.b07proj.view.RenderAddMedicationPage
+import com.example.b07proj.view.RenderAddSafeLocationsPage
+import com.example.b07proj.view.RenderDocumentPage
+import com.example.b07proj.view.RenderEmergencyContactPage
+import com.example.b07proj.view.RenderMedicationPage
+import com.example.b07proj.view.RenderSafeLocationsPage
+import com.example.b07proj.view.SafetyPlanQuizPage1
+import com.example.b07proj.view.RenderTips
+import com.example.b07proj.view.SafetyPlanQuizPage2
+import com.example.b07proj.view.SafetyPlanQuizPage3
+import com.example.b07proj.view.RenderStoragePage
+
 
 class MainActivity : ComponentActivity() {
 
@@ -34,11 +47,14 @@ class MainActivity : ComponentActivity() {
                 //host the navigation graph
                 NavHost(
                     navController = navController,
-                    startDestination = "login_page",
+                    startDestination = "email_login",
                     builder = {
                         //define the route
                         composable("landing_page"){
                             LandingPage(navController, auth)
+                        }
+                        composable("edit_quiz_screen") {
+                            SafetyPlanQuizPage2(navController)
                         }
                         composable("pin_page"){
                             PinPage(navController)
@@ -52,25 +68,82 @@ class MainActivity : ComponentActivity() {
                         composable("email_login"){
                             EmailLogin(navController)
                         }
+                        composable("loggedintopbar"){
+                            LoggedInTopBar(navController) {}
+                        }
+                        composable("safety_plan_quiz") {
+                            SafetyPlanQuizPage1(navController)
+                        }
+                        composable("safety_plan_tips") {
+                            RenderTips(navController)
+                        }
+                        composable("safetyPlanQuizPage2") {
+                            SafetyPlanQuizPage2(navController)
+                        }
+                        composable("safetyPlanQuizPage3") {
+                            SafetyPlanQuizPage3(navController)
+                        }
+                        composable("storagePage") {
+                            RenderStoragePage(navController)
+                        }
+                        composable("documents_screen") {
+                            RenderDocumentPage(navController)
+                        }
+                        composable("contacts_screen") {
+                            RenderEmergencyContactPage(navController)
+                        }
+                        composable("locations_screen") {
+                            RenderSafeLocationsPage(navController)
+                        }
+                        composable("meds_screen") {
+                            RenderMedicationPage(navController)
+                        }
+                        composable("add_documents") {
+                            RenderAddDocumentsPage(navController)
+                        }
+                        // this page is for adding new contacts or editing ones, we need
+                        // to pass in optional argument contactId to edit
+                        composable(
+                            "add_or_edit_contacts?dataItemId={dataItemId}",
+                            arguments = listOf(
+                                navArgument("dataItemId") {
+                                    type = NavType.StringType
+                                    nullable = true
+                                }
+                            )
+                        ) { backStackEntry ->
+                            RenderAddContactsPage(navController)
+                        }
+
+                        // this page is for adding new contacts or editing ones, we need
+                        // to pass in optional argument contactId to edit
+                        composable(
+                            "add_or_edit_safe_locations?dataItemId={dataItemId}",
+                            arguments = listOf(
+                                navArgument("dataItemId") {
+                                    type = NavType.StringType
+                                    nullable = true
+                                }
+                            )
+                        ) { backStackEntry ->
+                            RenderAddSafeLocationsPage(navController)
+                        }
+
+                        composable(
+                            "add_or_edit_medications?dataItemId={dataItemId}",
+                            arguments = listOf(
+                                navArgument("dataItemId") {
+                                    type = NavType.StringType
+                                    nullable = true
+                                }
+                            )
+                        ) { backStackEntry ->
+                            RenderAddMedicationPage(navController)
+                        }
+
                     }
                 )
             }
         }
-    }
-}
-
-@Composable
-fun Greeting(name: String, modifier: Modifier = Modifier) {
-    Text(
-        text = "Hello $name!",
-        modifier = modifier
-    )
-}
-
-@Preview(showBackground = true)
-@Composable
-fun GreetingPreview() {
-    B07ProjTheme {
-        Greeting("Android")
     }
 }
