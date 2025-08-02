@@ -11,7 +11,6 @@ import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
 import androidx.compose.material3.Button
 import androidx.compose.material3.CircularProgressIndicator
-import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.DisposableEffect
@@ -37,48 +36,50 @@ import com.example.b07proj.presenter.dataItems.AddDataItemPresenter
 import com.example.b07proj.presenter.dataItems.Categories
 import com.example.b07proj.ui.theme.backgroundAccent
 
-
+// Renderer component for medication page
 @Composable
-fun RenderAddContactsPage(navController: NavHostController) {
-    AddContactsPage(navController)
+fun RenderAddMedicationPage(navController: NavHostController) {
+    AddMedicationPage(navController)
 }
 
-@OptIn(ExperimentalMaterial3Api::class)
 @Composable
-fun AddContactsPage(navController: NavHostController) {
+fun AddMedicationPage(navController: NavHostController) {
     // our answers for each question are stored here
     val answers = remember { mutableStateMapOf<String, String>() }
     // mapping the question to if a specific error it came across from user input (ex invalid email format)
     val errors = remember { mutableStateMapOf<String, Boolean>() }
-    // To determine if we show the spinner or not when fetching/storing data
+    // To determine if we show the spinner or not
     var isLoading by remember { mutableStateOf(false) }
     // for Android OS
     val context = LocalContext.current
 
-    // presenter type of AddContactsContract.Presenter (interface), call constructor with null (meaning there is no view yet to pair with)
+    // presenter type of AddDataItemContract.Presenter (interface), call constructor with null (meaning there is no view yet to pair with)
     val presenter : AddDataItemContract.Presenter = remember { AddDataItemPresenter(null) }
 
-
-    // get contactId from navigation arguments, note if will be null if we are adding
-    val contactId = navController.currentBackStackEntry?.arguments?.getString("dataItemId")
+    // get dataItemId from navigation arguments, note if will be null if we are adding
+    val medicationId = navController.currentBackStackEntry?.arguments?.getString("dataItemId")
     // Provide the view contract
     val view = remember {
         object : AddDataItemContract.View {
             override fun showLoading() {
                 isLoading = true
             }
+
             override fun hideLoading() {
                 isLoading = false
             }
             override fun navigateBack() {
                 navController.popBackStack()
             }
+
             override fun showSuccess(message: String) {
                 Toast.makeText(context, message, Toast.LENGTH_SHORT).show()
             }
+
             override fun showError(message: String) {
                 Toast.makeText(context, message, Toast.LENGTH_LONG).show()
             }
+
             override fun displayDataItemDetails(itemData: Map<String, String>) {
                 // for editing we clear all the previous answers and load in the fetched data
                 answers.clear()
@@ -86,7 +87,7 @@ fun AddContactsPage(navController: NavHostController) {
             }
         }
     }
-    // connecting presenter and view together (before presenter had view as null)
+    // connecting presenter and view together
     DisposableEffect(presenter) {
         (presenter as AddDataItemPresenter).view = view
         onDispose {
@@ -94,38 +95,38 @@ fun AddContactsPage(navController: NavHostController) {
         }
     }
     // launch effect to fetch data when screen was opened in edit mode
-    LaunchedEffect(key1 = contactId) {
-        if (contactId != null) {
-            presenter.loadDataItemDetails(Categories.EMERGENCY_CONTACTS, contactId)
+    LaunchedEffect(key1 = medicationId) {
+        if (medicationId != null) {
+            presenter.loadDataItemDetails(Categories.MEDICATIONS, medicationId)
         }
     }
 
-    // Question objects for each questions for emergency contacts
+    // Question objects for each questions for medication
+    // #TODO ask if the ID numbers have to be next to each other or if they can be far apart
+    // Ask for name of medication
     val freeformQuestion1 = Question(
-        id = 666,
-        question = "What is the name of the emergency contact?",
+        id = 672,
+        question = "What is the name of the medication?",
         type = "freeform",
-        variable = "contactName"
+        variable = "medicationName"
     )
-    val phoneNumberQuestion2 = Question(
-        id = 667,
-        question = "Provide the primary phone of the contact",
-        type = "phoneNumber",
-        variable = "contactPhoneNumber"
+
+    // Ask for dosage of medication as freeform string
+    val freeformQuestion2 = Question(
+        id = 673,
+        question = "What dosage do you take?",
+        type = "freeform",
+        variable = "medicationDosage",
     )
-    val dropdownQuestion3 = Question(
-        id = 668,
-        question = "What is your relationship to this person?",
-        type = "dropdown",
-        variable = "contactRelation",
-        options = listOf("Spouse", "Partner", "Parent", "Child", "Sibling", "Friend", "Guardian", "Caregiver", "Doctor")
+
+    // Ask for expiry of medication as freeform string
+    val dateQuestion3 = Question(
+        id = 674,
+        question = "When does it expire?",
+        type = "date",
+        variable = "medicationExpiry",
     )
-    val emailQuestion4 = Question(
-        id = 669,
-        question = "What is the email address for this contact?",
-        type = "email",
-        variable = "contactEmail"
-    )
+
     Box(
         modifier = Modifier.fillMaxSize(),
         contentAlignment = Alignment.Center
@@ -140,93 +141,51 @@ fun AddContactsPage(navController: NavHostController) {
             ) {
                 // header
                 Text(
-                    text = stringResource(id = R.string.addContactHeader),
+                    text = stringResource(id = R.string.addMedicationHeader),
                     color = backgroundAccent,
                     fontSize = 30.sp,
                     fontWeight = FontWeight.Bold,
                     fontFamily = myFont,
                     textAlign = TextAlign.Center
                 )
-
                 Spacer(modifier = Modifier.height(24.dp))
 
-                // First question, free form question
+                // First question for medication name
                 FreeformQuestion2(
                     question = freeformQuestion1,
                     value = answers[freeformQuestion1.variable!!].orEmpty(),
-                    // answers["contact_name"]:(users answer)
                     onValueChange = { newText -> answers[freeformQuestion1.variable] = newText },
                     label = "Name"
                 )
-
                 Spacer(modifier = Modifier.height(24.dp))
 
-                // Contact primary phone number
-                PhoneNumberQuestion(
-                    question = phoneNumberQuestion2,
-                    value = answers[phoneNumberQuestion2.variable!!].orEmpty(),
-                    // answers["contact_phone_number"]:(users answer)
-                    onValueChange = { newText -> answers[phoneNumberQuestion2.variable] = newText
-                    },
-                    isError = errors[phoneNumberQuestion2.variable] == true
+                // Second question for medication dosage
+                FreeformQuestion2(
+                    question = freeformQuestion2,
+                    value = answers[freeformQuestion2.variable!!].orEmpty(),
+                    onValueChange = { newText -> answers[freeformQuestion2.variable] = newText },
+                    label = "Dosage"
                 )
-
                 Spacer(modifier = Modifier.height(24.dp))
 
-                // question for relation to user
-                DropdownQuestion(
-                    question = dropdownQuestion3,
-                    onAnswer = { newText -> answers[dropdownQuestion3.variable as String] = newText }
+                // TODO: Create a DateQuestion1 w/o the submission button
+                // Third question for medication expiry
+                DateQuestion(
+                    question = dateQuestion3,
+                    onAnswer = { newText -> answers[dateQuestion3.variable!!] = newText }
                 )
-
-                Spacer(modifier = Modifier.height(24.dp))
-
-                // question for providing email address of contact
-                EmailQuestion(
-                    question = emailQuestion4,
-                    value = answers[emailQuestion4.variable!!].orEmpty(),
-                    onValueChange = { newText ->
-                        answers[emailQuestion4.variable] = newText
-                    },
-                    isError = errors[emailQuestion4.variable] == true
-                )
-
                 Spacer(modifier = Modifier.height(24.dp))
 
                 // submission button
                 Button(
-                    enabled = answers.size == 4 && answers.all { item -> item.value.isNotEmpty() },
+                    enabled = answers.size == 3 && answers.all { item -> item.value.isNotEmpty() },
                     onClick = {
-                        // get answer phone number and email (we need to check them)
-                        val phoneNumber = answers[phoneNumberQuestion2.variable].orEmpty()
-                        val emailAddress = answers[emailQuestion4.variable].orEmpty()
-
-                        val isPhoneValid = isPhoneNumberValid(phoneNumber)
-                        val isEmailValid = isEmailValid(emailAddress)
-
-                        // update errors boolean values at each question.variable
-                        // ex: if isPhoneNumberValid was false then errors["phoneNumber"] should be true
-                        errors[phoneNumberQuestion2.variable] = !isPhoneValid
-                        errors[emailQuestion4.variable] = !isEmailValid
-
-                        // we only proceed if both are valid ie both true
-                        if (isPhoneValid && isEmailValid ) {
-                            Log.d("AddContactsPage", "Valid phone number and email: $answers")
-                            presenter.saveDataItem(Categories.EMERGENCY_CONTACTS, answers.toMap(), contactId)
-                        }
-                        else {
-                            Log.d("AddContactsPage", "Valid phone number or email incorrect logic: $answers")
-                        }
+                        Log.d("AddMedicationPage", "Valid answers: $answers")
+                        presenter.saveDataItem(Categories.MEDICATIONS, answers.toMap(), medicationId)
                     },
                     modifier = Modifier.fillMaxWidth().padding(top = 16.dp)
                 ) {
-                    // change button text depending on if we editing or adding contact
-                    val buttonText = if (contactId == null) {
-                        "Add Contact"
-                    } else {
-                        "Update Contact"
-                    }
-                    Text(buttonText)
+                    Text("Add Medication")
                 }
             }
         }

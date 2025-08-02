@@ -5,7 +5,6 @@ import android.content.Context
 import android.net.Uri
 import android.os.Environment
 import android.widget.Toast
-import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.*
 import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.lazy.items
@@ -22,16 +21,17 @@ import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.style.TextOverflow
 import androidx.compose.ui.unit.dp
-import androidx.compose.ui.unit.sp
 import androidx.navigation.NavHostController
-import com.example.b07proj.model.DocumentData
+import com.example.b07proj.model.dataCategories.DocumentData
 import com.example.b07proj.presenter.DocumentPresenter
 
 
 @Composable
 fun RenderDocumentPage(navController: NavHostController) {
     val presenter = remember { DocumentPresenter() }
-    DocumentPage(navController = navController, presenter = presenter)
+    LoggedInTopBar(navController = navController) {
+        DocumentPage(navController = navController, presenter = presenter)
+    }
 }
 
 
