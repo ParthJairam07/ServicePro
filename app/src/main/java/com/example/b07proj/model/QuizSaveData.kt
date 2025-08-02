@@ -14,11 +14,11 @@ class QuizSaveData {
         collectionName: String,
         onComplete: (Boolean) -> Unit
     ) {
-        val user = FirebaseAuth.getInstance().currentUser
-        if (user != null && responses.isNotEmpty()) {
+        val currentUserId = HandleAuth.currentUserUuid
+        if (currentUserId != null && responses.isNotEmpty()) {
             FirebaseFirestore.getInstance()
                 .collection("users")
-                .document(user.uid)
+                .document(currentUserId)
                 .collection("quiz_responses")
                 .document(collectionName)
                 .set(responses)

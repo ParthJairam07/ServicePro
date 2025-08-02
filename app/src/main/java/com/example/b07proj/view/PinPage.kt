@@ -1,5 +1,7 @@
 package com.example.b07proj.view
 
+import android.content.Context
+import android.util.Log
 import androidx.compose.foundation.Image
 import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.Arrangement
@@ -35,6 +37,7 @@ import androidx.compose.ui.draw.scale
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.graphics.ColorFilter
 import androidx.compose.ui.graphics.RectangleShape
+import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.TextStyle
@@ -48,6 +51,7 @@ import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import androidx.navigation.NavController
 import com.example.b07proj.R
+import com.example.b07proj.model.PinManager
 import com.example.b07proj.ui.theme.Primary40
 import com.example.b07proj.ui.theme.Primary50
 import com.example.b07proj.ui.theme.backgroundAccent
@@ -60,6 +64,8 @@ fun PinPage(navController: NavController) {
 
 // initialize global variable for font
 val myFont = FontFamily(Font(R.font.afacad_regular))
+private const val PREFS_FILENAME = "com.example.b07proj.secure_user_prefs"
+private const val KEY_ENCRYPTED_USER_DATA = "encrypted_user_data"
 
 // define a custom TextField color scheme to be reused across the app.
 private val AppTextInputColors: TextFieldColors
@@ -206,6 +212,8 @@ fun EmailLoginLink(navController: NavController) {
 // continue button to proceed after entering the pin, pass in the pin to check if it's valid, and navController to get to the next page
 @Composable
 fun PinContinueButton(pin: String, navController: NavController) {
+    val context = LocalContext.current
+
     // set a column for the Done button
     Column(
         modifier = Modifier.padding(start = 250.dp, top = 40.dp)
@@ -214,7 +222,30 @@ fun PinContinueButton(pin: String, navController: NavController) {
         val iconAndTextColor = if (pin.length >= 4) Primary50 else Color.DarkGray
         // create a button field using the MVP design pattern where a onLoginClick method is being called and the pin are passed in
         Button(
-            onClick = { navController.navigate("email_login") }, // TEMP NAV - can be updated to actual logic
+            onClick = {
+                val sharedPreferences = context.getSharedPreferences(PREFS_FILENAME, Context.MODE_PRIVATE)
+
+                //get the encrypted data from the shared preferences
+                val encryptedData = sharedPreferences.getString(KEY_ENCRYPTED_USER_DATA, null)
+
+                if (encryptedData == null) {
+                    Log.e("PinLogin", "No PIN data found on device.")
+                    return@Button
+                }
+                // 3. Decrypt and get the stored PIN
+                val storedPin = PinManager.getPin(encryptedData)
+                if (storedPin == pin) {
+                    // SUCCESS!
+                    val userUUID = PinManager.getUuid(encryptedData)
+                    Log.d("PinLogin", "PIN Correct! Logging in user: $userUUID")
+                    // You can now pass the userUUID to your home screen or store it in a ViewModel
+
+                    navController.navigate("home_page") // Navigate to your main app screen
+                } else {
+                    // FAILURE!
+                    Log.w("PinLogin", "Incorrect PIN entered.")
+                }
+            },
             enabled = pin.length >= 4, // only enable the button if the fields are non-empty
             colors = ButtonDefaults.buttonColors(containerColor = backgroundAccent),
             modifier = Modifier.height(45.dp).width(120.dp),

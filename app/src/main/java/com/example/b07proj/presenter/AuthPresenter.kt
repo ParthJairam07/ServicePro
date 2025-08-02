@@ -1,11 +1,11 @@
 package com.example.b07proj.presenter
 
-import com.example.b07proj.model.HandleAuth
+import com.example.b07proj.model.HandleAuth // Make sure you import the object
 import com.example.b07proj.view.SignUpView
+import com.google.firebase.auth.GoogleAuthProvider
 
 class AuthPresenter (
-    private val auth: HandleAuth,
-    private val view: SignUpView
+    val view: SignUpView
 ){
 
     fun onSignUpClick(email: String, password: String) {
@@ -18,7 +18,8 @@ class AuthPresenter (
             return
         }
 
-        auth.signUp(email, password,
+        //Call the method directly on the singleton object `HandleAuth`.
+        HandleAuth.signUp(email, password,
             onSuccess = {
                 view.onSignUpSuccess()
             },
@@ -27,6 +28,7 @@ class AuthPresenter (
             }
         )
     }
+
     fun onLoginClick(email: String, password: String) {
         if (!isValidEmail(email)) {
             view.showError("Invalid email format")
@@ -36,12 +38,28 @@ class AuthPresenter (
             view.showError("Password must be at least 6 characters")
             return
         }
-        auth.loginWithEmail(email, password,
+
+        // Call the method directly on the singleton object `HandleAuth`.
+        HandleAuth.loginWithEmail(email, password,
             onSuccess = {
                 view.onSignUpSuccess()
             },
             onFailure = {
                 view.showError(it)
+            }
+        )
+    }
+
+    fun onGoogleSignInSucceeded(idToken: String) {
+        val credential = GoogleAuthProvider.getCredential(idToken, null)
+
+        // Call the method directly on the singleton object `HandleAuth`.
+        HandleAuth.signInWithGoogle(credential,
+            onSuccess = {
+                view.onSignUpSuccess()
+            },
+            onFailure = { errorMessage ->
+                view.showError(errorMessage)
             }
         )
     }

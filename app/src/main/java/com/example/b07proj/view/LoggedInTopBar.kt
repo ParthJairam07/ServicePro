@@ -73,7 +73,7 @@ import kotlin.collections.mutableListOf
 @SuppressLint("CoroutineCreationDuringComposition", "UnrememberedMutableState")
 @OptIn(ExperimentalMaterial3Api::class) // allow usage of experimental Material3 APIs like Scaffold
 @Composable
-fun LoggedInTopBar(navController: NavHostController) {
+fun LoggedInTopBar(navController: NavHostController, content: @Composable (PaddingValues) -> Unit) {
     val drawerState = rememberDrawerState(DrawerValue.Closed) // keep track of the drawer state
     val scope = rememberCoroutineScope() // needed to launch drawer actions
     val editAccountDialog = mutableStateOf(false) // mutable bool for edit account dialog
@@ -118,8 +118,14 @@ fun LoggedInTopBar(navController: NavHostController) {
         Scaffold(
             // create a topBar element which will consist of the logo
             topBar = {
-                TopBar(scope, drawerState, navController)
+                Column {
+                    TopBar(scope, drawerState, navController)
+                    HorizontalDivider(
+                        color = Color.Gray,
+                        thickness = 0.5.dp
+                    )
 
+                }
             }
         ) { innerPadding -> // pass in padding to allow fields within the UI to be spaced from the topBar
             when {
@@ -144,15 +150,17 @@ fun LoggedInTopBar(navController: NavHostController) {
                     Column(
                         modifier = Modifier
                             .fillMaxSize()
-                            .background(color = Primary40)
+                            //.background(color = Primary40)
                             .padding(innerPadding)
                             .padding(16.dp)
                     ) {
+                        content(innerPadding)
                         // cuz why not (this will be gone too)
                         //val myFont = FontFamily(Font(R.font.afacad))
                     }
                 }
             }
+            // call the function here for our code
         }
 
     }

@@ -86,6 +86,6 @@ fun UISettingsPage(navController: NavController) {
 
 @Preview(showBackground = true, name = "Settings Page Preview")
 @Composable
-fun HomePagePreview() {
+fun SettingsPagePreview() {
     SettingsPage(navController = rememberNavController())
 }
