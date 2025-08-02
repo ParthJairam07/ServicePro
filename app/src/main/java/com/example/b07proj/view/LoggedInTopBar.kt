@@ -118,8 +118,14 @@ fun LoggedInTopBar(navController: NavHostController, content: @Composable (Paddi
         Scaffold(
             // create a topBar element which will consist of the logo
             topBar = {
-                TopBar(scope, drawerState)
+                Column {
+                    TopBar(scope, drawerState)
+                    HorizontalDivider(
+                        color = Color.Gray,
+                        thickness = 0.5.dp
+                    )
 
+                }
             }
         ) { innerPadding -> // pass in padding to allow fields within the UI to be spaced from the topBar
             when {
@@ -144,7 +150,7 @@ fun LoggedInTopBar(navController: NavHostController, content: @Composable (Paddi
                     Column(
                         modifier = Modifier
                             .fillMaxSize()
-//                            .background(color = Primary40)
+                            //.background(color = Primary40)
                             .padding(innerPadding)
                             .padding(16.dp)
                     ) {
@@ -154,6 +160,7 @@ fun LoggedInTopBar(navController: NavHostController, content: @Composable (Paddi
                     }
                 }
             }
+            // call the function here for our code
         }
 
     }

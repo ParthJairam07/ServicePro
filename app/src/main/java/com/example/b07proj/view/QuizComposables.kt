@@ -3,6 +3,7 @@ package com.example.b07proj.view
 import android.util.Log
 import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.*
+import androidx.compose.foundation.text.KeyboardOptions
 import androidx.compose.material3.*
 import androidx.compose.runtime.*
 import androidx.compose.ui.*
@@ -10,6 +11,8 @@ import androidx.compose.ui.draw.scale
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.text.*
 import androidx.compose.ui.text.font.*
+import androidx.compose.ui.text.input.ImeAction
+import androidx.compose.ui.text.input.KeyboardType
 import androidx.compose.ui.unit.*
 import androidx.navigation.NavHostController
 import com.example.b07proj.model.Question
@@ -185,6 +188,74 @@ fun CheckboxQuestion(question: Question, onAnswer: (String) -> Unit) {
         }
     }
 }
+
+@Composable
+fun FreeformQuestion2(question: Question, value: String, onValueChange: (String) -> Unit, label: String) {
+    QuizQuestion(question.question, required = true)
+    OutlinedTextField(
+        value = value,
+        label = { Text(label) },
+        onValueChange = onValueChange,
+        modifier = Modifier.fillMaxWidth(),
+        textStyle = TextStyle(fontFamily = myFont)
+    )
+}
+fun isPhoneNumberValid(phone: String): Boolean {
+    return phone.all { it.isDigit() } && phone.length >= 7
+
+
+}
+fun isEmailValid(email: String): Boolean {
+    // Android has a built-in pattern for email validation.
+    return android.util.Patterns.EMAIL_ADDRESS.matcher(email).matches()
+}
+
+@Composable
+fun EmailQuestion(question: Question, value: String, onValueChange: (String) -> Unit, isError: Boolean) {
+    val errorMessage = "Please enter a valid email address."
+    QuizQuestion(question.question, required = true)
+    OutlinedTextField(
+        value = value,
+        onValueChange = onValueChange,
+        modifier = Modifier.fillMaxWidth(),
+        label = { Text("Email Address") },
+        keyboardOptions = KeyboardOptions(
+            keyboardType = KeyboardType.Email,
+            imeAction = ImeAction.Done
+        ),
+        // handle the error display, if isError true the supportText will be displayed
+        isError = isError,
+        supportingText = {
+            if (isError) {
+                Text(text = errorMessage, color = MaterialTheme.colorScheme.error)
+            }
+        }
+    )
+}
+@Composable
+fun PhoneNumberQuestion(question: Question, value: String, onValueChange: (String) -> Unit, isError: Boolean) {
+    val errorMessage = "Please enter a valid phone number."
+    QuizQuestion(question.question, required = true)
+    OutlinedTextField(
+        value = value,
+        onValueChange = onValueChange,
+        modifier = Modifier.fillMaxWidth(),
+        label = { Text("Phone Number") },
+        keyboardOptions = KeyboardOptions(
+            keyboardType = KeyboardType.Phone,
+            imeAction = ImeAction.Next
+        ),
+        singleLine = true,
+        // These two lines handle the error display
+        isError = isError,
+        supportingText = {
+            if (isError) {
+                Text(text = errorMessage, color = MaterialTheme.colorScheme.error)
+            }
+        }
+    )
+}
+
 
 @Composable
 fun QuizQuestion(text: String, required: Boolean = false) {

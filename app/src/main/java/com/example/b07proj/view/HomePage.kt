@@ -88,7 +88,7 @@ fun UIHomePage(navController: NavHostController) {
                         "Access Documents",
                         Icons.Outlined.Description,
                         navController,
-                        "bazinga"
+                        "documents_screen"
                     )
 
                     Spacer(modifier = Modifier.size(32.dp))
@@ -97,7 +97,7 @@ fun UIHomePage(navController: NavHostController) {
                         "Get Local Support",
                         Icons.Outlined.Support,
                         navController,
-                        "bazinga"
+                        "contacts_screen"
                     )
                 }
             }

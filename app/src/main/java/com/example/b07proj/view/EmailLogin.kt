@@ -87,7 +87,7 @@ fun UIEmailLogin(navController: NavHostController) {
             view = object : SignUpView {
                 // override function onSignUpSuccess to navigate to landing_page once successful
                 override fun onSignUpSuccess() {
-                    navController.navigate("safety_plan_quiz")
+                    navController.navigate("storagePage")
                 }
 
                 // override a method to display an error message to the user
