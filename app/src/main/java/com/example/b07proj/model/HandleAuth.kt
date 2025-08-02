@@ -16,7 +16,6 @@ object HandleAuth {
     /**
      * Holds the UUID of the currently logged-in user.
      * It is null if no one is logged in.
-     * 'private set' means only HandleAuth can change it, but anyone can read it.
      */
     var currentUserUuid: String? = null
         private set
