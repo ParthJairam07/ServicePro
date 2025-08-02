@@ -31,7 +31,7 @@ import com.example.b07proj.view.RenderTips
 import com.example.b07proj.view.SafetyPlanQuizPage2
 import com.example.b07proj.view.SafetyPlanQuizPage3
 import com.example.b07proj.view.RenderStoragePage
-
+import com.example.b07proj.view.CreatePin
 
 class MainActivity : ComponentActivity() {
 
@@ -43,33 +43,36 @@ class MainActivity : ComponentActivity() {
         setContent {
             B07ProjTheme {
                 //create an instance of the auth
-                val auth = HandleAuth()
                 val navController = rememberNavController() // to navigate to screens
                 //host the navigation graph
                 NavHost(
                     navController = navController,
-                    startDestination = "email_login",
+                    startDestination = "sign_up_page",
                     builder = {
                         //define the route
-                        composable("landing_page"){
-                            LandingPage(navController, auth)
+                        composable("landing_page") {
+                            LandingPage(navController)
                         }
+                        composable("create_pin") {
+                            CreatePin(navController)
+                        }
+
                         composable("edit_quiz_screen") {
                             SafetyPlanQuizPage2(navController)
                         }
-                        composable("pin_page"){
+                        composable("pin_page") {
                             PinPage(navController)
                         }
-                        composable("login_page"){
+                        composable("login_page") {
                             LoginPage(navController)
                         }
-                        composable("sign_up_page"){
+                        composable("sign_up_page") {
                             SignUpPage(navController)
                         }
-                        composable("email_login"){
+                        composable("email_login") {
                             EmailLogin(navController)
                         }
-                        composable("loggedintopbar"){
+                        composable("loggedintopbar") {
                             LoggedInTopBar(navController) {}
                         }
                         composable("safety_plan_quiz") {

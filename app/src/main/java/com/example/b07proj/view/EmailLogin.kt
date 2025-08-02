@@ -1,32 +1,16 @@
 package com.example.b07proj.view
 
+import android.app.Activity
 import android.widget.Toast
+import androidx.activity.compose.rememberLauncherForActivityResult
+import androidx.activity.result.contract.ActivityResultContracts
 import androidx.compose.foundation.Image
 import androidx.compose.foundation.background
-import androidx.compose.foundation.layout.Arrangement
-import androidx.compose.foundation.layout.Column
-import androidx.compose.foundation.layout.Row
-import androidx.compose.foundation.layout.fillMaxSize
-import androidx.compose.foundation.layout.height
-import androidx.compose.foundation.layout.padding
-import androidx.compose.foundation.layout.width
+import androidx.compose.foundation.layout.*
 import androidx.compose.foundation.shape.CircleShape
-import androidx.compose.material3.Button
-import androidx.compose.material3.ButtonDefaults
-import androidx.compose.material3.ExperimentalMaterial3Api
-import androidx.compose.material3.MaterialTheme
-import androidx.compose.material3.OutlinedTextField
-import androidx.compose.material3.OutlinedTextFieldDefaults
-import androidx.compose.material3.Scaffold
-import androidx.compose.material3.Text
-import androidx.compose.material3.TextFieldColors
-import androidx.compose.material3.TopAppBar
-import androidx.compose.material3.TopAppBarDefaults
-import androidx.compose.runtime.Composable
-import androidx.compose.runtime.getValue
-import androidx.compose.runtime.mutableStateOf
-import androidx.compose.runtime.remember
-import androidx.compose.runtime.setValue
+import androidx.compose.material3.*
+import androidx.compose.runtime.*
+import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.scale
 import androidx.compose.ui.graphics.Color
@@ -50,65 +34,82 @@ import com.example.b07proj.presenter.AuthPresenter
 import com.example.b07proj.ui.theme.Primary40
 import com.example.b07proj.ui.theme.Primary50
 import com.example.b07proj.ui.theme.backgroundAccent
+import com.google.android.gms.auth.api.signin.GoogleSignIn
+import com.google.android.gms.auth.api.signin.GoogleSignInOptions
+import com.google.android.gms.common.api.ApiException
+import kotlinx.coroutines.launch
 
-// renders for the email login page
+// Renders for the email login page
 @Composable
 fun EmailLogin(navController: NavHostController) {
-    // call the UIEmailLogin() function which loads the full UI onto the app
+    // Call the UIEmailLogin() function which loads the full UI onto the app
     UIEmailLogin(navController)
 }
 
-// define a custom TextField color scheme to be reused across the app.
+// Define a custom TextField color scheme to be reused across the app.
 private val AppTextInputColors: TextFieldColors
-    // set the color of the border when clicked and non-clicked, the label color when clicked and unclicked and so on.
     @Composable
     get() = OutlinedTextFieldDefaults.colors(
-        focusedBorderColor = Color.White, // when the field is selected
-        unfocusedBorderColor = Primary50, // when the field is not selected
+        focusedBorderColor = Color.White,
+        unfocusedBorderColor = Primary50,
         focusedTextColor = Color.White,
         unfocusedTextColor = Color.DarkGray,
         unfocusedLabelColor = Primary50,
         focusedLabelColor = Color.White
     )
 
-// create a function for the UI of the login
-@OptIn(ExperimentalMaterial3Api::class) // allow usage of experimental Material3 APIs like Scaffold
+// Create a function for the UI of the login
+@OptIn(ExperimentalMaterial3Api::class)
 @Composable
 fun UIEmailLogin(navController: NavHostController) {
-    // get the current context of the app to use for things like Toasts
     val context = LocalContext.current
+    val coroutineScope = rememberCoroutineScope()
 
-    // set a presenter variable that stores whether or not the auth was successful
     val presenter = remember {
-        // use MVP pattern: presenter handles login logic and updates the view
         AuthPresenter(
-            // check the auth through HandleAuth() function
-            auth = HandleAuth(),
             view = object : SignUpView {
-                // override function onSignUpSuccess to navigate to landing_page once successful
                 override fun onSignUpSuccess() {
-                    navController.navigate("storagePage")
+                    // Navigate and clear the back stack so user can't go back to login
+                    navController.navigate("storagePage") {
+                        popUpTo(navController.graph.startDestinationId) {
+                            inclusive = true
+                        }
+                    }
                 }
 
-                // override a method to display an error message to the user
                 override fun showError(message: String) {
                     Toast.makeText(context, message, Toast.LENGTH_SHORT).show()
                 }
             }
         )
     }
-    // create a Scaffold to house the TopAppBar and other parts of the page
+
+    // --- Backend Logic: Launcher for Google Sign-In ---
+    val launcher = rememberLauncherForActivityResult(
+        contract = ActivityResultContracts.StartActivityForResult()
+    ) { result ->
+        if (result.resultCode == Activity.RESULT_OK) {
+            val task = GoogleSignIn.getSignedInAccountFromIntent(result.data)
+            try {
+                // Google Sign In was successful, authenticate with Firebase
+                val account = task.getResult(ApiException::class.java)!!
+                val idToken = account.idToken!!
+                presenter.onGoogleSignInSucceeded(idToken)
+            } catch (e: ApiException) {
+                // Google Sign In failed, update UI appropriately
+                Toast.makeText(context, "Google Sign-In failed: ${e.message}", Toast.LENGTH_LONG).show()
+            }
+        }
+    }
+
     Scaffold(
-        // create a topBar element which will consist of the logo
         topBar = {
             TopAppBar(
-                // set the colors to the default values that match the app
                 colors = TopAppBarDefaults.topAppBarColors(
                     containerColor = MaterialTheme.colorScheme.primaryContainer,
                     titleContentColor = MaterialTheme.colorScheme.primary,
                 ),
                 title = {
-                    // set the logo through the Image() element and enter the correct description
                     Image(
                         painter = painterResource(R.drawable.templogo),
                         contentDescription = stringResource(id = R.string.logoDescription),
@@ -117,74 +118,113 @@ fun UIEmailLogin(navController: NavHostController) {
             )
         },
         floatingActionButton = {
-            ExitButton(
-                modifier = Modifier
-                    .padding(5.dp)    // placement
-            )
+            // Assuming ExitButton is defined elsewhere
+            // ExitButton(modifier = Modifier.padding(5.dp))
         }
     ) { padding ->
-        // create the full background view through a column
         Column(
             modifier = Modifier
-                // enter the appropriate elements, such as filling to the entire page, color and padding values
                 .fillMaxSize()
                 .background(color = Primary40)
                 .padding(padding)
-                .padding(16.dp)
+                .padding(16.dp),
+            horizontalAlignment = Alignment.CenterHorizontally
         ) {
-            // set the fonts used for the UI in a variable
             val myFont = FontFamily(Font(R.font.afacad))
 
-            // Create the title for the page through the Text() element
             LoginTitleText(myFont)
 
-            // create another column for the information to be entered by the user to login
             Column(verticalArrangement = Arrangement.spacedBy(2.dp)) {
-                // set the read-only variables of email, password and myFont
-                var email by remember { mutableStateOf("") } // stores the email input
-                var password by remember { mutableStateOf("") } // stores the password input
-                // create a new row to house the email field and the mail icon
+                var email by remember { mutableStateOf("") }
+                var password by remember { mutableStateOf("") }
                 EmailInputField(email, onEmailChange = { email = it }, myFont)
-                // set a new row element for the password field and icon
                 PasswordInputField(password, onPasswordChange = { password = it }, myFont)
-                // set a column for the button icon and perform validation before calling presenter
                 LoginButton(email, password, presenter, context, myFont)
             }
+
+            Spacer(modifier = Modifier.height(16.dp))
+            Text(
+                text = "OR",
+                color = Color.White.copy(alpha = 0.7f),
+                fontFamily = myFont,
+                fontSize = 16.sp
+            )
+            Spacer(modifier = Modifier.height(16.dp))
+
+            // Google Sign-In Button with Backend Logic
+            GoogleSignInButton(
+                onClick = {
+                    coroutineScope.launch {
+                        // Configure Google Sign-In
+                        val gso = GoogleSignInOptions.Builder(GoogleSignInOptions.DEFAULT_SIGN_IN)
+                            .requestIdToken(context.getString(R.string.default_web_client_id))
+                            .requestEmail()
+                            .build()
+                        val googleSignInClient = GoogleSignIn.getClient(context, gso)
+                        // Launch the sign-in UI
+                        launcher.launch(googleSignInClient.signInIntent)
+                    }
+                },
+                modifier = Modifier.padding(horizontal = 30.dp)
+            )
         }
     }
 }
 
-// create the title for the page through the Text() element
+
+@Composable
+fun GoogleSignInButton(onClick: () -> Unit, modifier: Modifier = Modifier) {
+    Button(
+        onClick = onClick,
+        modifier = modifier.fillMaxWidth(),
+        shape = CircleShape,
+        colors = ButtonDefaults.buttonColors(containerColor = Color.Black)
+    ) {
+        Row(
+            modifier = Modifier.padding(vertical = 8.dp),
+            verticalAlignment = Alignment.CenterVertically,
+            horizontalArrangement = Arrangement.Center
+        ) {
+            Image(
+                painter = painterResource(id = R.drawable.ic_google_logo),
+                contentDescription = "Google sign-in button"
+            )
+            Text(
+                text = "Sign in with Google",
+                modifier = Modifier.padding(start = 12.dp),
+                color = Color.White,
+                fontWeight = FontWeight.Bold
+            )
+        }
+    }
+}
+
 @Composable
 fun LoginTitleText(myFont: FontFamily) {
     Text(
         text = stringResource(id = R.string.log_in),
         textAlign = TextAlign.Center,
         modifier = Modifier
-            .padding(115.dp, top = 100.dp),
-        // set font, size and color of the title
+            .fillMaxWidth()
+            .padding(top = 100.dp, bottom = 20.dp),
         fontFamily = myFont,
         fontSize = 50.sp,
         color = Color.White,
     )
 }
 
-// create a text field row for email input, taking in an email string to store the users values, onEmailChange to update the email and font
 @Composable
 fun EmailInputField(email: String, onEmailChange: (String) -> Unit, myFont: FontFamily) {
     Row(
-        modifier = Modifier.padding(30.dp, top = 40.dp),
-        // set the spacing between the icon and the text field
-        horizontalArrangement = Arrangement.spacedBy(15.dp)
+        modifier = Modifier.padding(horizontal = 30.dp, vertical = 5.dp),
+        horizontalArrangement = Arrangement.spacedBy(15.dp),
+        verticalAlignment = Alignment.CenterVertically
     ) {
-        // create a text field through the OutlinedTextField() elements
         OutlinedTextField(
-            // set the value to email variable to store what the user enters, and update it through OnValueChange
             value = email,
             singleLine = true,
             onValueChange = onEmailChange,
-            modifier = Modifier.padding(0.dp, 0.dp),
-            // set the text for the field, and the hint through label and placeholder
+            modifier = Modifier.weight(1f),
             label = { Text(stringResource(id = R.string.email_string), fontFamily = myFont) },
             placeholder = { Text(stringResource(id = R.string.example_email), fontFamily = myFont) },
             textStyle = TextStyle(
@@ -192,12 +232,11 @@ fun EmailInputField(email: String, onEmailChange: (String) -> Unit, myFont: Font
                 fontWeight = FontWeight.Bold,
                 fontFamily = myFont
             ),
-            // follow the styles from the variable above for the text field outline
             colors = AppTextInputColors,
             shape = CircleShape
         )
         Image(
-            modifier = Modifier.padding(start = 22.dp, 50.dp).scale(2.6F),
+            modifier = Modifier.size(24.dp),
             painter = painterResource(R.drawable.baseline_mail_24),
             contentDescription = stringResource(id = R.string.mail_icon),
             colorFilter = ColorFilter.tint(color = Primary50)
@@ -205,24 +244,19 @@ fun EmailInputField(email: String, onEmailChange: (String) -> Unit, myFont: Font
     }
 }
 
-// create a text field row for password input, that takes in a password of type string, a string to keep track of what is being updated, and myFont
 @Composable
 fun PasswordInputField(password: String, onPasswordChange: (String) -> Unit, myFont: FontFamily) {
     Row(
-        // set the padding values on the UI and the spacing between the field and icon
-        modifier = Modifier.padding(30.dp, top = 5.dp),
+        modifier = Modifier.padding(horizontal = 30.dp, vertical = 5.dp),
+        horizontalArrangement = Arrangement.spacedBy(15.dp),
+        verticalAlignment = Alignment.CenterVertically
     ) {
-        // create a text field through the OutlinedTextField() parameter
         OutlinedTextField(
-            // set the value to password to store user value
             value = password,
             singleLine = true,
-            // change the password variables as the user enters their information in realtime
             onValueChange = onPasswordChange,
-            // hide the password to ensure screen security when entering it
             visualTransformation = PasswordVisualTransformation(),
-            modifier = Modifier.padding((0).dp, top = 10.dp),
-            // set the text field label to password and a hint through placeholder
+            modifier = Modifier.weight(1f),
             label = { Text(stringResource(id = R.string.password_string), fontFamily = myFont) },
             placeholder = { Text(stringResource(id = R.string.example_password), fontFamily = myFont) },
             textStyle = TextStyle(
@@ -230,13 +264,11 @@ fun PasswordInputField(password: String, onPasswordChange: (String) -> Unit, myF
                 fontWeight = FontWeight.Bold,
                 fontFamily = myFont
             ),
-            // set the default text field color parameters initialized above
             colors = AppTextInputColors,
             shape = CircleShape
         )
-        // set the password icon (lock image)
         Image(
-            modifier = Modifier.padding(start = 0.dp, top = 19.dp, end = 21.dp).scale(0.7F),
+            modifier = Modifier.size(36.dp),
             painter = painterResource(R.drawable.passwordicon),
             contentDescription = stringResource(id = R.string.password_icon),
             colorFilter = ColorFilter.tint(color = Primary50)
@@ -244,57 +276,49 @@ fun PasswordInputField(password: String, onPasswordChange: (String) -> Unit, myF
     }
 }
 
-// create a login button that calls the presenter method only if password is valid, taking in the email, password, presenter, context for the Toast, and font
 @Composable
-fun LoginButton(
-    email: String,
-    password: String,
-    presenter: AuthPresenter,
-    context: android.content.Context,
-    myFont: FontFamily
-) {
+fun LoginButton(email: String, password: String, presenter: AuthPresenter, context: android.content.Context, myFont: FontFamily) {
     Column(
-        // set a column for the button icon
-        modifier = Modifier.padding(start = 250.dp, 30.dp)
+        modifier = Modifier
+            .fillMaxWidth()
+            .padding(top = 16.dp),
+        horizontalAlignment = Alignment.End
     ) {
-        // create a boolean value that keeps the text of the button gray until the valid information is entered
         val iconAndTextColor = if (email.isNotEmpty() && password.isNotEmpty()) Primary50 else Color.DarkGray
-
-        // create a button field using the MVP design pattern where a onLoginClick method is being called and the email and password are passed in
         Button(
             onClick = {
-                // check whether the password contains letters and digits
                 val hasLetter = password.any { it.isLetter() }
                 val hasDigit = password.any { it.isDigit() }
                 val isValidPassword = hasLetter && hasDigit
                 if (isValidPassword) {
-                    // call the presenter method to authenticate the user and tells HandleAuth() to log in
                     presenter.onLoginClick(email, password)
                 } else {
-                    // create a toast where if the password does not contain both alphabetical and numerical values, then the user is forced to retry
-                    Toast.makeText(context, "Password must be alphanumeric", Toast.LENGTH_SHORT).show() // take the context value to know which window to display
+                    Toast.makeText(context, "Password must be alphanumeric", Toast.LENGTH_SHORT).show()
                 }
             },
-            // only enable the button if the fields are non-empty
             enabled = email.isNotEmpty() && password.isNotEmpty(),
-            // set the colors of the button to a specific set of custom ones
             colors = ButtonDefaults.buttonColors(containerColor = backgroundAccent),
-            modifier = Modifier.height(45.dp).width(120.dp),
+            modifier = Modifier
+                .height(45.dp)
+                .width(120.dp),
             shape = RectangleShape,
         ) {
-            // set a new row to house the Done text and arrow icon
-            Row(horizontalArrangement = Arrangement.spacedBy(5.dp)) {
+            Row(
+                horizontalArrangement = Arrangement.spacedBy(5.dp),
+                verticalAlignment = Alignment.CenterVertically
+            ) {
                 Text(
                     stringResource(id = R.string.continueButtonText),
-                    modifier = Modifier.padding(0.dp, 0.dp, bottom = 5.dp).padding(end = 15.dp),
+                    modifier = Modifier.padding(end = 15.dp),
                     color = iconAndTextColor,
                     fontSize = 20.sp,
                     fontFamily = myFont
                 )
                 Image(
-                    // set the image, description and color value through the painter, contentDescription and colorFilter fields
                     painter = painterResource(R.drawable.sendorizontal),
-                    modifier = Modifier.scale(2.5F).padding(top = 5.dp),
+                    modifier = Modifier
+                        .scale(2.5F)
+                        .padding(top = 2.dp),
                     contentDescription = stringResource(id = R.string.arrow_content_description),
                     colorFilter = ColorFilter.tint(color = iconAndTextColor)
                 )
