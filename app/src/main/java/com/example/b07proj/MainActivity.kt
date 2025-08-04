@@ -119,7 +119,7 @@ class MainActivity : ComponentActivity() {
                             HomePage(navController)
                         }
                         composable("direct_links") {
-                            DirectLinks()
+                            DirectLinks(navController)
                         }
                         composable("settings_page") {
                             SettingsPage(navController)
