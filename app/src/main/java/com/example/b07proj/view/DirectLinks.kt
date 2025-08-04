@@ -64,7 +64,6 @@ suspend fun loadResources(context: Context): List<Resource> {
 @Composable
 fun DirectLinks() {
     val ctx = LocalContext.current
-
     var city      by remember { mutableStateOf("") }
     var resources by remember { mutableStateOf(emptyList<Resource>()) }
 

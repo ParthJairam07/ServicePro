@@ -375,13 +375,13 @@ fun SafetyPlanQuizScreen2(
                         ) {
                             Done(navController, responses) { resps ->
                                 presenter.saveResponses(resps, "branch") {
-                                    navController.navigate("landing_page") // your route
+                                    navController.navigate("home_page") // your route
                                 }
                             }
                         }
                     }
                 }
-                //set the Done2 button where the outputMap would be updated and be redirected to the landing_page
+                //set the Done2 button where the outputMap would be updated and be redirected to the home_page
                 if (outputMap.isNotEmpty() && showSubmit) {
                     Row(
                         modifier = Modifier.fillMaxWidth(),
@@ -391,7 +391,7 @@ fun SafetyPlanQuizScreen2(
                                 // Show done button after single question
                             Log.d(FirebaseAuth.getInstance().currentUser?.uid.toString(),FirebaseAuth.getInstance().currentUser.toString())
                             db.collection("users").document(FirebaseAuth.getInstance().currentUser?.uid.toString()).collection("quiz_responses").document(typeofBranch).update(outputMap)
-                                navController.navigate("landing_page")
+                                navController.navigate("home_page")
                             }
 
                     }
@@ -410,7 +410,7 @@ fun SafetyPlanQuizScreen2(
                 ) {
                     Done2( responses) { resps ->
                         presenter.saveResponses(resps, "warmup") {
-                            navController.navigate("landing_page") // your route
+                            navController.navigate("home_page") // your route
                         }
                     }
                 }
