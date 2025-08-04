@@ -16,12 +16,12 @@
     "11": "Money Location",
     "12": {
       "answer": "Place to Stay",
-      "tempShelter": "Temporary Shelter"
+      "shelter_name": "Temporary Shelter"
     },
     "13": "Post-Incident Contact",
     "14": {
       "answer": "Protection Order",
-      "orderType": "Legal Order Type"
+      "legal_order": "Legal Order Type"
     },
     "15": {
       "answer": "Safety Tools",

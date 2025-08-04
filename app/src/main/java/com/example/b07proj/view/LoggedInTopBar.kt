@@ -462,7 +462,7 @@ fun EditParsable(quizScreenTrigger: MutableState<Boolean>, innerPadding: Padding
                                 append(" and ") // add some grammar
                         }
                     }.trim('"')
-
+                    counter = 0
                     // do the same for the keys in answers.json
                     val combined2 = buildString {
                         for ((key2, value2) in newMap2) {
