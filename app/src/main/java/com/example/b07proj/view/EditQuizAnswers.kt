@@ -27,7 +27,9 @@ import com.google.firebase.firestore.FirebaseFirestore
 @Composable
 fun EditQuizAnswers(navController: NavHostController) {
     val presenter = remember { QuizPresenter() }
-    SafetyPlanQuizScreen2(navController, presenter)
+    LoggedInTopBar(navController) {
+        SafetyPlanQuizScreen2(navController, presenter)
+    }
 }
 
 @SuppressLint("MutableCollectionMutableState")
@@ -53,50 +55,7 @@ fun SafetyPlanQuizScreen2(
     var typeofBranch: String = ""
 //    val currentQuestion = questions["question$currentQuestionIndex"]
 
-    Scaffold(
-        // temporary topBar and values for now
-        topBar = {
-            Row(
-                verticalAlignment = Alignment.CenterVertically,
-                horizontalArrangement = Arrangement.SpaceBetween,
-                modifier = Modifier
-                    .padding(horizontal = 24.dp)
-                    .padding(vertical = 12.dp)
-                    .padding(top = 24.dp)
-                    .fillMaxWidth()
-            ) {
-                Text("Lo here!")
-                Row {
-                    // settings icon to access pin information and more
-                    Button(
-                        onClick = {},
-                        colors = ButtonDefaults.buttonColors(containerColor = Color.Transparent),
-                        contentPadding = PaddingValues(0.dp),
-                        modifier = Modifier.size(36.dp, 32.dp)
-                    ) {
-                        Icon(
-                            imageVector = Icons.Outlined.Settings,
-                            contentDescription = "Settings",
-                            tint = BackgroundColor
-                        )
-                    }
-                    // person button to access account info
-                    Button(
-                        onClick = {},
-                        colors = ButtonDefaults.buttonColors(containerColor = Color.Transparent),
-                        contentPadding = PaddingValues(0.dp),
-                        modifier = Modifier.size(36.dp, 32.dp)
-                    ) {
-                        Icon(
-                            imageVector = Icons.Outlined.Person,
-                            contentDescription = "Profile",
-                            tint = BackgroundColor
-                        )
-                    }
-                }
-            }
-        }
-    ) { padding ->
+    Scaffold{ padding ->
         // columns for the questions
         Column(
             // modifier for the values of sizing and position, padding
