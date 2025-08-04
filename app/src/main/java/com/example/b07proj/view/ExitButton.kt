@@ -11,7 +11,7 @@ import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.text.font.FontWeight
 import androidx.core.net.toUri
-
+//
 @Composable
 fun ExitButton(modifier: Modifier = Modifier) {
     val context = LocalContext.current
