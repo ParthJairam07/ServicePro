@@ -21,10 +21,11 @@ fun ExitButton(modifier: Modifier = Modifier) {
         onClick = {
             // Launch google.com
             Intent(Intent.ACTION_VIEW, "https://www.google.com".toUri())
-                .also { context.startActivity(it) }
+                .apply { addFlags(Intent.FLAG_ACTIVITY_NEW_TASK) }
+                .also { context.applicationContext.startActivity(it) }
 
             // terminate
-            activity?.finishAffinity()
+            activity?.finishAndRemoveTask()
         },
         modifier = modifier, // in other pages
         colors = ButtonDefaults.buttonColors(
