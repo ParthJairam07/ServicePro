@@ -124,6 +124,16 @@ fun LoggedInTopBar(navController: NavHostController, content: @Composable (Paddi
                         }
                     }
                 )
+                NavigationDrawerItem(
+                    label = { Text("Logout") },
+                    selected = false,
+                    onClick = {
+                        scope.launch {
+                            drawerState.close()
+                            navController.navigate("login_page")
+                        }
+                    }
+                )
 
             }
         }
