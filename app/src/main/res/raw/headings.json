@@ -15,16 +15,16 @@
     "10": "Go-bag Prepared",
     "11": "Money Location",
     "12": {
-      "placeToStay": "Place to Stay",
+      "answer": "Place to Stay",
       "tempShelter": "Temporary Shelter"
     },
     "13": "Post-Incident Contact",
     "14": {
-      "order": "Protection Order",
+      "answer": "Protection Order",
       "orderType": "Legal Order Type"
     },
     "15": {
-      "tools": "Safety Tools",
+      "answer": "Safety Tools",
       "equipment": "Equipment Type"
     },
     "16": "Type of Support"

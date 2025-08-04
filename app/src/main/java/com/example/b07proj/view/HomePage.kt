@@ -89,6 +89,7 @@ fun UIHomePage(navController: NavHostController) {
                         navController,
                         "direct_links"
                     )
+
                 }
             }
         }

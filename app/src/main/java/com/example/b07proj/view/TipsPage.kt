@@ -377,7 +377,7 @@ fun TipCard(tipAndTitle: TipAndTitle) {
 fun BackButton(navController: NavHostController) {
     Button(
         onClick = {
-            navController.navigate("safety_plan_tips")
+            navController.navigate("home_page")
         },
         colors = ButtonDefaults.buttonColors(containerColor = Primary40),
     ) {
