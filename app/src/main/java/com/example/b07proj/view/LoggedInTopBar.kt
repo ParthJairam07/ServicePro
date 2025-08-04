@@ -124,6 +124,16 @@ fun LoggedInTopBar(navController: NavHostController, content: @Composable (Paddi
                         }
                     }
                 )
+                NavigationDrawerItem(
+                    label = { Text("Logout") },
+                    selected = false,
+                    onClick = {
+                        scope.launch {
+                            drawerState.close()
+                            navController.navigate("login_page")
+                        }
+                    }
+                )
 
             }
         }
@@ -462,7 +472,7 @@ fun EditParsable(quizScreenTrigger: MutableState<Boolean>, innerPadding: Padding
                                 append(" and ") // add some grammar
                         }
                     }.trim('"')
-
+                    counter = 0
                     // do the same for the keys in answers.json
                     val combined2 = buildString {
                         for ((key2, value2) in newMap2) {
