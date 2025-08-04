@@ -20,13 +20,15 @@ import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.outlined.Person
 import androidx.compose.material.icons.outlined.Settings
 import androidx.compose.ui.draw.scale
+import com.google.firebase.auth.FirebaseAuth
+import com.google.firebase.firestore.FirebaseFirestore
 
 
-//@Composable
-//fun SafetyPlanQuizPageTemp(navController: NavHostController) {
-  //  val presenter = remember { QuizPresenter() }
-   // SafetyPlanQuizScreen2(navController, presenter)
-//}
+@Composable
+fun EditQuizAnswers(navController: NavHostController) {
+    val presenter = remember { QuizPresenter() }
+    SafetyPlanQuizScreen2(navController, presenter)
+}
 
 @SuppressLint("MutableCollectionMutableState")
 @Composable
@@ -43,6 +45,12 @@ fun SafetyPlanQuizScreen2(
     // Get Warmup questions
     val quizData = presenter.getQuizData(LocalContext.current)
     val questions = quizData.questions.Warmup
+    // Search for the question across all sections
+    val warmup = quizData.questions.Warmup
+    val branch = quizData.questions.BranchQuestions
+    val followUp = quizData.questions.FollowUp
+    val db = FirebaseFirestore.getInstance()
+    var typeofBranch: String = ""
 //    val currentQuestion = questions["question$currentQuestionIndex"]
 
     Scaffold(
@@ -57,7 +65,7 @@ fun SafetyPlanQuizScreen2(
                     .padding(top = 24.dp)
                     .fillMaxWidth()
             ) {
-                Text("Logo goes here!")
+                Text("Lo here!")
                 Row {
                     // settings icon to access pin information and more
                     Button(
@@ -104,32 +112,79 @@ fun SafetyPlanQuizScreen2(
             visibleQuestionIndices.forEach { questionIndex ->
                 val questionKey = "question$questionIndex"
                 val question = questions[questionKey]
+
+
                 Log.d("CheckQuestion", "$questionKey: ${question != null}")
                 var showSubmit by remember { mutableStateOf(false) }
                 for ((key,value) in outputMap)
                     Log.d(key,"$value"+"e")
                 // first case, if the user wants to edit their answers
                 if (outputMap.isNotEmpty()) {
+
                     val targetKey = outputMap.keys.first()
-                    val question = questions.values.firstOrNull { it.id.toString() == targetKey }
+                    val questionId = targetKey.toInt()
+
+
+                    // Try Warmup questions
+                    var question = warmup.values.firstOrNull { it.id == questionId }
+                    typeofBranch = "warmup"
+                    // Look in BranchQuestions if not found
+                    if (question == null) {
+                        branch.values.forEach { section ->
+                            section.values.firstOrNull { it.id == questionId }?.let {
+                                question = it
+                                return@forEach
+                            }
+                        }
+                        typeofBranch = "branch"
+                    }
+
+                    // Look in Follow-up if still not found
+                    if (question == null) {
+                        question = followUp.values.firstOrNull { it.id == questionId }
+                        typeofBranch = "followup"
+                    }
+
 
                     question?.let {
-                        // Show the first question (hasChildren)
+                        // Show the first question
                         when (it.type) {
                             "radio" -> RadioQuestion(
                                 question = it,
                                 onAnswer = { answer ->
                                     Log.d(it.id.toString(),it.id.toString())
-                                    if (it.id != 5) {
+                                    if (it.id != 5 && it.id != 12 && it.id != 14 && it.id != 15) {
                                         Log.d("hm", "hm")
                                         responses[it.id.toString()] = answer
+                                        outputMap = responses
+                                        Log.d(outputMap.keys.toString(),outputMap.keys.toString() )
                                         // Show done button after single question
                                         showSubmit = true
 
-                                    }else {
-                                        responses[it.id.toString()] = mutableMapOf("hasChildren" to answer)
-                                        showFollowUp = (answer == "Yes") // Only show follow-up if true
-                                        if (!showFollowUp) showSubmit = true
+                                    }else if (it.id == 5) {
+                                        if (answer == "Yes") {
+                                            responses[it.id.toString()] = mutableMapOf("hasChildren" to answer)
+                                            showFollowUp = true
+                                        } else {
+                                            responses[it.id.toString()] = answer
+                                            showFollowUp = false
+                                            showSubmit = true
+                                        }
+
+                                        outputMap = responses
+                                        Log.d(outputMap.keys.toString(), outputMap.keys.toString())
+                                    } else {
+                                        if (answer == "Yes") {
+                                            responses[it.id.toString()] = mutableMapOf("answer" to answer)
+                                            showFollowUp = true
+                                        } else {
+                                            responses[it.id.toString()] = answer
+                                            showFollowUp = false
+                                            showSubmit = true
+                                        }
+
+                                        outputMap = responses
+                                        Log.d(outputMap.keys.toString(), outputMap.keys.toString())
                                     }
                                 }
                             )
@@ -138,6 +193,9 @@ fun SafetyPlanQuizScreen2(
                                 question = it,
                                 onAnswer = { answer ->
                                     responses[it.id.toString()] = answer
+                                    outputMap = responses
+                                    Log.d(outputMap.keys.toString(),outputMap.keys.toString() )
+                                    // Show done button after single question
                                     showSubmit = true
                                 }
                             )
@@ -146,6 +204,28 @@ fun SafetyPlanQuizScreen2(
                                 question = it,
                                 onAnswer = { answer ->
                                     responses[it.id.toString()] = answer
+                                    outputMap = responses
+                                    Log.d(outputMap.keys.toString(),outputMap.keys.toString() )
+                                    // Show done button after single question
+                                    showSubmit = true
+                                }
+                            )
+                            "date" -> DateQuestion(
+                                question = question,
+                                onAnswer = { answer ->
+                                    responses[question.id.toString()] = answer
+                                    outputMap = responses
+                                    Log.d(outputMap.keys.toString(),outputMap.keys.toString() )
+                                    // Show done button after single question
+                                    showSubmit = true
+                                }
+                            )
+                            "checkbox" -> CheckboxQuestion(
+                                question = question,
+                                onAnswer = { answers ->
+                                    responses[question.id.toString()] = answers
+                                    outputMap = responses
+                                    Log.d(outputMap.keys.toString(),outputMap.keys.toString() )
                                     showSubmit = true
                                 }
                             )
@@ -164,9 +244,24 @@ fun SafetyPlanQuizScreen2(
                                         followUp = null
                                     ),
                                     onAnswer = { answer ->
-                                        val existing = responses["5"] as? MutableMap<String, Any> ?: mutableMapOf()
-                                        existing["codeWord"] = answer
-                                        responses["5"] = existing
+                                        val existing = responses[it.id.toString()] as? MutableMap<String, Any> ?: mutableMapOf()
+                                        if (it.id == 5) {
+                                            existing["codeWord"] = answer
+                                            responses["5"] = existing
+                                        }else if (it.id == 12) {
+                                            existing["shelter_name"] = answer
+                                            responses["12"] = existing
+                                        } else if (it.id == 14) {
+                                            existing["legal_order"] = answer
+                                            responses["14"] = existing
+                                        } else if (it.id == 15) {
+                                            existing["equipment"] = answer
+                                            responses["15"] = existing
+
+                                        }
+                                        outputMap = responses
+                                        Log.d(outputMap.keys.toString(),outputMap.keys.toString() )
+                                        // Show done button after single question
                                         showSubmit = true
                                     }
                                 )
@@ -225,6 +320,19 @@ fun SafetyPlanQuizScreen2(
                                         }
                                     }
                                 )
+
+                                "date" -> DateQuestion(
+                                    question = question,
+                                    onAnswer = { answer ->
+                                        responses[question.id.toString()] = answer
+                                        Log.d(
+                                            "SafetyPlanQuizPage2",
+                                            "Date answer for ID ${question.id}: $answer"
+                                        )
+                                    }
+                                )
+
+
                             }
                             // Follow-up for question 5
                             if (question.id == 5 && showFollowUp) {
@@ -279,11 +387,13 @@ fun SafetyPlanQuizScreen2(
                         modifier = Modifier.fillMaxWidth(),
                         horizontalArrangement = Arrangement.End
                     ) {
-                        Done2(responses) { resps ->
-                            presenter.saveResponses(resps, "branch") {
+                        Done2(responses) {
+                                // Show done button after single question
+                            Log.d(FirebaseAuth.getInstance().currentUser?.uid.toString(),FirebaseAuth.getInstance().currentUser.toString())
+                            db.collection("users").document(FirebaseAuth.getInstance().currentUser?.uid.toString()).collection("quiz_responses").document(typeofBranch).update(outputMap)
                                 navController.navigate("landing_page")
                             }
-                        }
+
                     }
                 }
 

@@ -34,8 +34,12 @@ import com.example.b07proj.view.SafetyPlanQuizPage2
 import com.example.b07proj.view.SafetyPlanQuizPage3
 import com.example.b07proj.view.RenderStoragePage
 import com.example.b07proj.view.CreatePin
+import com.example.b07proj.view.DialogBox
 import com.example.b07proj.view.DirectLinks
 import com.example.b07proj.view.SettingsPage
+import com.example.b07proj.view.EditParsable
+import com.example.b07proj.view.EditQuizAnswers
+import kotlin.Boolean
 
 class MainActivity : ComponentActivity() {
 
@@ -64,7 +68,7 @@ class MainActivity : ComponentActivity() {
                         }
 
                         composable("edit_quiz_screen") {
-                            SafetyPlanQuizPage2(navController)
+                            EditQuizAnswers(navController)
                         }
                         composable("pin_page") {
                             PinPage(navController, deepLinkDestination ?: "home_page")
