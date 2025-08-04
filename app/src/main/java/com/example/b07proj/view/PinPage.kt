@@ -58,8 +58,8 @@ import com.example.b07proj.ui.theme.backgroundAccent
 
 // page for login with pin, takes in a navigation controller to switch to other pages once the tasks have been completed
 @Composable
-fun PinPage(navController: NavController) {
-    UIPinPage(navController)
+fun PinPage(navController: NavController, nextPage: String) {
+    UIPinPage(navController, nextPage)
 }
 
 // initialize global variable for font
@@ -82,7 +82,7 @@ private val AppTextInputColors: TextFieldColors
 
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
-fun UIPinPage(navController: NavController) {
+fun UIPinPage(navController: NavController, nextPage: String) {
     Scaffold(
         // create a topBar element which will consist of the logo
         topBar = {
@@ -124,7 +124,7 @@ fun UIPinPage(navController: NavController) {
             // call the emailLoginLink and pass in the navController to get to different parts of the UI
             EmailLoginLink(navController)
             // and the continue button
-            PinContinueButton(pin = pin, navController = navController)
+            PinContinueButton(pin = pin, navController = navController, nextPage = nextPage)
         }
     }
 }
@@ -211,7 +211,7 @@ fun EmailLoginLink(navController: NavController) {
 
 // continue button to proceed after entering the pin, pass in the pin to check if it's valid, and navController to get to the next page
 @Composable
-fun PinContinueButton(pin: String, navController: NavController) {
+fun PinContinueButton(pin: String, navController: NavController, nextPage: String) {
     val context = LocalContext.current
 
     // set a column for the Done button
@@ -240,7 +240,7 @@ fun PinContinueButton(pin: String, navController: NavController) {
                     Log.d("PinLogin", "PIN Correct! Logging in user: $userUUID")
                     // You can now pass the userUUID to your home screen or store it in a ViewModel
 
-                    navController.navigate("storagePage") // Navigate to your main app screen
+                    navController.navigate(nextPage) // Navigate to your main app screen
                 } else {
                     // FAILURE!
                     Log.w("PinLogin", "Incorrect PIN entered.")

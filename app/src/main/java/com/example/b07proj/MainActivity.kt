@@ -10,8 +10,11 @@ import androidx.navigation.compose.composable
 import androidx.navigation.compose.rememberNavController
 import androidx.navigation.navArgument
 import com.example.b07proj.model.HandleAuth
+import com.example.b07proj.notifs.DEEP_LINK_NEXT_SCREEN_KEY
+import com.example.b07proj.presenter.QuizPresenter
 import com.example.b07proj.ui.theme.B07ProjTheme
 import com.example.b07proj.view.EmailLogin
+import com.example.b07proj.view.HomePage
 import com.example.b07proj.view.LandingPage
 import com.example.b07proj.view.LoggedInTopBar
 import com.example.b07proj.view.LoginPage
@@ -31,6 +34,12 @@ import com.example.b07proj.view.SafetyPlanQuizPage2
 import com.example.b07proj.view.SafetyPlanQuizPage3
 import com.example.b07proj.view.RenderStoragePage
 import com.example.b07proj.view.CreatePin
+import com.example.b07proj.view.DialogBox
+import com.example.b07proj.view.DirectLinks
+import com.example.b07proj.view.SettingsPage
+import com.example.b07proj.view.EditParsable
+import com.example.b07proj.view.EditQuizAnswers
+import kotlin.Boolean
 
 class MainActivity : ComponentActivity() {
 
@@ -39,6 +48,8 @@ class MainActivity : ComponentActivity() {
         super.onCreate(savedInstanceState)
         enableEdgeToEdge()
 
+        val deepLinkDestination = intent.getStringExtra(DEEP_LINK_NEXT_SCREEN_KEY)
+
         setContent {
             B07ProjTheme {
                 //create an instance of the auth
@@ -46,7 +57,7 @@ class MainActivity : ComponentActivity() {
                 //host the navigation graph
                 NavHost(
                     navController = navController,
-                    startDestination = "sign_up_page",
+                    startDestination = "login_page",
                     builder = {
                         //define the route
                         composable("landing_page") {
@@ -57,10 +68,10 @@ class MainActivity : ComponentActivity() {
                         }
 
                         composable("edit_quiz_screen") {
-                            SafetyPlanQuizPage2(navController)
+                            EditQuizAnswers(navController)
                         }
                         composable("pin_page") {
-                            PinPage(navController)
+                            PinPage(navController, deepLinkDestination ?: "home_page")
                         }
                         composable("login_page") {
                             LoginPage(navController)
@@ -69,7 +80,7 @@ class MainActivity : ComponentActivity() {
                             SignUpPage(navController)
                         }
                         composable("email_login") {
-                            EmailLogin(navController)
+                            EmailLogin(navController, deepLinkDestination ?: "home_page")
                         }
                         composable("loggedintopbar") {
                             LoggedInTopBar(navController) {}
@@ -103,6 +114,15 @@ class MainActivity : ComponentActivity() {
                         }
                         composable("add_documents") {
                             RenderAddDocumentsPage(navController)
+                        }
+                        composable("home_page") {
+                            HomePage(navController)
+                        }
+                        composable("direct_links") {
+                            DirectLinks(navController)
+                        }
+                        composable("settings_page") {
+                            SettingsPage(navController)
                         }
                         // this page is for adding new contacts or editing ones, we need
                         // to pass in optional argument contactId to edit

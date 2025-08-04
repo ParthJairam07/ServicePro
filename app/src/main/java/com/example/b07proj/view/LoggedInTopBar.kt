@@ -7,6 +7,7 @@ import androidx.compose.foundation.Image
 import androidx.compose.foundation.background
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Arrangement
+import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.PaddingValues
 import androidx.compose.foundation.layout.Row
@@ -29,6 +30,7 @@ import androidx.compose.material.icons.filled.Menu
 import androidx.compose.material.icons.outlined.Settings
 import androidx.compose.material3.Card
 import androidx.compose.material3.CenterAlignedTopAppBar
+import androidx.compose.material3.CircularProgressIndicator
 import androidx.compose.material3.DrawerState
 import androidx.compose.material3.DrawerValue
 import androidx.compose.material3.ExperimentalMaterial3Api
@@ -63,7 +65,11 @@ import androidx.navigation.NavHostController
 import com.example.b07proj.R
 import com.example.b07proj.presenter.QuizPresenter
 import com.example.b07proj.ui.theme.BackgroundColor
+import com.example.b07proj.ui.theme.Primary40
 import com.example.b07proj.ui.theme.Primary50
+import com.example.b07proj.view.AnswersProvider.getUserAnswers
+import com.google.android.play.integrity.internal.b
+import com.google.gson.JsonElement
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.launch
 import org.json.JSONObject
@@ -80,7 +86,7 @@ fun LoggedInTopBar(navController: NavHostController, content: @Composable (Paddi
     val editAccountInfo = mutableStateOf(false) // mutable bool for quiz edit confirmation
     val quizScreenTrigger = remember { mutableStateOf(false) } // used to trigger quiz edit navigation
     val fullQuizRestart = remember { mutableStateOf(false) } // used to trigger new quiz navigation
-
+    val goToEditAfterDialog = remember { mutableStateOf(false) }
     // create a modalNavigationDrawer in order to store the menu bar
     ModalNavigationDrawer(
         // keep state variable which will change according to when the user clicks the bar open or dismisses
@@ -97,19 +103,38 @@ fun LoggedInTopBar(navController: NavHostController, content: @Composable (Paddi
 
                 // create an Account heading, with two drawer items for the user to go to
                 Text("Account", modifier = Modifier.padding(16.dp), style = MaterialTheme.typography.titleMedium)
-                NavigationDrawerItem(
-                    label = { Text("View Account") },
-                    // not selected currently
-                    selected = false,
-                    // the scope is responsible for changing the state of the drawer to be closed, and opening the mutable bool to open account info
-                    onClick = { scope.launch { drawerState.close() } ; viewAccount.value=true }
-                )
+                //NavigationDrawerItem(
+                //    label = { Text("View Account") },
+                //    selected = false,
+                //    onClick = {
+                 //       scope.launch {
+                //            drawerState.close()
+                //            viewAccount.value = true
+                 //       }
+                 //   }
+                //)
+
                 NavigationDrawerItem(
                     label = { Text("Edit Account") },
                     selected = false,
-                    // the scope is responsible for changing the state of the drawer to be closed, and opening the mutable bool to edit account info
-                    onClick = { viewAccount.value=false ; editAccountDialog.value = true }
+                    onClick = {
+                        scope.launch {
+                            drawerState.close()
+                            editAccountDialog.value = true
+                        }
+                    }
                 )
+                NavigationDrawerItem(
+                    label = { Text("Logout") },
+                    selected = false,
+                    onClick = {
+                        scope.launch {
+                            drawerState.close()
+                            navController.navigate("login_page")
+                        }
+                    }
+                )
+
             }
         }
     ) {
@@ -118,7 +143,7 @@ fun LoggedInTopBar(navController: NavHostController, content: @Composable (Paddi
             // create a topBar element which will consist of the logo
             topBar = {
                 Column {
-                    TopBar(scope, drawerState)
+                    TopBar(scope, drawerState, navController)
                     HorizontalDivider(
                         color = Color.Gray,
                         thickness = 0.5.dp
@@ -127,35 +152,43 @@ fun LoggedInTopBar(navController: NavHostController, content: @Composable (Paddi
                 }
             }
         ) { innerPadding -> // pass in padding to allow fields within the UI to be spaced from the topBar
+            LaunchedEffect(goToEditAfterDialog.value) {
+                if (goToEditAfterDialog.value) {
+                    editAccountInfo.value = true
+                    goToEditAfterDialog.value = false
+                }
+            }
             when {
-                // set function values and where they will go using the when keyword, which is good for handling conditional logic like switch cases
-                editAccountDialog.value -> DialogBox( editAccountDialog, editAccountInfo, fullQuizRestart)
+                editAccountDialog.value -> DialogBox(goToEditAfterDialog,editAccountDialog, editAccountInfo, fullQuizRestart)
+
                 viewAccount.value -> {
-                    // again refresh menu bar state
-                    scope.launch { drawerState.close() }
-                    // call specific function and pass in padding
                     Parsable(innerPadding)
                 }
+
                 editAccountInfo.value -> {
-                    scope.launch { drawerState.close() }
-                    // call specific function and pass in padding
                     EditParsable(quizScreenTrigger, innerPadding, navController)
                 }
 
-                quizScreenTrigger.value -> navController.navigate("edit_quiz_screen") //navigate to edit screen
-                fullQuizRestart.value -> navController.navigate("safety_plan_quiz") //navigate to restart quiz screen
+                quizScreenTrigger.value -> {
+                    LaunchedEffect(Unit) {
+                        navController.navigate("edit_quiz_screen")
+                    }
+                }
+
+                fullQuizRestart.value -> {
+                    LaunchedEffect(Unit) {
+                        navController.navigate("safety_plan_quiz")
+                    }
+                }
+
                 else -> {
-                    // if nothing is triggered, keep a normal background for now. this will be removed in the next commit most likely and integrated
                     Column(
                         modifier = Modifier
                             .fillMaxSize()
-                            //.background(color = Primary40)
                             .padding(innerPadding)
                             .padding(16.dp)
                     ) {
                         content(innerPadding)
-                        // cuz why not (this will be gone too)
-                        //val myFont = FontFamily(Font(R.font.afacad))
                     }
                 }
             }
@@ -170,13 +203,14 @@ fun LoggedInTopBar(navController: NavHostController, content: @Composable (Paddi
 // DialogBox function that takes in innerPadding values for right spacing, editAccountDialog for dismissing the box, editAccountInfo to open a new edit info, and full restart
 @Composable
 fun DialogBox(
+    goToEditAfterDialog: MutableState<Boolean>,
     editAccountDialog: MutableState<Boolean>,
     editAccountInfo: MutableState<Boolean>,
     fullQuizRestart: MutableState<Boolean>
 ) {
     // display the dialog when triggered. It can be dismissed manually.
     Dialog(
-        onDismissRequest = { !editAccountDialog.value }  // dialog closes when user taps outside
+        onDismissRequest = { editAccountDialog.value = false }  // dialog closes when user taps outside
     ) {
         // create a card UI with rounded corners inside the dialog box
         Card(
@@ -226,11 +260,11 @@ fun DialogBox(
                         Text("Yes")
                     }
 
-                    // "No" option: close dialog and go to account info editing
                     TextButton(
                         onClick = {
                             editAccountDialog.value = false
-                            editAccountInfo.value = true
+                            goToEditAfterDialog.value = true
+
                         },
                         modifier = Modifier.padding(8.dp),
                     ) {
@@ -260,61 +294,65 @@ val myList = mutableListOf<String>()
 fun ViewData() {
     // take the current context (necessary for accessing files)
     val context = LocalContext.current
-
-    // set input streams to open the answers.json and headings.json files
-    val inputStream = context.resources.openRawResource(
-        context.resources.getIdentifier("answers", "raw", context.packageName)
-    )
     val inputStream2 = context.resources.openRawResource(
         context.resources.getIdentifier("headings", "raw", context.packageName)
     )
-    // use BufferedReader to read the text from the inputStreams
-    val jsonData = inputStream.bufferedReader().use { it.readText() }
     val jsonData2 = inputStream2.bufferedReader().use { it.readText() }
-
-    // Convert the read text into a JSONObject
-    val outputJsonString = JSONObject(jsonData)
     val outputJsonString2 = JSONObject(jsonData2)
-
-    // Parse into the JSONObject but going through each ID, through accessing "answers"
-    val posts = outputJsonString.getJSONObject("answers")
     val posts2 = outputJsonString2.getJSONObject("answers")
-    // go through each key (id)
-    for (i in posts.keys()) {
-        // if the id is 5, there could be multiple answers, so store it in the list accordingly
-        if (i == "5") {
-            // get the "5" ID values from each answers.json and headings.json
-            val nested1 = posts2.getJSONObject("5")
-            val nested2 = posts.getJSONObject("5")
 
-            // combine all inner values into one string per post in headings.json
-            val combined1 = buildString {
-                for (key in nested1.keys()) {
-                    append(nested1.getString(key))
-                    append(" and ") // add some grammar
+
+    LaunchedEffect(Unit) {
+
+
+        val newMap: Map<String, JsonElement> = getUserAnswers()
+        var counter: Int = 0
+
+        // parse through the keys in the JSON object from the headings.json
+        for ((key, value) in newMap) {
+            // if the specific text has children in it and the i is 5, then set to the outputMap accordingly
+            if (key == "5" || key == "12"|| key == "14" || key == "15") {
+                if (!value.isJsonObject) {
+                    var combined1 : String = ""
+                    val thisObject = posts2.getJSONObject(key)
+                    val keysforThis = thisObject.keys()
+                    while (keysforThis.hasNext()) {
+                        val key = keysforThis.next()
+                        combined1 = buildString {
+                            append(thisObject.get(key).toString())
+                        }
+                    }
+                    myList.add(combined1)
+                    myList.add(value.toString().trim('"'))
+                } else {
+                    val newMap2: Map<String, Any> =
+                        value.asJsonObject.asMap() as Map<String, String>
+
+                    val combined1 = buildString {
+                        for ((key2, value2) in newMap2) {
+                            append(posts2.getJSONObject(key).getString(key2).trim('"'))
+                            counter = counter + 1
+                            if (counter < newMap2.size)
+                                append(" and ") // add some grammar
+                        }
+                    }.trim('"')
+
+                    // do the same for the keys in answers.json
+                    val combined2 = buildString {
+                        for ((key2, value2) in newMap2) {
+                            append(value2.toString().trim('"'))
+                            append("\n") //this time add a newline
+                        }
+                    }.trim('"')
+
+                    myList.add(combined1)
+                    myList.add(combined2)
                 }
-            }.trim() //whitespace
 
-            // do the same for the keys in answers.json
-            val combined2 = buildString {
-                for (key in nested2.keys()) {
-                    append(nested2.getString(key))
-                    append("\n") //this time add a newline
-                }
-            }.trim()
-
-            // add the combined versions to the list
-            myList.add(combined1)
-            myList.add(combined2)
-
-        } else {
-            // get the title (id) and the information by the user (id2)
-            val id = posts2.getString(i)
-            val id2 = posts.getString(i)
-
-            // store in the list
-            myList.add(id)
-            myList.add(id2)
+            } else {
+                myList.add(posts2.getString(key))
+                myList.add(value.toString().trim('"'))
+            }
         }
     }
 
@@ -384,166 +422,230 @@ fun Parsable(innerPadding: PaddingValues) {
 }
 
 // create a global mutableMap so that specific user editing options can be passed to the QuizPage
-val outputMap = mutableMapOf<String, Any>()
+var outputMap: Map<String, Any> = mutableMapOf<String, Any>()
 
 // EditParsable takes in quizScreenTrigger to open a screen to change the answer, padding values, navController to go to the screen
 @SuppressLint("UnrememberedMutableState")
 @Composable
 fun EditParsable(quizScreenTrigger: MutableState<Boolean>, innerPadding: PaddingValues, navController: NavHostController) {
     // call ViewData again to get all the answers entered
-    ViewData()
-    // set a LazyColumn for harnessing all the answers, to be scrollable
-    LazyColumn(
-        // set modifier with the padding values to not interfere with topBar
-        modifier = Modifier
-            .fillMaxHeight()
-            .background(color = BackgroundColor)
-            .padding(innerPadding)
-            .padding(top = 30.dp, start = 15.dp, end = 15.dp)
-            .consumeWindowInsets(innerPadding),
-        // spacing between items
-        verticalArrangement = Arrangement.spacedBy(12.dp)
-    ) {
-        // loop through items through chunks of 2
-        items(myList.chunked(2)) { pair ->
-            if ("Relationship Status" !in pair.toString()) {
-                val text1 = pair.getOrNull(0) ?: "" // set text1 to be the title, or 0th index, else empty string
-                val text2 = pair.getOrNull(1) ?: "" // set text2 to be the answers, or 1st index, else empty string
+    val isDataLoaded = remember { mutableStateOf(false) }
+    val context = LocalContext.current
 
-                // set a presenter variable which calls the QuizPresenter() kotlin class which has specific functions needed for the QuizPage
-                val presenter = remember { QuizPresenter() }
+    LaunchedEffect(Unit) {
+        myList.clear() // Clear any existing data
+        val inputStream2 = context.resources.openRawResource(
+            context.resources.getIdentifier("headings", "raw", context.packageName)
+        )
+        val jsonData2 = inputStream2.bufferedReader().use { it.readText() }
+        val outputJsonString2 = JSONObject(jsonData2)
+        val posts2 = outputJsonString2.getJSONObject("answers")
 
-                //Column(modifier = Modifier.heightIn(max = 2500.dp)) {
-                // if this value is triggered, go to the screen to edit that specific question
-                if (quizScreenTrigger.value)
-                    navController.navigate("edit_quiz_screen")
-                //}
-                // create a boxy-item for each answer
-                Surface(
-                    color = Primary50,
-                    shape = RoundedCornerShape(16.dp),
-                    shadowElevation = 6.dp,
-                    modifier = Modifier
-                        .fillMaxWidth()
-                        .wrapContentHeight()
-                ) {
-                    Column(
+        val newMap: Map<String, JsonElement> = getUserAnswers()
+        var counter: Int = 0
+
+        // parse through the keys in the JSON object from the headings.json
+        for ((key, value) in newMap) {
+            // if the specific text has children in it and the i is 5, then set to the outputMap accordingly
+            if (key == "5" || key == "12"|| key == "14" || key == "15") {
+                if (!value.isJsonObject) {
+                    var combined1 : String = ""
+                    val thisObject = posts2.getJSONObject(key)
+                    val keysforThis = thisObject.keys()
+                    while (keysforThis.hasNext()) {
+                        val key = keysforThis.next()
+                        combined1 = buildString {
+                            append(thisObject.get(key).toString())
+                        }
+                    }
+                    myList.add(combined1)
+                    myList.add(value.toString().trim('"'))
+                } else {
+                    val newMap2: Map<String, Any> =
+                        value.asJsonObject.asMap() as Map<String, String>
+
+                    val combined1 = buildString {
+                        for ((key2, value2) in newMap2) {
+                            append(posts2.getJSONObject(key).getString(key2).trim('"'))
+                            counter = counter + 1
+                            if (counter < newMap2.size)
+                                append(" and ") // add some grammar
+                        }
+                    }.trim('"')
+                    counter = 0
+                    // do the same for the keys in answers.json
+                    val combined2 = buildString {
+                        for ((key2, value2) in newMap2) {
+                            append(value2.toString().trim('"'))
+                            append("\n") //this time add a newline
+                        }
+                    }.trim('"')
+
+                    myList.add(combined1)
+                    myList.add(combined2)
+                }
+
+            } else {
+                myList.add(posts2.getString(key))
+                myList.add(value.toString().trim('"'))
+            }
+        }
+
+        isDataLoaded.value = true
+    }
+
+    if (isDataLoaded.value) {
+        // set a LazyColumn for harnessing all the answers, to be scrollable
+        LazyColumn(
+            // set modifier with the padding values to not interfere with topBar
+            modifier = Modifier
+                .fillMaxHeight()
+                .background(color = BackgroundColor)
+                .padding(innerPadding)
+                .padding(top = 30.dp, start = 15.dp, end = 15.dp)
+                .consumeWindowInsets(innerPadding),
+            // spacing between items
+            verticalArrangement = Arrangement.spacedBy(12.dp)
+        ) {
+            // loop through items through chunks of 2
+            items(myList.chunked(2)) { pair ->
+                if ("Relationship Status" !in pair.toString()) {
+                    val text1 = pair.getOrNull(0) ?: "" // set text1 to be the title, or 0th index, else empty string
+                    val text2 = pair.getOrNull(1) ?: "" // set text2 to be the answers, or 1st index, else empty string
+
+                    // set a presenter variable which calls the QuizPresenter() kotlin class which has specific functions needed for the QuizPage
+                    val presenter = remember { QuizPresenter() }
+
+                    //Column(modifier = Modifier.heightIn(max = 2500.dp)) {
+                    // if this value is triggered, go to the screen to edit that specific question
+                    if (quizScreenTrigger.value)
+                        navController.navigate("edit_quiz_screen")
+                    //}
+                    // create a boxy-item for each answer
+                    Surface(
+                        color = Primary50,
+                        shape = RoundedCornerShape(16.dp),
+                        shadowElevation = 6.dp,
                         modifier = Modifier
-                            .padding(16.dp)
+                            .fillMaxWidth()
+                            .wrapContentHeight()
                     ) {
-                        // set text1 and text2 in a column for the user to see their information
-                        Text(
-                            text = text1,
-                            fontSize = 18.sp,
-                            color = Color.Black,
-                            fontWeight = FontWeight.Bold,
+                        Column(
                             modifier = Modifier
-                                .fillMaxWidth()
-                                .padding(bottom = 8.dp),
-                            textAlign = TextAlign.Start
-                        )
-                        Text(
-                            text = text2,
-                            fontSize = 14.sp,
-                            color = Color.DarkGray,
-                            modifier = Modifier.fillMaxWidth(),
-                            textAlign = TextAlign.Start
-                        )
-                        // set context and editOk variables to trigger the screen to edit the specific answer
-                        val context = LocalContext.current
-                        val editOk = remember { mutableStateOf(false) }
-                        // edit icon
-                        Icon(
-                            imageVector = Icons.Filled.Edit,
-                            contentDescription = stringResource(R.string.editIcon),
-                            modifier = Modifier.align(Alignment.End).clickable {
-                                editOk.value = true // opens the screen
-                            }
-                        )
-                        // if the editOk value is true, this sets up the outputMap and actually opens the screen
-                        if (editOk.value) {
-                            LaunchedEffect(Unit) {
-                                // call function to get the user's ID or related data
-                                getId(context, text1)
-                                // this might not be needed???
-                                presenter.prefillMap = outputMap
-                                // trigger the quiz screen to show
-                                quizScreenTrigger.value = true
+                                .padding(16.dp)
+                        ) {
+                            // set text1 and text2 in a column for the user to see their information
+                            Text(
+                                text = text1,
+                                fontSize = 18.sp,
+                                color = Color.Black,
+                                fontWeight = FontWeight.Bold,
+                                modifier = Modifier
+                                    .fillMaxWidth()
+                                    .padding(bottom = 8.dp),
+                                textAlign = TextAlign.Start
+                            )
+                            Text(
+                                text = text2,
+                                fontSize = 14.sp,
+                                color = Color.DarkGray,
+                                modifier = Modifier.fillMaxWidth(),
+                                textAlign = TextAlign.Start
+                            )
+                            // set context and editOk variables to trigger the screen to edit the specific answer
+                            val context = LocalContext.current
+                            val editOk = remember { mutableStateOf(false) }
+                            // edit icon
+                            Icon(
+                                imageVector = Icons.Filled.Edit,
+                                contentDescription = stringResource(R.string.editIcon),
+                                modifier = Modifier.align(Alignment.End).clickable {
+                                    editOk.value = true // opens the screen
+                                }
+                            )
+                            // if the editOk value is true, this sets up the outputMap and actually opens the screen
+                            if (editOk.value) {
+                                LaunchedEffect(Unit) {
+                                    // call function to get the user's ID or related data
+                                    outputMap = getId(context, text1)
+                                    Log.d(outputMap.keys.toString(), outputMap.keys.toString())
+                                    Log.d("AAAAAAAAA", "AAAAAAAAAAAAAAA")
+                                    // this might not be needed???
+                                    presenter.prefillMap = outputMap
+                                    // trigger the quiz screen to show
+                                    quizScreenTrigger.value = true
+                                }
                             }
                         }
                     }
                 }
             }
         }
+    } else {
+        // show loading indicator while data is being loaded
+        Box(
+            modifier = Modifier
+                .fillMaxSize()
+                .padding(innerPadding),
+            contentAlignment = Alignment.Center
+        ) {
+            CircularProgressIndicator()
+        }
     }
 }
+
+
+
 
 // this function getID takes in specific context to access resources, a text of the specific answer to set to outputMap and navController?
-@SuppressLint("DiscouragedApi")
-fun getId(context: Context, text: String): String {
-    try {
-        // get the inputStreams to open the files answers.json and headings.json
-        val inputStream = context.resources.openRawResource(
-            context.resources.getIdentifier("answers", "raw", context.packageName)
-        )
-        val inputStream2 = context.resources.openRawResource(
-            context.resources.getIdentifier("headings", "raw", context.packageName)
-        )
+// New getId function - suspend, pure logic, no @Composable
+suspend fun getId(context: Context, text: String): Map<String, String> {
+    val inputStream2 = context.resources.openRawResource(
+        context.resources.getIdentifier("headings", "raw", context.packageName)
+    )
+    val jsonData2 = inputStream2.bufferedReader().use { it.readText() }
+    val outputJsonString2 = JSONObject(jsonData2)
+    val posts2 = outputJsonString2.getJSONObject("answers")
 
-        // read from the files
-        val jsonData = inputStream.bufferedReader().use { it.readText() }
-        val jsonData2 = inputStream2.bufferedReader().use { it.readText() }
-
-        // convert the read text to a JSONObject
-        val posts = JSONObject(jsonData).getJSONObject("answers")
-        val posts2 = JSONObject(jsonData2).getJSONObject("answers")
-
-        // parse through the keys in the JSON object from the headings.json
-        for (i in posts2.keys()) {
-            // if the specific text has children in it and the i is 5, then set to the outputMap accordingly
-            if (i == "5" && "Children" in text) {
-                val nested1 = posts2.getJSONObject("5") // headings
-                val nested2 = posts.getJSONObject("5")  // answers
-
-                for (key in nested1.keys()) {
-                    val id = nested1.getString(key)
-                    // see if the text matches with the id, if it does this is the question to edit
-                    if (id in text) {
-                        // create a currentMap to have be a mutableMap with strings, else an empty map with "5" as the index value
-                        val currentMap = outputMap["5"] as? MutableMap<String, String> ?: mutableMapOf()
-                        // set the values for the key to currentMap
-                        currentMap[key] = nested2.getString(key)
-                        // set the current map with key "5" onto outputMap
-                        outputMap["5"] = currentMap
-                    }
-                }
-                // break out of the loop, got the needed question to change
-                break
-            } else {
-                val id = posts2.getString(i)
-                // see if the text matches with the id, if it does this is the question to edit
-                if (id == text) {
-                    // add to outputMap with key being the number, and setting the current value
-                    outputMap[i] = posts.getString(i)
-                    break
-                }
-            }
+    // Find matching key
+    var ok: String = "0"
+    for (i in posts2.keys()) {
+        if (posts2[i] == text) {
+            ok = i
         }
-
-        return "0"
-
-    } catch (e: Exception) {
-        // had issues with runtime occasionally at the start with values constantly being printed, seemed to be solved but i'll keep it here
-        Log.e("getIdError", "Runtime exception: ${e.message}", e)
-        return "Error"
     }
+
+    val result = mutableMapOf<String, String>()
+    val newMap: Map<String, JsonElement> = getUserAnswers()
+    for ((key, value) in newMap) {
+        if (key == "5" && "Code" in text) {
+            result["5"] = value.toString()
+            break
+        } else if (key == "12" && ("Shelter" in text || "Place" in text)) {
+            result["12"] = value.toString()
+            break
+        } else if (key == "14" && ("Legal" in text || "Protection" in text)) {
+            result["14"] = value.toString()
+            break
+        } else if (key == "15" && ("Equipment" in text || "Safety" in text)) {
+            result["15"] = value.toString()
+            break
+        }
+        else if (key == ok) {
+            result[key] = value.toString()
+            break
+        }
+    }
+
+    return result
 }
+
 
 
 // this function is the TopBar, taking in the scope and state of menu bar
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
-fun TopBar(scope: CoroutineScope, drawerState: DrawerState ) {
+fun TopBar(scope: CoroutineScope, drawerState: DrawerState, navController: NavHostController ) {
     CenterAlignedTopAppBar(
         title = {
             // display the logo image in the center of the top bar
@@ -571,7 +673,7 @@ fun TopBar(scope: CoroutineScope, drawerState: DrawerState ) {
         },
         actions = {
             // placeholder for a settings icon on the right side (does nothing for now)
-            IconButton(onClick = { /* erm */ }) {
+            IconButton(onClick = { navController.navigate("settings_page") }) {
                 Icon(
                     imageVector = Icons.Outlined.Settings,
                     contentDescription = "Settings",

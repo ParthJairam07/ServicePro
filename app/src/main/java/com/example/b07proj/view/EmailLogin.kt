@@ -41,9 +41,9 @@ import kotlinx.coroutines.launch
 
 // Renders for the email login page
 @Composable
-fun EmailLogin(navController: NavHostController) {
+fun EmailLogin(navController: NavHostController, nextPage: String) {
     // Call the UIEmailLogin() function which loads the full UI onto the app
-    UIEmailLogin(navController)
+    UIEmailLogin(navController, nextPage)
 }
 
 // Define a custom TextField color scheme to be reused across the app.
@@ -61,7 +61,7 @@ private val AppTextInputColors: TextFieldColors
 // Create a function for the UI of the login
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
-fun UIEmailLogin(navController: NavHostController) {
+fun UIEmailLogin(navController: NavHostController, nextPage: String) {
     val context = LocalContext.current
     val coroutineScope = rememberCoroutineScope()
 
@@ -70,7 +70,7 @@ fun UIEmailLogin(navController: NavHostController) {
             view = object : SignUpView {
                 override fun onSignUpSuccess() {
                     // Navigate and clear the back stack so user can't go back to login
-                    navController.navigate("storagePage") {
+                    navController.navigate(nextPage) {
                         popUpTo(navController.graph.startDestinationId) {
                             inclusive = true
                         }
