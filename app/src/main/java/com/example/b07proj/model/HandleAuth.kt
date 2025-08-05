@@ -11,14 +11,14 @@ import com.google.firebase.ktx.Firebase
  */
 object HandleAuth {
 
-    private val auth: FirebaseAuth = Firebase.auth
+    val auth: FirebaseAuth = Firebase.auth
 
     /**
      * Holds the UUID of the currently logged-in user.
      * It is null if no one is logged in.
      */
     var currentUserUuid: String? = null
-        private set
+        set
 
     // When this object is first created, check if a user is already signed in from a previous session.
     init {

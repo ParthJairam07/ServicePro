@@ -103,5 +103,11 @@ dependencies {
     testImplementation("org.mockito.kotlin:mockito-kotlin:5.2.1") // Or the latest version
     testImplementation(kotlin("test"))
 
+    // MockK for mocking Kotlin singletons
+    testImplementation("io.mockk:mockk:1.13.10")
+
+    // Kluent for assertions
+    testImplementation("org.amshove.kluent:kluent-android:1.68")
+
 
 }

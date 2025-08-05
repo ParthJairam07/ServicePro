@@ -64,7 +64,7 @@ class AuthPresenter (
         )
     }
 
-    private fun isValidEmail(email: String): Boolean {
+    fun isValidEmail(email: String): Boolean {
         return android.util.Patterns.EMAIL_ADDRESS.matcher(email).matches()
     }
 }

@@ -12,9 +12,6 @@ import kotlinx.coroutines.flow.asStateFlow
 class DocumentPresenter(
     private val repository: DocumentRepository = DocumentRepository()
 ) {
-    // The scope is still useful for other tasks, but not strictly needed for the repository calls anymore.
-    private val scope = CoroutineScope(Dispatchers.Main)
-
     private val _isLoading = MutableStateFlow(false)
     val isLoading: StateFlow<Boolean> = _isLoading.asStateFlow()
 
@@ -44,7 +41,6 @@ class DocumentPresenter(
                 // The view can show a Toast.
                 _isLoading.value = false
             }
-            // You could add another StateFlow here to signal success/failure to the UI for a Toast
         }
     }
 
