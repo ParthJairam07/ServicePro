@@ -92,9 +92,9 @@ fun EmergencyContactPage(navController: NavHostController) {
                 showEmptyState = false
             }
 
-            override fun onContactDeleted(contactId: String) {
+            override fun onDataItemDeleted(dataItemId: String) {
                 // when we deleted a contact, remove that contact off the list and update
-                val updatedList = contacts.filterNot { it.id == contactId }
+                val updatedList = contacts.filterNot { it.id == dataItemId }
                 contacts = updatedList
                 if (updatedList.isEmpty()) {
                     showEmptyState = true
@@ -106,7 +106,7 @@ fun EmergencyContactPage(navController: NavHostController) {
     DisposableEffect(presenter) {
         presenter.view = view
         // Load data when the view is ready
-        presenter.loadContacts(Categories.EMERGENCY_CONTACTS, EmergencyContact::class.java)
+        presenter.loadDataItems(Categories.EMERGENCY_CONTACTS, EmergencyContact::class.java)
         onDispose {
             presenter.onViewDestroyed()
         }
@@ -162,7 +162,7 @@ fun EmergencyContactPage(navController: NavHostController) {
                             ContactCard(
                                 contact = contact,
                                 onDelete = {
-                                    presenter.deleteContact(Categories.EMERGENCY_CONTACTS, contact.id)
+                                    presenter.deleteDataItem(Categories.EMERGENCY_CONTACTS, contact.id)
                                 },
                                 // if we are editing pass in the contact id associated with it
                                 onEdit = {

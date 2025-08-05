@@ -26,7 +26,7 @@ class ViewContactsPresenter<T>(var view: ViewDataItemContract.View<T>?) : ViewDa
     // the user uid
     private val userUid : String? get() = auth.currentUser?.uid
 
-    override fun loadContacts(category: Categories, itemClass: Class<T>) {
+    override fun loadDataItems(category: Categories, itemClass: Class<T>) {
         // start showing we are currently loading in contacts
         view?.showLoading()
         // get current user of whoever auth
@@ -42,7 +42,7 @@ class ViewContactsPresenter<T>(var view: ViewDataItemContract.View<T>?) : ViewDa
 
         if (categoryCollection == null) {
             view?.displayError("Error getting data item: Invalid category")
-            return;
+            return
         }
 
         contacts.collection("users")
@@ -70,7 +70,7 @@ class ViewContactsPresenter<T>(var view: ViewDataItemContract.View<T>?) : ViewDa
             }
     }
     // delete contact based on contactId
-    override fun deleteContact(categories: Categories, contactId: String) {
+    override fun deleteDataItem(categories: Categories, dataItemId: String) {
         // auth checking
         val currentUserId = userUid
         if (currentUserId == null) {
@@ -78,7 +78,7 @@ class ViewContactsPresenter<T>(var view: ViewDataItemContract.View<T>?) : ViewDa
             return
         }
         // if we didn't get a proper id display error
-        if (contactId.isEmpty()) {
+        if (dataItemId.isEmpty()) {
             view?.displayError("Invalid id for item")
             return
         }
@@ -87,16 +87,16 @@ class ViewContactsPresenter<T>(var view: ViewDataItemContract.View<T>?) : ViewDa
 
         if (categoryCollection == null) {
             view?.displayError("Error getting data item: Invalid category")
-            return;
+            return
         }
 
         // get specific document to delete
         contacts.collection("users").document(currentUserId)
-            .collection(categoryCollection).document(contactId)
+            .collection(categoryCollection).document(dataItemId)
             .delete()
             .addOnSuccessListener {
                 // tell view that the contact is deleted
-                view?.onContactDeleted(contactId)
+                view?.onDataItemDeleted(dataItemId)
             }
             .addOnFailureListener { exception ->
                 view?.displayError("Error deleting data item: ${exception.message}")

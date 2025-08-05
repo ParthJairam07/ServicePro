@@ -46,7 +46,9 @@ class AddDataItemPresenterTest {
 
     @Before
     fun setUp() {
+        // initialize all mock objects
         MockitoAnnotations.openMocks(this)
+
         mockedAuth = Mockito.mockStatic(FirebaseAuth::class.java)
         mockedFirestore = Mockito.mockStatic(FirebaseFirestore::class.java)
 
@@ -182,7 +184,7 @@ class AddDataItemPresenterTest {
 }
 
 // mock addOnSuccessListener
-private fun <T> Task<T>.mockSuccess(result: T?): Task<T> {
+fun <T> Task<T>.mockSuccess(result: T?): Task<T> {
 
     whenever(this.isSuccessful).thenReturn(true)
 
@@ -201,7 +203,7 @@ private fun <T> Task<T>.mockSuccess(result: T?): Task<T> {
     return this
 }
 
-private fun <T> Task<T>.mockFailure(exception: Exception): Task<T> {
+fun <T> Task<T>.mockFailure(exception: Exception): Task<T> {
     whenever(this.isSuccessful).thenReturn(false)
     whenever(this.result).thenReturn(null)
     whenever(this.exception).thenReturn(exception)

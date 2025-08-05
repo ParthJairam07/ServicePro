@@ -86,9 +86,9 @@ fun MedicationPage(navController: NavHostController) {
                 errorMessage = message
                 showEmptyState = false
             }
-            override fun onContactDeleted(contactId: String) {
+            override fun onDataItemDeleted(dataItemId: String) {
                 // when we deleted a contact, remove that contact off the list and update
-                val updatedList = medications.filterNot { it.id == contactId }
+                val updatedList = medications.filterNot { it.id == dataItemId }
                 medications = updatedList
                 if (updatedList.isEmpty()) {
                     showEmptyState = true
@@ -99,7 +99,7 @@ fun MedicationPage(navController: NavHostController) {
     DisposableEffect(presenter) {
         presenter.view = view
         // Load data when the view is ready
-        presenter.loadContacts(Categories.MEDICATIONS, Medication::class.java)
+        presenter.loadDataItems(Categories.MEDICATIONS, Medication::class.java)
         onDispose {
             presenter.onViewDestroyed()
         }
@@ -151,7 +151,7 @@ fun MedicationPage(navController: NavHostController) {
                             MedicationCard(
                                 medication = contact,
                                 onDelete = {
-                                    presenter.deleteContact(Categories.MEDICATIONS, contact.id)
+                                    presenter.deleteDataItem(Categories.MEDICATIONS, contact.id)
                                 },
                                 // if we are editing pass in the contact id associated with it
                                 onEdit = {

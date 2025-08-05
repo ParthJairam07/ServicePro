@@ -90,9 +90,9 @@ fun SafeLocationPage(navController: NavHostController) {
                 showEmptyState = false
             }
 
-            override fun onContactDeleted(contactId: String) {
+            override fun onDataItemDeleted(dataItemId: String) {
                 // when we deleted a contact, remove that contact off the list and update
-                val updatedList = locations.filterNot { it.id == contactId }
+                val updatedList = locations.filterNot { it.id == dataItemId }
                 locations = updatedList
                 if (updatedList.isEmpty()) {
                     showEmptyState = true
@@ -105,7 +105,7 @@ fun SafeLocationPage(navController: NavHostController) {
     DisposableEffect(presenter) {
         presenter.view = view
         // Load data when the view is ready
-        presenter.loadContacts(Categories.SAFE_LOCATIONS, SafeLocation::class.java)
+        presenter.loadDataItems(Categories.SAFE_LOCATIONS, SafeLocation::class.java)
         onDispose {
             presenter.onViewDestroyed()
         }
@@ -155,7 +155,7 @@ fun SafeLocationPage(navController: NavHostController) {
                             LocationCard(
                                 location = contact,
                                 onDelete = {
-                                    presenter.deleteContact(Categories.SAFE_LOCATIONS, contact.id)
+                                    presenter.deleteDataItem(Categories.SAFE_LOCATIONS, contact.id)
                                 },
                                 // if we are editing pass in the contact id associated with it
                                 onEdit = {
