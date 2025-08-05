@@ -9,7 +9,7 @@ import com.google.firebase.ktx.Firebase
 /**
  * A singleton object to manage Firebase Authentication and the current user session.
  */
-object HandleAuth {
+object HandleAuth : IAuthService{
 
     val auth: FirebaseAuth = Firebase.auth
 
@@ -25,7 +25,7 @@ object HandleAuth {
         currentUserUuid = auth.currentUser?.uid
     }
 
-    fun signUp(
+    override fun signUp(
         email: String,
         password: String,
         onSuccess: () -> Unit,
@@ -43,7 +43,7 @@ object HandleAuth {
             }
     }
 
-    fun loginWithEmail(
+    override fun loginWithEmail(
         email: String,
         password: String,
         onSuccess: () -> Unit,
@@ -61,17 +61,14 @@ object HandleAuth {
             }
     }
 
-    /**
-     * A function for your PIN login flow.
-     * You call this after the PIN has been successfully verified.
-     */
+
     fun loginWithPin(uuid: String) {
         // Here, we trust the PIN check was successful and we simply set the user session.
         currentUserUuid = uuid
         Log.d("HandleAuth", "User session started via PIN for UUID: $currentUserUuid")
     }
 
-    fun signInWithGoogle(credential: AuthCredential, onSuccess: () -> Unit, onFailure: (String) -> Unit) {
+    override fun signInWithGoogle(credential: AuthCredential, onSuccess: () -> Unit, onFailure: (String) -> Unit) {
         auth.signInWithCredential(credential)
             .addOnCompleteListener { task ->
                 if (task.isSuccessful) {
