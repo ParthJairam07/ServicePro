@@ -22,14 +22,17 @@ import androidx.compose.ui.tooling.preview.Preview
 import androidx.navigation.compose.rememberNavController
 import androidx.compose.ui.draw.scale
 import kotlinx.coroutines.launch
-
+import androidx.compose.foundation.rememberScrollState
+import androidx.compose.foundation.verticalScroll
 
 
 @Composable
 fun SafetyPlanQuizPage1(navController: NavHostController) {
     val context = LocalContext.current
     val presenter = remember { QuizPresenter() }
-    SafetyPlanQuizScreen(navController, presenter)
+    LoggedInTopBar(navController) {
+        SafetyPlanQuizScreen(navController, presenter)
+    }
 }
 
 @Composable
@@ -42,52 +45,19 @@ fun SafetyPlanQuizScreen(navController: NavHostController, presenter: QuizPresen
     val quizData = presenter.getQuizData(LocalContext.current)
     val questions = quizData.questions.Warmup
 
+    // Create a scroll state to remember the scroll position
+    val scrollState = rememberScrollState()
+
     Scaffold(
-        topBar = {
-            Row(
-                verticalAlignment = Alignment.CenterVertically,
-                horizontalArrangement = Arrangement.SpaceBetween,
-                modifier = Modifier
-                    .padding(horizontal = 24.dp)
-                    .padding(vertical = 12.dp)
-                    .padding(top = 24.dp)
-                    .fillMaxWidth()
-            ) {
-                Text("Logo goes here!")
-                Row {
-                    Button(
-                        onClick = {},
-                        colors = ButtonDefaults.buttonColors(containerColor = Color.Transparent),
-                        contentPadding = PaddingValues(0.dp),
-                        modifier = Modifier.size(36.dp, 32.dp)
-                    ) {
-                        Icon(
-                            imageVector = Icons.Outlined.Settings,
-                            contentDescription = "Settings",
-                            tint = BackgroundColor
-                        )
-                    }
-                    Button(
-                        onClick = {},
-                        colors = ButtonDefaults.buttonColors(containerColor = Color.Transparent),
-                        contentPadding = PaddingValues(0.dp),
-                        modifier = Modifier.size(36.dp, 32.dp)
-                    ) {
-                        Icon(
-                            imageVector = Icons.Outlined.Person,
-                            contentDescription = "Profile",
-                            tint = BackgroundColor
-                        )
-                    }
-                }
-            }
-        }
+
     ) { padding ->
         Column(
             modifier = Modifier
                 .fillMaxSize()
                 .background(Color.White)
                 .padding(padding)
+                // Apply the verticalScroll modifier
+                .verticalScroll(scrollState)
                 .padding(horizontal = 16.dp),
             horizontalAlignment = Alignment.Start
         ) {
@@ -138,7 +108,6 @@ fun SafetyPlanQuizScreen(navController: NavHostController, presenter: QuizPresen
                                 }
                             }
                         )
-                        // You can add more types here if needed like "checkbox", "date"
                         else -> Text("Unsupported question type: ${question.type}")
                     }
 
@@ -196,8 +165,6 @@ fun SafetyPlanQuizScreen(navController: NavHostController, presenter: QuizPresen
         }
     }
 }
-
-
 
 @Preview(showBackground = true, name = "Safety Plan Quiz Preview")
 @Composable
