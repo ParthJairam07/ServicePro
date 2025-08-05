@@ -2,6 +2,7 @@ package com.example.b07proj.view
 
 import androidx.compose.foundation.BorderStroke
 import androidx.compose.foundation.layout.Arrangement
+import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.PaddingValues
 import androidx.compose.foundation.layout.Row
@@ -48,53 +49,53 @@ fun HomePage(navController: NavHostController) {
 
 @Composable
 fun UIHomePage(navController: NavHostController) {
-    LoggedInTopBar(
-        navController
-    ){
-        Column(
-            modifier = Modifier
-                .fillMaxSize(),
-            horizontalAlignment = Alignment.CenterHorizontally,
-        ) {
-            ScreenHeaderTop("Welcome Back")
-
-
-            Row(
+    LoggedInTopBar(navController) {
+        Box(modifier = Modifier.fillMaxSize()) {
+            Column(
                 modifier = Modifier
-                    .padding(top = 16.dp)
-                    .fillMaxWidth(),
-                horizontalArrangement = Arrangement.SpaceEvenly
-            )
-            {
-                Column {
-                    HomePageButton(
-                        "View Your Plan",
-                        Icons.Outlined.Checklist,
-                        navController,
-                        "safety_plan_tips"
-                    )
+                    .fillMaxSize()
+                    .padding(bottom = 70.dp), // Add space to not overlap exit button
+                horizontalAlignment = Alignment.CenterHorizontally,
+            ) {
+                ScreenHeaderTop("Welcome Back")
 
-                    Spacer(modifier = Modifier.size(32.dp))
-                    HomePageButton(
-                        "Access Storage",
-                        Icons.Outlined.Description,
-                        navController,
-                        "storagePage"
-                    )
-                }
-                Column {
-                    HomePageButton(
-                        "Get Local Support",
-                        Icons.Outlined.Support,
-                        navController,
-                        "direct_links"
-                    )
+                Row(
+                    modifier = Modifier
+                        .padding(top = 16.dp)
+                        .fillMaxWidth(),
+                    horizontalArrangement = Arrangement.SpaceEvenly
+                ) {
+                    Column {
+                        HomePageButton(
+                            "View Your Plan",
+                            Icons.Outlined.Checklist,
+                            navController,
+                            "safety_plan_tips"
+                        )
 
+                        Spacer(modifier = Modifier.size(32.dp))
+
+                        HomePageButton(
+                            "Access Storage",
+                            Icons.Outlined.Description,
+                            navController,
+                            "storagePage"
+                        )
+                    }
+                    Column {
+                        HomePageButton(
+                            "Get Local Support",
+                            Icons.Outlined.Support,
+                            navController,
+                            "direct_links"
+                        )
+                    }
                 }
             }
         }
     }
 }
+
 
 @Composable
 fun HomePageButton(action: String, icon: ImageVector, navController: NavHostController, goTo: String ) {
@@ -142,6 +143,7 @@ fun HomePageButton(action: String, icon: ImageVector, navController: NavHostCont
             )
         }
     }
+
 }
 
 

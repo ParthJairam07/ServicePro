@@ -34,7 +34,9 @@ fun SafetyPlanQuizPage2(navController: NavHostController) {
         navController.navigate("login")
         return
     }
-    SafetyPlanQuizScreenBranch(navController, presenter)
+    LoggedInTopBar(navController) {
+        SafetyPlanQuizScreenBranch(navController, presenter)
+    }
 }
 
 @Composable
@@ -95,45 +97,6 @@ fun SafetyPlanQuizScreenBranch(navController: NavHostController, presenter: Quiz
 
     Scaffold(
         snackbarHost = { SnackbarHost(snackbarHostState) },
-        topBar = {
-            Row(
-                verticalAlignment = Alignment.CenterVertically,
-                horizontalArrangement = Arrangement.SpaceBetween,
-                modifier = Modifier
-                    .padding(horizontal = 24.dp)
-                    .padding(vertical = 12.dp)
-                    .padding(top = 24.dp)
-                    .fillMaxWidth()
-            ) {
-                Text("Logo goes here!")
-                Row {
-                    Button(
-                        onClick = {},
-                        colors = ButtonDefaults.buttonColors(containerColor = Color.Transparent),
-                        contentPadding = PaddingValues(0.dp),
-                        modifier = Modifier.size(36.dp, 32.dp)
-                    ) {
-                        Icon(
-                            imageVector = Icons.Outlined.Settings,
-                            contentDescription = "Settings",
-                            tint = BackgroundColor
-                        )
-                    }
-                    Button(
-                        onClick = {},
-                        colors = ButtonDefaults.buttonColors(containerColor = Color.Transparent),
-                        contentPadding = PaddingValues(0.dp),
-                        modifier = Modifier.size(36.dp, 32.dp)
-                    ) {
-                        Icon(
-                            imageVector = Icons.Outlined.Person,
-                            contentDescription = "Profile",
-                            tint = BackgroundColor
-                        )
-                    }
-                }
-            }
-        }
     ) { padding ->
         Column(
             modifier = Modifier
@@ -511,9 +474,4 @@ fun SafetyPlanQuizScreenBranch(navController: NavHostController, presenter: Quiz
             }
         }
     }
-}
-
-@Composable
-fun SafetyPlanQuizPage2Preview() {
-    SafetyPlanQuizPage2(navController = rememberNavController())
 }

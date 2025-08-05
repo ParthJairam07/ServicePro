@@ -84,7 +84,7 @@ fun UIEmailLogin(navController: NavHostController, nextPage: String) {
         )
     }
 
-    // --- Backend Logic: Launcher for Google Sign-In ---
+    // Backend Logic: Launcher for Google Sign-In
     val launcher = rememberLauncherForActivityResult(
         contract = ActivityResultContracts.StartActivityForResult()
     ) { result ->
@@ -118,8 +118,7 @@ fun UIEmailLogin(navController: NavHostController, nextPage: String) {
             )
         },
         floatingActionButton = {
-            // Assuming ExitButton is defined elsewhere
-            // ExitButton(modifier = Modifier.padding(5.dp))
+            ExitButton()
         }
     ) { padding ->
         Column(

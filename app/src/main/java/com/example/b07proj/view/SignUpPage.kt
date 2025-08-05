@@ -124,10 +124,7 @@ fun UISignUpPage(navController: NavHostController) {
             )
         },
         floatingActionButton = {
-            ExitButton(
-                modifier = Modifier.padding(5.dp),
-                navController = navController
-            )
+            ExitButton()
         }
     ) { padding ->
         Column(
@@ -304,7 +301,6 @@ fun PasswordInput(password: String, onPasswordChange: (String) -> Unit) {
 
 @Composable
 fun TermsSection(email: String, password: String, presenter: AuthPresenter) {
-    var selectedOption by remember { mutableStateOf(false) }
     var selectedOption1 by remember { mutableStateOf(false) }
     val backgroundAccentRadio = accentRadioColors()
     val context = LocalContext.current

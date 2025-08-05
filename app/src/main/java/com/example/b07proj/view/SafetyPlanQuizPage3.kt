@@ -33,7 +33,9 @@ fun SafetyPlanQuizPage3(navController: NavHostController) {
         navController.navigate("login")
         return
     }
-    SafetyPlanQuizScreenFollowUp(navController, presenter)
+    LoggedInTopBar(navController) {
+        SafetyPlanQuizScreenFollowUp(navController, presenter)
+    }
 }
 
 @Composable
@@ -45,46 +47,7 @@ fun SafetyPlanQuizScreenFollowUp(navController: NavHostController, presenter: Qu
     val question = quizData.questions.FollowUp?.get("question1")
 
     Scaffold(
-        snackbarHost = { SnackbarHost(snackbarHostState) },
-        topBar = {
-            Row(
-                verticalAlignment = Alignment.CenterVertically,
-                horizontalArrangement = Arrangement.SpaceBetween,
-                modifier = Modifier
-                    .padding(horizontal = 24.dp)
-                    .padding(vertical = 12.dp)
-                    .padding(top = 24.dp)
-                    .fillMaxWidth()
-            ) {
-                Text("Logo goes here!")
-                Row {
-                    Button(
-                        onClick = {},
-                        colors = ButtonDefaults.buttonColors(containerColor = Color.Transparent),
-                        contentPadding = PaddingValues(0.dp),
-                        modifier = Modifier.size(36.dp, 32.dp)
-                    ) {
-                        Icon(
-                            imageVector = Icons.Outlined.Settings,
-                            contentDescription = "Settings",
-                            tint = BackgroundColor
-                        )
-                    }
-                    Button(
-                        onClick = {},
-                        colors = ButtonDefaults.buttonColors(containerColor = Color.Transparent),
-                        contentPadding = PaddingValues(0.dp),
-                        modifier = Modifier.size(36.dp, 32.dp)
-                    ) {
-                        Icon(
-                            imageVector = Icons.Outlined.Person,
-                            contentDescription = "Profile",
-                            tint = BackgroundColor
-                        )
-                    }
-                }
-            }
-        }
+        snackbarHost = { SnackbarHost(snackbarHostState) }
     ) { padding ->
         Column(
             modifier = Modifier
