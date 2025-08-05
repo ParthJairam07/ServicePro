@@ -4,8 +4,9 @@ import android.content.Context
 import com.example.b07proj.model.QuizData
 import com.example.b07proj.model.QuizSaveData
 
-class QuizPresenter {
-    private val repository = QuizSaveData()
+class QuizPresenter(
+    private val repository: QuizSaveData = QuizSaveData()
+) {
     var prefillMap: Map<String, Any>? = null
 
     fun getQuizData(context: Context): QuizData {

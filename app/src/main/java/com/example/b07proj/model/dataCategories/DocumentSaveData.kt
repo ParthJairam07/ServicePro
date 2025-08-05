@@ -15,28 +15,28 @@ data class DocumentData(
 
 class DocumentRepository {
 
-    private suspend fun uploadFileToStorage(fileUri: Uri, documentName: String, onComplete: (String?) -> Unit) {
-        val user = FirebaseAuth.getInstance().currentUser
-        if (user == null) {
-            Log.e("FirebaseStorage", "Upload failed: User is not authenticated.")
-            onComplete(null)
-            return
-        }
-
-        val storageRef = FirebaseStorage.getInstance().reference
-        val safeDocumentName = documentName.replace(Regex("[^a-zA-Z0-9.-]"), "_")
-        val fileRef = storageRef.child("documents/${user.uid}/$safeDocumentName")
-
-        try {
-            fileRef.putFile(fileUri).await()
-            val downloadUrl = fileRef.downloadUrl.await().toString()
-            Log.d("FirebaseStorage", "File uploaded successfully: $downloadUrl")
-            onComplete(downloadUrl)
-        } catch (e: Exception) {
-            Log.e("FirebaseStorage", "Error uploading file '$documentName'", e)
-            onComplete(null)
-        }
-    }
+//    private suspend fun uploadFileToStorage(fileUri: Uri, documentName: String, onComplete: (String?) -> Unit) {
+//        val user = FirebaseAuth.getInstance().currentUser
+//        if (user == null) {
+//            Log.e("FirebaseStorage", "Upload failed: User is not authenticated.")
+//            onComplete(null)
+//            return
+//        }
+//
+//        val storageRef = FirebaseStorage.getInstance().reference
+//        val safeDocumentName = documentName.replace(Regex("[^a-zA-Z0-9.-]"), "_")
+//        val fileRef = storageRef.child("documents/${user.uid}/$safeDocumentName")
+//
+//        try {
+//            fileRef.putFile(fileUri).await()
+//            val downloadUrl = fileRef.downloadUrl.await().toString()
+//            Log.d("FirebaseStorage", "File uploaded successfully: $downloadUrl")
+//            onComplete(downloadUrl)
+//        } catch (e: Exception) {
+//            Log.e("FirebaseStorage", "Error uploading file '$documentName'", e)
+//            onComplete(null)
+//        }
+//    }
 
     fun deleteDocument(documentName: String, onResult: (Boolean) -> Unit) {
         val user = FirebaseAuth.getInstance().currentUser
