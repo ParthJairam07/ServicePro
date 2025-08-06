@@ -36,9 +36,11 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.font.FontWeight
+import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import androidx.navigation.NavHostController
+import androidx.navigation.compose.rememberNavController
 import com.example.b07proj.R
 import com.example.b07proj.model.dataCategories.Medication
 import com.example.b07proj.presenter.dataItems.Categories
@@ -53,6 +55,7 @@ fun RenderMedicationPage(navController: NavHostController) {
 
 @Composable
 fun MedicationPage(navController: NavHostController) {
+
     var isLoading by remember { mutableStateOf(true) }
     var medications by remember { mutableStateOf<List<Medication>>(emptyList()) }
     var errorMessage by remember { mutableStateOf<String?>(null) }
@@ -105,8 +108,11 @@ fun MedicationPage(navController: NavHostController) {
         }
     }
     LoggedInTopBar(navController) {
+        // header
+        ScreenHeaderTop(stringResource(R.string.MedicationsHeader))
+
         Box(
-            modifier = Modifier.fillMaxSize().padding(16.dp),
+            modifier = Modifier.fillMaxWidth(),
             contentAlignment = Alignment.Center
         ) {
             when {
@@ -115,10 +121,9 @@ fun MedicationPage(navController: NavHostController) {
                 errorMessage != null -> Text("Error: $errorMessage")
                 showEmptyState -> {
                     Column(
-                        modifier = Modifier.padding(5.dp).fillMaxSize(),
+                        modifier = Modifier.fillMaxWidth(),
                         verticalArrangement = Arrangement.spacedBy(12.dp),
                         horizontalAlignment = Alignment.CenterHorizontally
-
                     ) {
                         Text(
                             "You have not added any medication yet.",
@@ -130,22 +135,21 @@ fun MedicationPage(navController: NavHostController) {
                 else -> {
                     // this means we have a contact list (at least 1)
                     LazyColumn(
-                        modifier = Modifier.padding(5.dp).fillMaxSize(),
-                        contentPadding = PaddingValues(16.dp),
+                        modifier = Modifier.fillMaxWidth(),
                         verticalArrangement = Arrangement.spacedBy(12.dp),
                         horizontalAlignment = Alignment.CenterHorizontally
                     ) {
                         // header
-                        item {
-                            Text(
-                                text = stringResource(R.string.MedicationsHeader),
-                                color = backgroundAccent,
-                                fontSize = 30.sp,
-                                fontWeight = FontWeight.Bold,
-                                fontFamily = myFont
-                            )
-                            Spacer(modifier = Modifier.height(16.dp))
-                        }
+//                        item {
+//                            Text(
+//                                text = stringResource(R.string.MedicationsHeader),
+//                                color = backgroundAccent,
+//                                fontSize = 30.sp,
+//                                fontWeight = FontWeight.Bold,
+//                                fontFamily = myFont
+//                            )
+//                            Spacer(modifier = Modifier.height(16.dp))
+//                        }
                         // list of contacts spawn here, each contact in contacts we have a ContactCard for
                         items(medications, key = {it.id})  { contact ->
                             MedicationCard(
@@ -167,6 +171,7 @@ fun MedicationPage(navController: NavHostController) {
                 }
             }
         }
+        BackButton(navController)
     }
 }
 
@@ -245,4 +250,12 @@ fun MedicationCard(medication: Medication, onDelete: () -> Unit, onEdit: () -> U
             }
         }
     }
+}
+
+
+
+@Preview(showBackground = true, name = "Medication Page")
+@Composable
+fun MedicationPagePreview() {
+    MedicationPage(rememberNavController())
 }

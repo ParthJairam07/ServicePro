@@ -3,10 +3,12 @@ package com.example.b07proj.view
 import android.util.Log
 import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.*
+import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.foundation.text.KeyboardOptions
 import androidx.compose.material3.*
 import androidx.compose.runtime.*
 import androidx.compose.ui.*
+import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.scale
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.text.*
@@ -197,8 +199,10 @@ fun FreeformQuestion2(question: Question, value: String, onValueChange: (String)
         label = { Text(label) },
         onValueChange = onValueChange,
         modifier = Modifier.fillMaxWidth(),
-        textStyle = TextStyle(fontFamily = myFont)
+        textStyle = TextStyle(fontFamily = myFont),
+        shape = RoundedCornerShape(16.dp),
     )
+    Spacer(modifier = Modifier.padding(bottom = 8.dp))
 }
 fun isPhoneNumberValid(phone: String): Boolean {
     return phone.all { it.isDigit() } && phone.length >= 7
@@ -229,7 +233,8 @@ fun EmailQuestion(question: Question, value: String, onValueChange: (String) -> 
             if (isError) {
                 Text(text = errorMessage, color = MaterialTheme.colorScheme.error)
             }
-        }
+        },
+        shape = RoundedCornerShape(16.dp),
     )
 }
 @Composable
@@ -252,7 +257,8 @@ fun PhoneNumberQuestion(question: Question, value: String, onValueChange: (Strin
             if (isError) {
                 Text(text = errorMessage, color = MaterialTheme.colorScheme.error)
             }
-        }
+        },
+        shape = RoundedCornerShape(16.dp),
     )
 }
 
@@ -270,7 +276,6 @@ fun QuizQuestion(text: String, required: Boolean = false) {
                 }
             }
         },
-        modifier = Modifier.padding(bottom = 8.dp)
     )
 }
 

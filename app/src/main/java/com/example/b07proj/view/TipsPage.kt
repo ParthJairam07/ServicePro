@@ -51,6 +51,8 @@ import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.size
 import androidx.compose.ui.text.font.Font
 import androidx.compose.ui.text.font.FontFamily
+import androidx.compose.ui.tooling.preview.Preview
+import androidx.navigation.compose.rememberNavController
 import com.example.b07proj.ui.theme.backgroundAccent
 import com.google.firebase.auth.FirebaseAuth
 import com.google.firebase.firestore.FirebaseFirestore
@@ -278,50 +280,45 @@ fun TipPage(navController: NavHostController) {
 
     }
 
-    Scaffold(
-        topBar = {
-            // ordered as a column for horizontal line below the header
-            Column {
-                TopAppBar(
-                    title = {
-                        // logo of the app
-                        Image(
-                            painter = painterResource(R.drawable.templogo) ,
-                            contentDescription = stringResource(id = R.string.logoDescription),
-                        )
-                    }
-                )
-                HorizontalDivider(
-                    color = Color.Gray,
-                    thickness = 0.5.dp
-                )
-            }
-        }, floatingActionButton = {
-            ExitButton(
-                modifier = Modifier
-                    .padding(5.dp)    // placement
-            )
-        }
-    ) { paddingValues ->
+    LoggedInTopBar(navController) {
+
+
+
+//    Scaffold(
+//        topBar = {
+//            // ordered as a column for horizontal line below the header
+//            Column {
+//                TopAppBar(
+//                    title = {
+//                        // logo of the app
+//                        Image(
+//                            painter = painterResource(R.drawable.templogo) ,
+//                            contentDescription = stringResource(id = R.string.logoDescription),
+//                        )
+//                    }
+//                )
+//                HorizontalDivider(
+//                    color = Color.Gray,
+//                    thickness = 0.5.dp
+//                )
+//            }
+//        }, floatingActionButton = {
+//            ExitButton(
+//                modifier = Modifier
+//                    .padding(5.dp)    // placement
+//            )
+//        }
+//    ) { paddingValues ->
+
+        // Header of UI
+        ScreenHeaderTop(stringResource(R.string.tipsHeader))
+
         // used to load all tips in a scrollable view (very similar to recycler view)
         LazyColumn(
-            modifier = Modifier.padding(paddingValues).fillMaxSize(),
-            contentPadding = PaddingValues(16.dp),
+            modifier = Modifier.fillMaxSize(),
             verticalArrangement = Arrangement.spacedBy(12.dp),
             horizontalAlignment = Alignment.CenterHorizontally
         ) {
-            item {
-                val myFont = FontFamily(Font(R.font.afacad))
-                Text(
-                    text = stringResource(R.string.tipsHeader),
-                    color = backgroundAccent,
-                    fontSize = 30.sp,
-                    fontWeight = FontWeight.Bold,
-                    fontFamily = myFont
-                )
-                Spacer(modifier = Modifier.height(16.dp))
-
-            }
             if (isLoading) {
                 // If we are loading, show a spinner.
                 item {
@@ -373,28 +370,15 @@ fun TipCard(tipAndTitle: TipAndTitle) {
         }
     }
 }
-@Composable
-fun BackButton(navController: NavHostController) {
-    Button(
-        onClick = {
-            navController.navigate("home_page")
-        },
-        colors = ButtonDefaults.buttonColors(containerColor = Primary40),
-    ) {
-        Image(
-            painter = painterResource(id = R.drawable.whitearrowgoback),
-            contentDescription = stringResource(id = R.string.arrow_content_description),
-            modifier = Modifier.size(16.dp)
-        )
-        Spacer(modifier = Modifier.width(12.dp))
-        Text(
-            text = stringResource(R.string.BackButtonText),
 
-            )
-    }
-}
 // used in navigation
 @Composable
 fun RenderTips(navController: NavHostController) {
     TipPage(navController)
+}
+
+@Preview
+@Composable
+fun TipPagePreview() {
+    TipPage(rememberNavController())
 }

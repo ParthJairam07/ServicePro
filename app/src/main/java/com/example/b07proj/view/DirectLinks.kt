@@ -71,16 +71,13 @@ fun DirectLinks(navController: NavHostController) {
             else -> {
                 // Column for all resources
                 Column(
-                    Modifier
-                        .fillMaxSize()
-                        .padding(bottom = 16.dp),
+                    Modifier.fillMaxSize(),
                     verticalArrangement = Arrangement.spacedBy(12.dp)
                 ) {
                     // Iterate through each resource and display it
                     resources.forEach { res ->
                         ResourceComposable(res, navController)
                     }
-                    Spacer(modifier = Modifier.padding(16.dp))
                     BackButton(navController)
                 }
             }

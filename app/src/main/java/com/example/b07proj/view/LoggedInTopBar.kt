@@ -60,10 +60,12 @@ import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.style.TextAlign
+import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import androidx.compose.ui.window.Dialog
 import androidx.navigation.NavHostController
+import androidx.navigation.compose.rememberNavController
 import com.example.b07proj.R
 import com.example.b07proj.presenter.QuizPresenter
 import com.example.b07proj.ui.theme.BackgroundColor
@@ -78,6 +80,8 @@ import org.json.JSONObject
 import kotlin.collections.mutableListOf
 import androidx.compose.material3.Button
 import androidx.compose.material3.ButtonDefaults
+import androidx.compose.ui.graphics.RectangleShape
+import androidx.compose.ui.graphics.Shape
 import androidx.core.net.toUri
 
 @Composable
@@ -205,6 +209,7 @@ fun LoggedInTopBar(navController: NavHostController, content: @Composable (Paddi
                                 .fillMaxSize()
                                 .padding(innerPadding)
                                 .padding(16.dp)
+                                .padding(horizontal = 32.dp)
                         ) {
                             content(innerPadding)
                         }
@@ -509,9 +514,11 @@ fun EditParsable(quizScreenTrigger: MutableState<Boolean>, innerPadding: Padding
                             Icon(
                                 imageVector = Icons.Filled.Edit,
                                 contentDescription = stringResource(R.string.editIcon),
-                                modifier = Modifier.align(Alignment.End).clickable {
-                                    editOk.value = true
-                                }
+                                modifier = Modifier
+                                    .align(Alignment.End)
+                                    .clickable {
+                                        editOk.value = true
+                                    }
                             )
                             if (editOk.value) {
                                 LaunchedEffect(Unit) {
@@ -585,10 +592,8 @@ fun TopBar(scope: CoroutineScope, drawerState: DrawerState, navController: NavHo
             )
         },
         navigationIcon = {
-            Icon(
-                imageVector = Icons.Filled.Menu,
-                contentDescription = stringResource(R.string.menuIcon),
-                modifier = Modifier.clickable {
+            IconButton(
+                onClick = {
                     scope.launch {
                         if (drawerState.isClosed) {
                             drawerState.open()
@@ -597,10 +602,19 @@ fun TopBar(scope: CoroutineScope, drawerState: DrawerState, navController: NavHo
                         }
                     }
                 }
-            )
+            ) {
+                Icon(
+                    imageVector = Icons.Filled.Menu,
+                    contentDescription = stringResource(R.string.menuIcon)
+                )
+            }
         },
         actions = {
-            IconButton(onClick = { navController.navigate("settings_page") }) {
+            IconButton(
+                onClick = { navController.navigate("settings_page") },
+                modifier = Modifier.padding(0.dp),
+                // make icon button have no padding or anyting (all comes from icon)
+            ) {
                 Icon(
                     imageVector = Icons.Outlined.Settings,
                     contentDescription = "Settings",
@@ -609,4 +623,10 @@ fun TopBar(scope: CoroutineScope, drawerState: DrawerState, navController: NavHo
             }
         }
     )
+}
+
+@Preview(showBackground = true, name = "Safety Plan Quiz Preview")
+@Composable
+fun LoggedInTopBarPreview() {
+    LoggedInTopBar(navController = rememberNavController()) {}
 }

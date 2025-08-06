@@ -64,20 +64,13 @@ fun DocumentPage(navController: NavHostController, presenter: DocumentPresenter)
         )
     }
 
+    // Header
+    ScreenHeaderTop("Documents")
+
     LazyColumn(
-        modifier = Modifier.fillMaxSize(),
-        contentPadding = PaddingValues(16.dp),
+        modifier = Modifier.fillMaxWidth(),
         verticalArrangement = Arrangement.spacedBy(12.dp)
     ) {
-        item {
-            Text(
-                text = "Documents",
-                style = MaterialTheme.typography.headlineLarge,
-                fontWeight = FontWeight.Bold
-            )
-            Spacer(modifier = Modifier.height(16.dp))
-        }
-
         //empty card when its loading
         if (isLoading && documents.isEmpty()) {
             item {
@@ -89,7 +82,6 @@ fun DocumentPage(navController: NavHostController, presenter: DocumentPresenter)
             item {
                 Text(
                     "No documents found. Add one to get started!",
-                    modifier = Modifier.padding(vertical = 24.dp)
                 )
             }
         } else {
@@ -116,6 +108,7 @@ fun DocumentPage(navController: NavHostController, presenter: DocumentPresenter)
             AddDocumentsButton(navController)
         }
     }
+    BackButton(navController)
 }
 
 
@@ -251,3 +244,4 @@ fun DeleteConfirmationDialog(
         }
     )
 }
+

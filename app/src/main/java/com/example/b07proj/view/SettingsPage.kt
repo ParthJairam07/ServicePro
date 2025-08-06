@@ -127,8 +127,6 @@ fun UISettingsPage(navController: NavHostController) {
                         shape = SegmentedButtonDefaults.itemShape(index = index, count = options.size),
                         onClick = {
                             selectedIndex = index
-                            println("$label was pressed")
-                            println(dayToTime[label]!!)
                             // First, update the remembered variable (so the UI reflects changes)
                             interval.longValue = dayToTime[label]!!
                             // Then, change the variables into saved preferences
@@ -215,6 +213,8 @@ fun UISettingsPage(navController: NavHostController) {
                 true // Has to be true for 24-hour format
             ).show()
         }
+        Spacer( modifier = Modifier.padding(top = 8.dp) )
+        BackButton(navController)
     }
 }
 

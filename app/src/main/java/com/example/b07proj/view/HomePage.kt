@@ -59,13 +59,14 @@ fun UIHomePage(navController: NavHostController) {
             ) {
                 ScreenHeaderTop("Welcome Back")
 
-                Row(
+                Column (
                     modifier = Modifier
                         .padding(top = 16.dp)
                         .fillMaxWidth(),
-                    horizontalArrangement = Arrangement.SpaceEvenly
+                    horizontalAlignment = Alignment.CenterHorizontally,
+                    verticalArrangement = Arrangement.SpaceBetween
                 ) {
-                    Column {
+                    Row {
                         HomePageButton(
                             "View Your Plan",
                             Icons.Outlined.Checklist,
@@ -82,7 +83,8 @@ fun UIHomePage(navController: NavHostController) {
                             "storagePage"
                         )
                     }
-                    Column {
+                    Spacer(modifier = Modifier.size(26.dp))
+                    Row {
                         HomePageButton(
                             "Get Local Support",
                             Icons.Outlined.Support,
@@ -107,8 +109,7 @@ fun HomePageButton(action: String, icon: ImageVector, navController: NavHostCont
         },
         border = BorderStroke(3.dp, Primary40),
         colors = ButtonDefaults.outlinedButtonColors(contentColor = Primary40),
-        modifier = Modifier.
-        size(width = 120.dp, height = 120.dp),
+        modifier = Modifier.size(width = 120.dp, height = 120.dp),
         contentPadding = PaddingValues(0.dp),
         shape = RoundedCornerShape(16.dp)
     )
