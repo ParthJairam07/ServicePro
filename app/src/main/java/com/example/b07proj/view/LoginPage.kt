@@ -19,6 +19,7 @@ import androidx.compose.material3.Scaffold
 import androidx.compose.material3.Text
 import androidx.compose.material3.TopAppBar
 import androidx.compose.material3.TopAppBarDefaults
+import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.scale
 import androidx.compose.ui.graphics.Color
@@ -71,14 +72,15 @@ fun UILogin(navController: NavController) {
                 .fillMaxSize()
                 .background(color = Primary40)
                 .padding(padding)
-                .padding(16.dp)
+                .padding(16.dp),
+            horizontalAlignment = Alignment.CenterHorizontally
         ) {
             // render the app title image and welcome text
             LoginTitle()
+            // render the login and signup buttons
+            LoginOptions(navController)
         }
 
-        // render the login and signup buttons
-        LoginOptions(navController)
     }
 }
 
@@ -88,22 +90,22 @@ fun UILogin(navController: NavController) {
 fun LoginTitle() {
     // set the fonts used for the UI in a variable
     val myFont = FontFamily(Font(R.font.afacad))
+    // set the title page text using the Text() element
+    Text(
+        modifier = Modifier.padding(top = 35.dp),
+        // create the text, font, size and color
+        text = stringResource(R.string.welcome_text),
+        fontFamily = myFont,
+        fontSize = 70.sp,
+        color = Color.White
+    )
 
     // create the title for the page through the Text() element and project image
     Image(
         // set the appropriate UI location, the image and description
-        modifier = Modifier.scale(2.0F).padding(start = 75.dp, top = 40.dp),
-        painter = painterResource(id = R.drawable.appimage),
+        modifier = Modifier.scale(1.8F).padding(top = 75.dp),
+        painter = painterResource(id = R.drawable.optionpageimage),
         contentDescription = stringResource(id = R.string.title_image),
-    )
-    // set the title page text using the Text() element
-    Text(
-        modifier = Modifier.padding(start = 100.dp, top = 20.dp),
-        // create the text, font, size and color
-        text = stringResource(R.string.welcome_text),
-        fontFamily = myFont,
-        fontSize = 50.sp,
-        color = Color.White
     )
 }
 
@@ -113,11 +115,12 @@ fun LoginOptions(navController: NavController) {
     // create a column to incorporate the buttons
     Column(
         // create the padding and the vertical arrangement for the columns
-        modifier = Modifier.padding(start = 70.dp, top = 650.dp),
+        modifier = Modifier.padding(top = 130.dp),
         verticalArrangement = Arrangement.spacedBy(20.dp)
     ) {
         // set the font value
         val myFont = FontFamily(Font(R.font.afacad))
+
 
         // create a button to navigate to the pin page if the user already has an account
         Button(
