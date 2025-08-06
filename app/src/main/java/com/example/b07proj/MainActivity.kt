@@ -47,7 +47,7 @@ class MainActivity : ComponentActivity() {
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         enableEdgeToEdge()
-
+        // used to handle auth
         val deepLinkDestination = intent.getStringExtra(DEEP_LINK_NEXT_SCREEN_KEY)
 
         setContent {

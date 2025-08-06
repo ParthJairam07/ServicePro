@@ -49,6 +49,7 @@ fun DocumentPage(navController: NavHostController, presenter: DocumentPresenter)
         presenter.fetchUserDocuments()
     }
 
+    // Show the delete confirmation dialog
     if (showDeleteDialog && documentToDelete != null) {
         DeleteConfirmationDialog(
             documentName = documentToDelete!!,
@@ -85,7 +86,7 @@ fun DocumentPage(navController: NavHostController, presenter: DocumentPresenter)
                 )
             }
         } else {
-
+            // documents card, each document is a row
             items(documents, key = { it.first }) { (name, data) ->
                 DocumentRowItem(
                     documentName = name,
@@ -102,7 +103,7 @@ fun DocumentPage(navController: NavHostController, presenter: DocumentPresenter)
             }
         }
 
-        // --- Add Document Button ---
+        // Add Document Button
         item {
             Spacer(modifier = Modifier.height(16.dp))
             AddDocumentsButton(navController)
@@ -112,6 +113,7 @@ fun DocumentPage(navController: NavHostController, presenter: DocumentPresenter)
 }
 
 
+// card for each document
 @Composable
 fun DocumentRowItem(
     documentName: String,
@@ -119,6 +121,7 @@ fun DocumentRowItem(
     onDownloadClick: () -> Unit,
     onDeleteClick: () -> Unit
 ) {
+
     Card(
         modifier = Modifier
             .fillMaxWidth(),
@@ -193,9 +196,7 @@ fun AddDocumentsButton(navController: NavHostController) {
     }
 }
 
-/**
- * NEW: Function to start a file download using Android's DownloadManager.
- */
+// function to start the download of the document user clicked
 private fun startDownload(
     context: Context,
     url: String,
@@ -203,6 +204,7 @@ private fun startDownload(
     description: String
 ) {
     try {
+        // sends a request to the download manager to start the download
         val request = DownloadManager.Request(Uri.parse(url))
             .setTitle(title)
             .setDescription(description)
@@ -219,12 +221,14 @@ private fun startDownload(
     }
 }
 
+// delete confirmation dialog composable
 @Composable
 fun DeleteConfirmationDialog(
     documentName: String,
     onConfirm: () -> Unit,
     onDismiss: () -> Unit
 ) {
+    // Create a dialog to confirm document deletion
     AlertDialog(
         onDismissRequest = onDismiss,
         title = { Text("Delete Document") },

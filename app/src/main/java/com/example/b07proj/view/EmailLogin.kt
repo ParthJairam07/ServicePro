@@ -217,6 +217,7 @@ fun LoginTitleText(myFont: FontFamily) {
     )
 }
 
+// for email input
 @Composable
 fun EmailInputField(email: String, onEmailChange: (String) -> Unit, myFont: FontFamily) {
     Row(

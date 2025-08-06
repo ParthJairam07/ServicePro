@@ -7,6 +7,7 @@ import com.google.firebase.firestore.FirebaseFirestore
 import com.google.firebase.storage.FirebaseStorage
 import kotlinx.coroutines.tasks.await
 
+// Represents a document with its metadata
 data class DocumentData(
     val documentDescription: String = "",
     val relevantDate: String = "",
@@ -15,30 +16,9 @@ data class DocumentData(
 
 class DocumentRepository {
 
-//    private suspend fun uploadFileToStorage(fileUri: Uri, documentName: String, onComplete: (String?) -> Unit) {
-//        val user = FirebaseAuth.getInstance().currentUser
-//        if (user == null) {
-//            Log.e("FirebaseStorage", "Upload failed: User is not authenticated.")
-//            onComplete(null)
-//            return
-//        }
-//
-//        val storageRef = FirebaseStorage.getInstance().reference
-//        val safeDocumentName = documentName.replace(Regex("[^a-zA-Z0-9.-]"), "_")
-//        val fileRef = storageRef.child("documents/${user.uid}/$safeDocumentName")
-//
-//        try {
-//            fileRef.putFile(fileUri).await()
-//            val downloadUrl = fileRef.downloadUrl.await().toString()
-//            Log.d("FirebaseStorage", "File uploaded successfully: $downloadUrl")
-//            onComplete(downloadUrl)
-//        } catch (e: Exception) {
-//            Log.e("FirebaseStorage", "Error uploading file '$documentName'", e)
-//            onComplete(null)
-//        }
-//    }
-
+    // Deletes a document from Firestore and Storage
     fun deleteDocument(documentName: String, onResult: (Boolean) -> Unit) {
+        // gets the current user
         val user = FirebaseAuth.getInstance().currentUser
         if (user == null) {
             Log.e("Repository", "Delete failed: User not authenticated.")
@@ -67,12 +47,10 @@ class DocumentRepository {
                 storageFileRef.delete()
                     .addOnSuccessListener {
                         Log.d("Storage", "File '$safeDocumentName' successfully deleted.")
-                        onResult(true) // FINAL SUCCESS
+                        onResult(true) // for success
                     }
                     .addOnFailureListener { e ->
                         Log.e("Storage", "Failed to delete file '$safeDocumentName'.", e)
-                        // The Firestore entry was deleted, but the file is now orphaned.
-                        // For simplicity, we report failure, but in a real app, you might log this for cleanup.
                         onResult(false)
                     }
             }
@@ -82,7 +60,7 @@ class DocumentRepository {
             }
     }
 
-
+    //function to upload a document to firestore and storage
     fun uploadAndSaveDocument(
         fileUri: Uri,
         documentName: String,
@@ -100,7 +78,9 @@ class DocumentRepository {
 
         //Get reference to the storage location
         val storageRef = FirebaseStorage.getInstance().reference
+        // Sanitize the document name for Firestore and Storage
         val safeDocumentName = documentName.replace(Regex("[^a-zA-Z0-9.-]"), "_")
+        // Create a reference to the file in Storage
         val fileRef = storageRef.child("documents/${user.uid}/$safeDocumentName")
 
         // Start the upload task

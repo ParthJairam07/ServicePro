@@ -12,24 +12,27 @@ import kotlinx.coroutines.flow.asStateFlow
 class DocumentPresenter(
     private val repository: DocumentRepository = DocumentRepository()
 ) {
+    // State flows for UI state
     private val _isLoading = MutableStateFlow(false)
     val isLoading: StateFlow<Boolean> = _isLoading.asStateFlow()
-
+    // State flow for user documents and upload status
     private val _userDocuments = MutableStateFlow<List<Pair<String, DocumentData>>>(emptyList())
     val userDocuments: StateFlow<List<Pair<String, DocumentData>>> = _userDocuments.asStateFlow()
 
     private val _uploadSuccess = MutableStateFlow<Boolean?>(null)
     val uploadSuccess: StateFlow<Boolean?> = _uploadSuccess.asStateFlow()
 
+    // Fetch user documents from the repository
     fun fetchUserDocuments() {
         _isLoading.value = true
-        // Call the simplified function and provide a callback
+        // get the user documents from the repository then update the state
         repository.getUserDocuments { documents ->
             _userDocuments.value = documents
             _isLoading.value = false
         }
     }
 
+    // Delete a document from the repository
     fun deleteDocument(documentName: String) {
         _isLoading.value = true
         repository.deleteDocument(documentName) { success ->
@@ -38,12 +41,11 @@ class DocumentPresenter(
                 fetchUserDocuments()
             } else {
                 // If it failed, just stop the loading indicator.
-                // The view can show a Toast.
                 _isLoading.value = false
             }
         }
     }
-
+    // Upload a document to the repository
     fun uploadAndSaveDocument(
         fileUri: Uri,
         documentName: String,
@@ -62,6 +64,7 @@ class DocumentPresenter(
         }
     }
 
+    // Reset the upload status when it's no longer needed
     fun resetUploadStatus() {
         _uploadSuccess.value = null
     }

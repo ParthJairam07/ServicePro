@@ -245,12 +245,10 @@ fun PinContinueButton(pin: String, navController: NavController, nextPage: Strin
                 // 3. Decrypt and get the stored PIN
                 val storedPin = PinManager.getPin(encryptedData)
                 if (storedPin == pin) {
-                    // SUCCESS!
                     val userUUID = PinManager.getUuid(encryptedData)
                     Log.d("PinLogin", "PIN Correct! Logging in user: $userUUID")
-                    // You can now pass the userUUID to your home screen or store it in a ViewModel
 
-                    navController.navigate(nextPage) // Navigate to your main app screen
+                    navController.navigate(nextPage) // go to main app screen
                 } else {
                     // FAILURE!
                     Log.w("PinLogin", "Incorrect PIN entered.")

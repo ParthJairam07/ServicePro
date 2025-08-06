@@ -54,6 +54,7 @@ fun AddSafeLocationsPage(navController: NavHostController) {
     // To determine if we show the spinner or not
     var isLoading by remember { mutableStateOf(false) }
     val context = LocalContext.current
+
     val presenter : AddDataItemContract.Presenter = remember { AddDataItemPresenter(null) }
 
     // get locationId from navigation arguments, note if will be null if we are adding

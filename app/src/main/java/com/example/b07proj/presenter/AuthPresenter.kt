@@ -9,7 +9,9 @@ class AuthPresenter (
     public val view: SignUpView,
     private val authService: IAuthService = HandleAuth
 ){
+    // Handle the sign-up button click
     fun onSignUpClick(email: String, password: String) {
+        // Validate the email and password
         if (!isValidEmail(email)) {
             view.showError("Invalid email format")
             return
@@ -30,6 +32,7 @@ class AuthPresenter (
         )
     }
 
+    // Handle the login button click
     fun onLoginClick(email: String, password: String) {
         if (!isValidEmail(email)) {
             view.showError("Invalid email format")
@@ -50,7 +53,7 @@ class AuthPresenter (
             }
         )
     }
-
+    // Handle the Google sign-in success
     fun onGoogleSignInSucceeded(idToken: String) {
         val credential = GoogleAuthProvider.getCredential(idToken, null)
 
@@ -64,7 +67,7 @@ class AuthPresenter (
             }
         )
     }
-
+    // check if email is valid, using regex
     private fun isValidEmail(email: String): Boolean {
         if (email.isBlank()) {
             return false

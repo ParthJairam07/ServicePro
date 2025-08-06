@@ -25,7 +25,6 @@ import androidx.navigation.compose.rememberNavController
 import com.google.firebase.auth.FirebaseAuth
 import com.google.firebase.firestore.FirebaseFirestore
 
-
 @Composable
 fun EditQuizAnswers(navController: NavHostController) {
     val presenter = remember { QuizPresenter() }
@@ -41,7 +40,6 @@ fun SafetyPlanQuizScreen2(
     presenter: QuizPresenter
 ) {
     // State to track current question and responses
-    //var currentQuestionIndex by remember { mutableIntStateOf(1) } // Start with question1
     val responses by remember { mutableStateOf(mutableMapOf<String, Any>()) } // Store responses
     var showFollowUp by remember { mutableStateOf(false) } // Track follow-up for question5
     var visibleQuestionIndices by remember { mutableStateOf(listOf(1)) } // starting with question1
@@ -55,7 +53,6 @@ fun SafetyPlanQuizScreen2(
     val followUp = quizData.questions.FollowUp
     val db = FirebaseFirestore.getInstance()
     var typeofBranch: String = ""
-//    val currentQuestion = questions["question$currentQuestionIndex"]
 
     Scaffold{ padding ->
         // columns for the questions
@@ -115,7 +112,6 @@ fun SafetyPlanQuizScreen2(
                                 onAnswer = { answer ->
                                     Log.d(it.id.toString(),it.id.toString())
                                     if (it.id != 5 && it.id != 12 && it.id != 14 && it.id != 15) {
-                                        Log.d("hm", "hm")
                                         responses[it.id.toString()] = answer
                                         outputMap = responses
                                         Log.d(outputMap.keys.toString(),outputMap.keys.toString() )
@@ -135,6 +131,7 @@ fun SafetyPlanQuizScreen2(
                                         outputMap = responses
                                         Log.d(outputMap.keys.toString(), outputMap.keys.toString())
                                     } else {
+                                        // Show follow-up for question 5
                                         if (answer == "Yes") {
                                             responses[it.id.toString()] = mutableMapOf("answer" to answer)
                                             showFollowUp = true
@@ -380,19 +377,6 @@ fun SafetyPlanQuizScreen2(
     }
 
 }
-
-//@Composable
-//fun ScreenHeader2(text: String) {
-   // Text(
-    //    text = text,
-//            fontFamily = myFont,
-     //       fontWeight = FontWeight.Bold,
-     //       fontSize = 24.sp,
-     //       color = Color.Black
-     //   ),
-     //   modifier = Modifier.padding(vertical = 16.dp)
-   // )
-//}
 
 @Composable
 fun RadioQuestion2(question: Question, onAnswer: (String) -> Unit) {

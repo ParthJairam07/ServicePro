@@ -3,7 +3,7 @@ package com.example.b07proj.presenter.dataItems
 
 import com.google.firebase.auth.FirebaseAuth
 import com.google.firebase.firestore.FirebaseFirestore
-
+// enum class for categories
 enum class Categories {
     EMERGENCY_CONTACTS,
     MEDICATIONS,

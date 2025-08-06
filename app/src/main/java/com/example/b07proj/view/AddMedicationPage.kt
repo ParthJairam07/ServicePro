@@ -104,7 +104,6 @@ fun AddMedicationPage(navController: NavHostController) {
     }
 
     // Question objects for each questions for medication
-    // #TODO ask if the ID numbers have to be next to each other or if they can be far apart
     // Ask for name of medication
     val freeformQuestion1 = Question(
         id = 672,

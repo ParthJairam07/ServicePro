@@ -26,6 +26,7 @@ import com.google.firebase.auth.FirebaseAuth
 import com.google.firebase.firestore.FirebaseFirestore
 import kotlinx.coroutines.launch
 
+
 @Composable
 fun SafetyPlanQuizPage2(navController: NavHostController) {
     val context = LocalContext.current

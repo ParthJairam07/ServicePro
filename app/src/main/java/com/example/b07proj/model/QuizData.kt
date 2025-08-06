@@ -4,12 +4,13 @@ import kotlinx.serialization.SerialName
 import kotlinx.serialization.Serializable
 import kotlinx.serialization.json.JsonElement
 
+// Represents the quiz data structure.
 @Serializable
 data class QuizData(
     val questions: Questions,
     val tips: Tips
 )
-
+// Represents a question in the quiz.
 @Serializable
 data class Questions(
     val Warmup: Map<String, Question>,
@@ -17,7 +18,7 @@ data class Questions(
     @SerialName("Follow-up")
     val FollowUp: Map<String, Question> = emptyMap()
 )
-
+// Represents a single question in the quiz.
 @Serializable
 data class Question(
     val id: Int,
@@ -28,14 +29,14 @@ data class Question(
     @SerialName("follow-up")
     val followUp: Map<String, FollowUp>? = null
 )
-
+// Represents a follow-up question in the quiz.
 @Serializable
 data class FollowUp(
     val sub_question: String,
     val input_type: String,
     val variable: String? = null
 )
-
+// Represents the tip data structure.
 @Serializable
 data class Tips(
     val questionATips: Map<String, Tip> = emptyMap(),
@@ -43,6 +44,7 @@ data class Tips(
     val questionCTips: Map<String, Tip> = emptyMap()
 )
 
+// Represents a tip in the quiz.
 @Serializable
 data class Tip(
     val id: Int? = null,

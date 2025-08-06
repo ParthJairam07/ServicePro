@@ -95,6 +95,7 @@ fun Done(navController: NavHostController, goTo: String) {
     }
 }
 
+// composable to just go back to the previous screen
 @Composable
 fun BackButton(navController: NavHostController, optionalText: String = stringResource(R.string.BackButtonText), modifier: Modifier = Modifier) {
     Button(

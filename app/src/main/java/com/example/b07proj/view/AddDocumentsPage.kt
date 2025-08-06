@@ -171,7 +171,6 @@ fun AddDocumentsPage(
                     ) {
                         // We will always be adding, so the text will always be null
                         AddEditOrCancelRow(null)
-//                    Text("Upload and Save Entire Document", style = TextStyle(fontFamily = myFont))
                     }
                 }
 

@@ -29,7 +29,7 @@ import com.example.b07proj.model.HandleAuth
 
 @OptIn(ExperimentalMaterial3Api::class)
 
-
+// not used for now
 @Composable
 fun LandingPage(
     navController: NavController
