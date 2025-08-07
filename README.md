@@ -32,7 +32,129 @@ and regular reminders to ensure users can manage and update their safety plans a
 - Reminders & Plan Review Notifications
 - Emergency Exit Button
 
-
+### Sample Folder structure
+```
+.
+├── build.gradle.kts
+├── google-services.json
+├── proguard-rules.pro
+└── src
+    ├── main
+    │   ├── AndroidManifest.xml
+    │   ├── java
+    │   │   └── com
+    │   │       └── example
+    │   │           └── b07proj
+    │   │               ├── MainActivity.kt
+    │   │               ├── MyApplication.kt
+    │   │               ├── model
+    │   │               │   ├── DirectLinksModel.kt
+    │   │               │   ├── HandleAuth.kt
+    │   │               │   ├── IAuthService.kt
+    │   │               │   ├── PinManager.kt
+    │   │               │   ├── QuizData.kt
+    │   │               │   ├── QuizDataSource.kt
+    │   │               │   ├── QuizSaveData.kt
+    │   │               │   └── dataCategories
+    │   │               │       ├── DocumentSaveData.kt
+    │   │               │       ├── EmergencyContact.kt
+    │   │               │       ├── Medication.kt
+    │   │               │       └── SafeLocation.kt
+    │   │               ├── notifs
+    │   │               │   ├── Notification.kt
+    │   │               │   ├── NotificationReciever.kt
+    │   │               │   └── PeriodicReminder.kt
+    │   │               ├── presenter
+    │   │               │   ├── AuthPresenter.kt
+    │   │               │   ├── DirectLinksPresenter.kt
+    │   │               │   ├── DocumentPresenter.kt
+    │   │               │   ├── QuizPresenter.kt
+    │   │               │   └── dataItems
+    │   │               │       ├── AddDataItemContract.kt
+    │   │               │       ├── AddDataItemPresenter.kt
+    │   │               │       ├── ViewDataItemContract.kt
+    │   │               │       └── ViewDataItemPresenter.kt
+    │   │               ├── ui
+    │   │               │   └── theme
+    │   │               │       ├── Color.kt
+    │   │               │       ├── Theme.kt
+    │   │               │       └── Type.kt
+    │   │               └── view
+    │   │                   ├── AddContactsView.kt
+    │   │                   ├── AddDocumentsPage.kt
+    │   │                   ├── AddMedicationPage.kt
+    │   │                   ├── AddSafeLocationsPage.kt
+    │   │                   ├── Common.kt
+    │   │                   ├── CreatePin.kt
+    │   │                   ├── DirectLinks.kt
+    │   │                   ├── DocumentsView.kt
+    │   │                   ├── EditQuizAnswers.kt
+    │   │                   ├── EmailLogin.kt
+    │   │                   ├── EmergencyContactsView.kt
+    │   │                   ├── HomePage.kt
+    │   │                   ├── LandingPage.kt
+    │   │                   ├── LoggedInTopBar.kt
+    │   │                   ├── LoginPage.kt
+    │   │                   ├── MedicationsView.kt
+    │   │                   ├── PinPage.kt
+    │   │                   ├── QuizComposables.kt
+    │   │                   ├── SafeLocationsView.kt
+    │   │                   ├── SafetyPlanQuizPage1.kt
+    │   │                   ├── SafetyPlanQuizPage2.kt
+    │   │                   ├── SafetyPlanQuizPage3.kt
+    │   │                   ├── SettingsPage.kt
+    │   │                   ├── SignUpPage.kt
+    │   │                   ├── SignUpView.kt
+    │   │                   ├── Storage.kt
+    │   │                   └── TipsPage.kt
+    │   └── res
+    │       ├── drawable
+    │       │   ├── appimage.png
+    │       │   ├── baseline_mail_24.xml
+    │       │   ├── drive_folder_upload.png
+    │       │   ├── ic_google_logo.xml
+    │       │   ├── ic_launcher_background.xml
+    │       │   ├── ic_launcher_foreground.xml
+    │       │   ├── optionpageimage.png
+    │       │   ├── passwordicon.png
+    │       │   ├── pincode.png
+    │       │   ├── relationshipssimple.png
+    │       │   ├── sendhorizontal.png
+    │       │   ├── sendorizontal.png
+    │       │   ├── templogo.png
+    │       │   └── whitearrowgoback.png
+    │       ├── font
+    │       │   ├── afacad.ttf
+    │       │   ├── afacad_bold.ttf
+    │       │   ├── afacad_regular.ttf
+    │       │   └── font.xml
+    │       ├── layout
+    │       │   └── landing_activity.xml
+    │       ├── raw
+    │       │   ├── answers.json
+    │       │   ├── headings.json
+    │       │   ├── questions.json
+    │       │   └── services.json
+    │       ├── values
+    │       │   ├── colors.xml
+    │       │   ├── strings.xml
+    │       │   └── themes.xml
+    │       └── xml
+    │           ├── backup_rules.xml
+    │           └── data_extraction_rules.xml
+    └── test
+        └── java
+            └── com
+                └── example
+                    └── b07proj
+                        ├── AddDataItemPresenterTest.kt
+                        ├── AuthPresenterTest.kt
+                        ├── DirectLinksPresenterTest.kt
+                        ├── DocumentPresenterTest.kt
+                        ├── ExampleUnitTest.kt
+                        ├── QuizPresenterTest.kt
+                        └── ViewDataItemPresenterTest.kt
+```
 ### Here are some snapshots
 
 <img width="202" height="454" alt="image" src="https://github.com/user-attachments/assets/eafeb40e-dce2-4fe4-a01b-944758d3f4b5" />
