@@ -167,12 +167,13 @@ fun DocumentRowItem(
             Spacer(modifier = Modifier.width(16.dp))
 
             // Download icon on the right
-            Icon(
-                imageVector = Icons.Default.Download,
-                contentDescription = "Download Document",
-                modifier = Modifier.size(24.dp),
-                tint = MaterialTheme.colorScheme.secondary
-            )
+            IconButton(onClick = onDownloadClick) {
+                Icon(
+                    imageVector = Icons.Default.Download,
+                    contentDescription = "Download Document",
+                    tint = MaterialTheme.colorScheme.secondary
+                )
+            }
             Spacer(modifier = Modifier.width(16.dp))
             IconButton(onClick = onDeleteClick) {
                 Icon(
@@ -214,7 +215,7 @@ private fun startDownload(
         val downloadManager = context.getSystemService(Context.DOWNLOAD_SERVICE) as DownloadManager
         downloadManager.enqueue(request)
 
-        Toast.makeText(context, "Starting download...", Toast.LENGTH_SHORT).show()
+        Toast.makeText(context, "Downloaded", Toast.LENGTH_SHORT).show()
     } catch (e: Exception) {
         // Handle exceptions, e.g., if the URL is invalid
         Toast.makeText(context, "Error starting download: ${e.message}", Toast.LENGTH_LONG).show()
