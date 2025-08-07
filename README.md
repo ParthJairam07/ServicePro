@@ -5,7 +5,14 @@ providing personalized guidance, secure information storage, and access to local
 The app is expected to offer flexible planning, privacy features, 
 and regular reminders to ensure users can manage and update their safety plans as their situations change.
 
-We implemented the following features:
+
+### Requirements
+- Ensure google-services.json is in the app folder
+- AGP version 8.11.1
+- All dependencies are installed from the build.gradle.kts
+- A clean pull from the github will install all that is required( will remove google-services.json after 1 month before repo goes public)
+  
+### We implemented the following features:
 - Login and Signup page using Firebase
 - Tailored questionnaire...
 - A list of tips based on questionnaire given
@@ -16,10 +23,12 @@ We implemented the following features:
 - Reminders & Plan Review Notifications
 - Emergency Exit Button
 
-Here are some snapshots
+
+### Here are some snapshots
 
 <img width="202" height="454" alt="image" src="https://github.com/user-attachments/assets/eafeb40e-dce2-4fe4-a01b-944758d3f4b5" />
 <img width="202" height="454" alt="image" src="https://github.com/user-attachments/assets/c2912154-3084-4697-b628-46dffd3f3faf" />
+<br/>
 <img width="202" height="454" alt="image" src="https://github.com/user-attachments/assets/9998be17-5366-489c-836f-e267d2648228" />
 <img width="202" height="454" alt="image" src="https://github.com/user-attachments/assets/cc66fb9e-d0aa-4580-b162-4471fb0de8a1" />
 
