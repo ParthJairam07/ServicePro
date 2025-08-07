@@ -31,7 +31,6 @@ import androidx.compose.material.icons.filled.Edit
 import androidx.compose.material.icons.filled.Menu
 import androidx.compose.material.icons.outlined.Settings
 import androidx.compose.material3.Card
-import androidx.compose.material3.CenterAlignedTopAppBar
 import androidx.compose.material3.CircularProgressIndicator
 import androidx.compose.material3.DrawerState
 import androidx.compose.material3.DrawerValue
@@ -69,10 +68,8 @@ import androidx.navigation.compose.rememberNavController
 import com.example.b07proj.R
 import com.example.b07proj.presenter.QuizPresenter
 import com.example.b07proj.ui.theme.BackgroundColor
-import com.example.b07proj.ui.theme.Primary40
 import com.example.b07proj.ui.theme.Primary50
 import com.example.b07proj.view.AnswersProvider.getUserAnswers
-import com.google.android.play.integrity.internal.b
 import com.google.gson.JsonElement
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.launch
@@ -80,8 +77,7 @@ import org.json.JSONObject
 import kotlin.collections.mutableListOf
 import androidx.compose.material3.Button
 import androidx.compose.material3.ButtonDefaults
-import androidx.compose.ui.graphics.RectangleShape
-import androidx.compose.ui.graphics.Shape
+import androidx.compose.ui.tooling.preview.Devices.PIXEL_7
 import androidx.core.net.toUri
 
 @Composable
@@ -134,7 +130,7 @@ fun LoggedInTopBar(navController: NavHostController, content: @Composable (Paddi
                     ExitButton()
                 }
             }
-        }
+        },
     ) { scaffoldPadding ->
         ModalNavigationDrawer(
             modifier = Modifier.padding(scaffoldPadding),
@@ -584,48 +580,46 @@ suspend fun getId(context: Context, text: String): Map<String, String> {
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
 fun TopBar(scope: CoroutineScope, drawerState: DrawerState, navController: NavHostController ) {
-    CenterAlignedTopAppBar(
-        title = {
-            Image(
-                painter = painterResource(R.drawable.templogo),
-                contentDescription = stringResource(id = R.string.logoDescription),
-            )
-        },
-        navigationIcon = {
-            IconButton(
-                onClick = {
-                    scope.launch {
-                        if (drawerState.isClosed) {
-                            drawerState.open()
-                        } else {
-                            drawerState.close()
-                        }
+    Row (
+        horizontalArrangement = Arrangement.SpaceBetween,
+        verticalAlignment = Alignment.CenterVertically,
+        modifier = Modifier.fillMaxWidth()
+    ){
+        IconButton(
+            onClick = {
+                scope.launch {
+                    if (drawerState.isClosed) {
+                        drawerState.open()
+                    } else {
+                        drawerState.close()
                     }
                 }
-            ) {
-                Icon(
-                    imageVector = Icons.Filled.Menu,
-                    contentDescription = stringResource(R.string.menuIcon)
-                )
             }
-        },
-        actions = {
-            IconButton(
-                onClick = { navController.navigate("settings_page") },
-                modifier = Modifier.padding(0.dp),
-                // make icon button have no padding or anyting (all comes from icon)
-            ) {
-                Icon(
-                    imageVector = Icons.Outlined.Settings,
-                    contentDescription = "Settings",
-                    tint = BackgroundColor
-                )
-            }
+        ) {
+            Icon(
+                imageVector = Icons.Filled.Menu,
+                contentDescription = stringResource(R.string.menuIcon)
+            )
         }
-    )
+        Image(
+            painter = painterResource(R.drawable.templogo),
+            contentDescription = stringResource(id = R.string.logoDescription),
+        )
+        IconButton(
+            onClick = { navController.navigate("settings_page") },
+            modifier = Modifier.padding(0.dp),
+            // make icon button have no padding or anyting (all comes from icon)
+        ) {
+            Icon(
+                imageVector = Icons.Outlined.Settings,
+                contentDescription = "Settings",
+                tint = BackgroundColor
+            )
+        }
+    }
 }
 
-@Preview(showBackground = true, name = "Safety Plan Quiz Preview")
+@Preview(showBackground = true, name = "Safety Plan Quiz Preview", device = PIXEL_7, showSystemUi = true)
 @Composable
 fun LoggedInTopBarPreview() {
     LoggedInTopBar(navController = rememberNavController()) {}
