@@ -52,7 +52,7 @@ class MainActivity : ComponentActivity() {
 
         setContent {
             B07ProjTheme {
-                //create an instance of the auth
+                //create an instance of the navigation controller
                 val navController = rememberNavController() // to navigate to screens
                 //host the navigation graph
                 NavHost(
