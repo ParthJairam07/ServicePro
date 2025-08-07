@@ -1,6 +1,7 @@
 package com.example.b07proj.view
 
 
+import androidx.compose.foundation.BorderStroke
 import androidx.compose.foundation.Image
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Column
@@ -49,8 +50,8 @@ import java.io.InputStreamReader
 import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.size
-import androidx.compose.ui.text.font.Font
-import androidx.compose.ui.text.font.FontFamily
+import androidx.compose.foundation.shape.RoundedCornerShape
+import androidx.compose.ui.graphics.ColorFilter
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.navigation.compose.rememberNavController
 import com.example.b07proj.ui.theme.backgroundAccent
@@ -60,7 +61,6 @@ import com.google.gson.GsonBuilder
 import kotlinx.coroutines.tasks.await
 
 // This page displays the tips of a logged in user
-
 
 // get user answers in a usable form for lazyColumn
 object AnswersProvider {
@@ -252,13 +252,14 @@ private fun JsonObject.getString(key: String): String? =
 
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
-fun TipPage(navController: NavHostController) {
+fun TipPage(navController: NavHostController, isFromNotif: Boolean = false) {
     // create a state to hold all tipsAndTitle objects, default is empty list
     var tipsList by remember { mutableStateOf<List<TipAndTitle>>(emptyList()) }
     // to see if the data is still loading or not
     var isLoading by remember { mutableStateOf(true) }
     // get application context, used to read a file
     val context = LocalContext.current
+
 
     // to run this code only once, when the composable first appears on screen
     // only rerun when key1 changes value
@@ -281,8 +282,6 @@ fun TipPage(navController: NavHostController) {
     }
 
     LoggedInTopBar(navController) {
-
-
 
 //    Scaffold(
 //        topBar = {
@@ -335,9 +334,39 @@ fun TipPage(navController: NavHostController) {
                     modifier = Modifier.fillMaxWidth(),
                     horizontalArrangement = Arrangement.Start
                 ) {
-                    BackButton(
-                        navController = navController
-                    )
+                    // if isFromNotif is not null, make text "Go home". Else use default
+                    if (isFromNotif)
+                    {
+                        // Usually the back button goes to the previous page
+                        // So this back button goes home instead.
+                        Button(
+                            onClick = {
+                                navController.navigate("home_page")
+                            },
+                            modifier = Modifier.padding(top = 16.dp),
+                            // make it have a border
+                            shape = RoundedCornerShape(32.dp),
+                            border = BorderStroke(1.dp, Primary40),
+                            colors = ButtonDefaults.outlinedButtonColors(contentColor = Primary40),
+                        ) {
+                            Image(
+                                painter = painterResource(id = R.drawable.whitearrowgoback),
+                                contentDescription = stringResource(id = R.string.arrow_content_description),
+                                modifier = Modifier.size(16.dp),
+                                colorFilter = ColorFilter.tint(Primary40)
+                            )
+                            Spacer(modifier = Modifier.width(12.dp))
+                            Text(
+                                text = "Go To Home",
+                            )
+                        }
+                    }
+                    else
+                    {
+                        BackButton(
+                            navController = navController
+                        )
+                    }
                 }
 
             }
@@ -373,8 +402,8 @@ fun TipCard(tipAndTitle: TipAndTitle) {
 
 // used in navigation
 @Composable
-fun RenderTips(navController: NavHostController) {
-    TipPage(navController)
+fun RenderTips(navController: NavHostController, isFromNotif: Boolean = false) {
+    TipPage(navController, isFromNotif)
 }
 
 @Preview

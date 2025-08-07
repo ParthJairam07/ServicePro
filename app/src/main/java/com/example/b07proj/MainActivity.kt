@@ -89,7 +89,7 @@ class MainActivity : ComponentActivity() {
                             SafetyPlanQuizPage1(navController)
                         }
                         composable("safety_plan_tips") {
-                            RenderTips(navController)
+                            RenderTips(navController, deepLinkDestination != null)
                         }
                         composable("safetyPlanQuizPage2") {
                             SafetyPlanQuizPage2(navController)
