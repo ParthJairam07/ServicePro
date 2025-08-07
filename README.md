@@ -11,10 +11,19 @@ and regular reminders to ensure users can manage and update their safety plans a
 - AGP version 8.11.1
 - All dependencies are installed from the build.gradle.kts
 - A clean pull from the github will install all that is required( will remove google-services.json after 1 month before repo goes public)
+
+
+### Tech stack:
+- Kotlin
+- Jetpack compose
+- Firebase auth, firestore to store user information, and firebase cloud storage to store document upload
+- Andriod Keystore to hold the pin from the user securely
+- Gradle for dependencies
+- Mockito and JUnit for testing
   
 ### We implemented the following features:
 - Login and Signup page using Firebase
-- Tailored questionnaire...
+- Tailored questionnaire based on users relationship status
 - A list of tips based on questionnaire given
 - Storage of Emergency Info
   - Upload important documents or photos
@@ -31,5 +40,7 @@ and regular reminders to ensure users can manage and update their safety plans a
 <br/>
 <img width="202" height="454" alt="image" src="https://github.com/user-attachments/assets/9998be17-5366-489c-836f-e267d2648228" />
 <img width="202" height="454" alt="image" src="https://github.com/user-attachments/assets/cc66fb9e-d0aa-4580-b162-4471fb0de8a1" />
+
+
 
 This app was for a CSCBO7, the people worked on this are Abinash Nagendran, Akshayan Prabaharan, Ayyash Anhardeen, Krish Patel, Parth Rupesh Jairam
