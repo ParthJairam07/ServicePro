@@ -5,8 +5,9 @@ import com.example.b07proj.model.DirectLinksModel
 import com.example.b07proj.view.Resource
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.asStateFlow
-
-class DirectLinksPresenter() {
+class DirectLinksPresenter(
+    private val model: DirectLinksModel = DirectLinksModel()   // single source of truth
+) {
     // State flow for loading state and error messages
     private val _isLoading = MutableStateFlow<Boolean>(true)
     val loading = _isLoading.asStateFlow()
@@ -20,9 +21,6 @@ class DirectLinksPresenter() {
 
     private val _resources = MutableStateFlow<List<Resource>>(emptyList())
     val resources = _resources.asStateFlow()
-
-     // Initialize the model
-     private val model = DirectLinksModel()
 
     // Fetch city and resources from the model
     suspend fun fetchCityAndResources(context: Context) {

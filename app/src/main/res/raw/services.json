@@ -54,7 +54,7 @@
       "name": "Police de Montréal – Information for victims",
       "category": "Police‑based referral",
       "phone": "via police non‑emergency",
-      "url": "https://www.spvm.qc.ca/"  /* general */
+      "url": "https://www.spvm.qc.ca/"
     }
   ],
   "Vancouver": [
@@ -99,14 +99,14 @@
     {
       "name": "Victim Services – Calgary VAST Crisis call response",
       "category": "On‑scene crisis / court support",
-      "phone": "same as above",
-      "url": "same"
+      "phone": "1‑888‑327‑7828",
+      "url": "https://www.calgary.ca/cps/community-programs-and-resources/victims-of-crime/victim-assistance-support-team.html"
     },
     {
       "name": "Calgary Police Service VAST Court & Emotional Support",
       "category": "Court accompaniment, referrals",
-      "phone": "same",
-      "url": "same"
+      "phone": "1‑888‑327‑7828",
+      "url": "https://www.calgary.ca/cps/community-programs-and-resources/victims-of-crime/victim-assistance-support-team.html"
     },
     {
       "name": "Counselling & community supports (via referrals)",
