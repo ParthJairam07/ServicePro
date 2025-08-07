@@ -11,6 +11,7 @@ import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.width
+import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.foundation.text.KeyboardOptions
 import androidx.compose.material3.Button
 import androidx.compose.material3.ButtonDefaults
@@ -34,9 +35,11 @@ import androidx.compose.ui.text.font.Font
 import androidx.compose.ui.text.font.FontFamily
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.input.KeyboardType
+import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import androidx.navigation.NavHostController
+import androidx.navigation.compose.rememberNavController
 import com.example.b07proj.R
 import com.example.b07proj.model.PinManager
 import com.example.b07proj.ui.theme.Primary40
@@ -99,7 +102,7 @@ fun InputPinField(
     onPinValueChange: (String) -> Unit,
     modifier: Modifier = Modifier
 ) {
-    OutlinedTextField(
+    OutlinedTextField (
         value = pinValue,
         // we only change the value if its less than 6 and all digits
         onValueChange = { newValue ->
@@ -112,8 +115,8 @@ fun InputPinField(
         // convert keyboard PIN keyboard
         keyboardOptions = KeyboardOptions(keyboardType = KeyboardType.NumberPassword),
         singleLine = true,
-
-        )
+        shape = RoundedCornerShape(16.dp)
+    )
 }
 
 @Composable
@@ -123,7 +126,7 @@ fun ContinueButton(pinValue: String, isPinValid: Boolean, modifier: Modifier, na
         onClick = {
             // check if pin is valid
             if (isPinValid) {
-             val userUUID = FirebaseAuth.getInstance().currentUser?.uid
+                val userUUID = FirebaseAuth.getInstance().currentUser?.uid
                 if (userUUID != null) {
 
                     // 1. Create JSON object and convert to string
@@ -142,19 +145,15 @@ fun ContinueButton(pinValue: String, isPinValid: Boolean, modifier: Modifier, na
                             apply()
                         }
                         Log.d("PinSetup", "Secure data encrypted and saved successfully.")
-                        Log.d("PinTest", "------ STARTING TEST ------")
-                        Log.d("PinTest", "Original Data: $jsonString")
-                        Log.d("PinTest", "Encrypted Data: $encryptedData")
                         navController.navigate("safety_plan_quiz")
                     } else {
                         Log.e("PinSetup", "Failed to encrypt data.")
-                        // Handle encryption failure (e.g., show an error toast)
                     }
 
                 }
             }
         },
-        // button will be glowing depending on if the pin is valid
+        // button will be enabled depending on if the pin is valid
         enabled = isPinValid,
         modifier = modifier,
         colors = ButtonDefaults.buttonColors(containerColor = Primary40),
@@ -244,4 +243,10 @@ fun UICreatePin(navController: NavHostController) {
             navController = navController
         )
     }
+}
+
+@Preview
+@Composable
+fun PreviewCreatePin() {
+    CreatePin(rememberNavController())
 }

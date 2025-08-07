@@ -11,6 +11,7 @@ import org.json.JSONObject
 
 
 class DirectLinksModel {
+    // function to load the city from the quiz
     suspend fun loadWarmupCity(): String? {
         val uid = Firebase.auth.currentUser?.uid ?: return null
 
@@ -21,7 +22,7 @@ class DirectLinksModel {
 
         return snap.getString("2")
     }
-
+    // function to load the resources from the city from the json file
     suspend fun loadResources(context: Context): List<Resource> {
         val city = loadWarmupCity()?.trim() ?: return emptyList()
 

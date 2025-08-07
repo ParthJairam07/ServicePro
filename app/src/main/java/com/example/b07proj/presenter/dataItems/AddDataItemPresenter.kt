@@ -27,7 +27,7 @@ class AddDataItemPresenter(var view: AddDataItemContract.View?) : AddDataItemCon
         val categoryCollection = categoryCollectionMap[category]
 
         if (categoryCollection == null) {
-            view?.showError("Error: Authentication Failed")
+            view?.showError("Error: Invalid Category")
             return;
         }
 

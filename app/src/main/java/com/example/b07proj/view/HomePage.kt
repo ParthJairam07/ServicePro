@@ -1,7 +1,10 @@
 package com.example.b07proj.view
 
 import androidx.compose.foundation.BorderStroke
+import androidx.compose.foundation.Image
+import androidx.compose.foundation.content.MediaType.Companion.Image
 import androidx.compose.foundation.layout.Arrangement
+import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.PaddingValues
 import androidx.compose.foundation.layout.Row
@@ -24,6 +27,7 @@ import androidx.compose.runtime.Composable
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.vector.ImageVector
+import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.text.TextStyle
 import androidx.compose.ui.text.font.Font
 import androidx.compose.ui.text.font.FontFamily
@@ -48,53 +52,62 @@ fun HomePage(navController: NavHostController) {
 
 @Composable
 fun UIHomePage(navController: NavHostController) {
-    LoggedInTopBar(
-        navController
-    ){
-        Column(
-            modifier = Modifier
-                .fillMaxSize(),
-            horizontalAlignment = Alignment.CenterHorizontally,
-        ) {
-            ScreenHeaderTop("Welcome Back")
-
-
-            Row(
+    LoggedInTopBar(navController) {
+        Box(modifier = Modifier.fillMaxSize()) {
+            Column(
                 modifier = Modifier
-                    .padding(top = 16.dp)
-                    .fillMaxWidth(),
-                horizontalArrangement = Arrangement.SpaceEvenly
-            )
-            {
-                Column {
-                    HomePageButton(
-                        "View Your Plan",
-                        Icons.Outlined.Checklist,
-                        navController,
-                        "safety_plan_tips"
-                    )
+                    .fillMaxSize()
+                    .padding(bottom = 70.dp), // Add space to not overlap exit button
+                horizontalAlignment = Alignment.CenterHorizontally,
+            ) {
+                ScreenHeaderTop("Welcome Back")
 
-                    Spacer(modifier = Modifier.size(32.dp))
-                    HomePageButton(
-                        "Access Storage",
-                        Icons.Outlined.Description,
-                        navController,
-                        "storagePage"
-                    )
-                }
-                Column {
-                    HomePageButton(
-                        "Get Local Support",
-                        Icons.Outlined.Support,
-                        navController,
-                        "direct_links"
-                    )
+                Column (
+                    modifier = Modifier
+                        .padding(top = 16.dp)
+                        .fillMaxWidth(),
+                    horizontalAlignment = Alignment.CenterHorizontally,
+                    verticalArrangement = Arrangement.SpaceBetween
+                ) {
+                    Row {
+                        HomePageButton(
+                            "View Your Plan",
+                            Icons.Outlined.Checklist,
+                            navController,
+                            "safety_plan_tips"
+                        )
 
+                        Spacer(modifier = Modifier.size(32.dp))
+
+                        HomePageButton(
+                            "Access Storage",
+                            Icons.Outlined.Description,
+                            navController,
+                            "storagePage"
+                        )
+                    }
+                    Spacer(modifier = Modifier.size(26.dp))
+                    Row {
+                        HomePageButton(
+                            "Get Local Support",
+                            Icons.Outlined.Support,
+                            navController,
+                            "direct_links"
+                        )
+                    }
+                    Image(
+                        painter = painterResource(id = R.drawable.relationshipssimple),
+                        contentDescription = "Help support image",
+                        modifier = Modifier
+                            .padding(top = 32.dp)
+                            .size(180.dp)
+                    )
                 }
             }
         }
     }
 }
+
 
 @Composable
 fun HomePageButton(action: String, icon: ImageVector, navController: NavHostController, goTo: String ) {
@@ -106,8 +119,7 @@ fun HomePageButton(action: String, icon: ImageVector, navController: NavHostCont
         },
         border = BorderStroke(3.dp, Primary40),
         colors = ButtonDefaults.outlinedButtonColors(contentColor = Primary40),
-        modifier = Modifier.
-        size(width = 120.dp, height = 120.dp),
+        modifier = Modifier.size(width = 120.dp, height = 120.dp),
         contentPadding = PaddingValues(0.dp),
         shape = RoundedCornerShape(16.dp)
     )
@@ -142,6 +154,7 @@ fun HomePageButton(action: String, icon: ImageVector, navController: NavHostCont
             )
         }
     }
+
 }
 
 

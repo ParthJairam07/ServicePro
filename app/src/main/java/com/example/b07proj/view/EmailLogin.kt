@@ -8,6 +8,8 @@ import androidx.compose.foundation.Image
 import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.*
 import androidx.compose.foundation.shape.CircleShape
+import androidx.compose.material.icons.Icons
+import androidx.compose.material.icons.filled.Lock
 import androidx.compose.material3.*
 import androidx.compose.runtime.*
 import androidx.compose.ui.Alignment
@@ -25,6 +27,7 @@ import androidx.compose.ui.text.font.FontFamily
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.input.PasswordVisualTransformation
 import androidx.compose.ui.text.style.TextAlign
+import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import androidx.navigation.NavHostController
@@ -38,6 +41,8 @@ import com.google.android.gms.auth.api.signin.GoogleSignIn
 import com.google.android.gms.auth.api.signin.GoogleSignInOptions
 import com.google.android.gms.common.api.ApiException
 import kotlinx.coroutines.launch
+import androidx.compose.material.icons.filled.Mail
+
 
 // Renders for the email login page
 @Composable
@@ -84,7 +89,7 @@ fun UIEmailLogin(navController: NavHostController, nextPage: String) {
         )
     }
 
-    // --- Backend Logic: Launcher for Google Sign-In ---
+    // Backend Logic: Launcher for Google Sign-In
     val launcher = rememberLauncherForActivityResult(
         contract = ActivityResultContracts.StartActivityForResult()
     ) { result ->
@@ -118,8 +123,7 @@ fun UIEmailLogin(navController: NavHostController, nextPage: String) {
             )
         },
         floatingActionButton = {
-            // Assuming ExitButton is defined elsewhere
-            // ExitButton(modifier = Modifier.padding(5.dp))
+            ExitButton()
         }
     ) { padding ->
         Column(
@@ -213,6 +217,7 @@ fun LoginTitleText(myFont: FontFamily) {
     )
 }
 
+// for email input
 @Composable
 fun EmailInputField(email: String, onEmailChange: (String) -> Unit, myFont: FontFamily) {
     Row(
@@ -235,11 +240,11 @@ fun EmailInputField(email: String, onEmailChange: (String) -> Unit, myFont: Font
             colors = AppTextInputColors,
             shape = CircleShape
         )
-        Image(
-            modifier = Modifier.size(24.dp),
-            painter = painterResource(R.drawable.baseline_mail_24),
+        Icon(
+            imageVector = Icons.Default.Mail,
             contentDescription = stringResource(id = R.string.mail_icon),
-            colorFilter = ColorFilter.tint(color = Primary50)
+            tint = Primary50,
+            modifier = Modifier.size(36.dp)
         )
     }
 }
@@ -267,11 +272,11 @@ fun PasswordInputField(password: String, onPasswordChange: (String) -> Unit, myF
             colors = AppTextInputColors,
             shape = CircleShape
         )
-        Image(
-            modifier = Modifier.size(36.dp),
-            painter = painterResource(R.drawable.passwordicon),
+        Icon(
+            imageVector = Icons.Default.Lock,
             contentDescription = stringResource(id = R.string.password_icon),
-            colorFilter = ColorFilter.tint(color = Primary50)
+            tint = Primary50,
+            modifier = Modifier.size(36.dp)
         )
     }
 }
@@ -325,4 +330,10 @@ fun LoginButton(email: String, password: String, presenter: AuthPresenter, conte
             }
         }
     }
+}
+
+@Preview
+@Composable
+fun EmailLoginPreview() {
+    EmailLogin(navController = NavHostController(LocalContext.current), nextPage = "home")
 }

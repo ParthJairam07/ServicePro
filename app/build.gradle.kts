@@ -96,5 +96,18 @@ dependencies {
     //For pin
     implementation("androidx.security:security-crypto:1.1.0-alpha06")
 
+    // For testing
+    testImplementation("org.mockito:mockito-core:5.12.0")
+    testImplementation("org.mockito:mockito-inline:5.2.0")
+
+    testImplementation("org.mockito.kotlin:mockito-kotlin:5.2.1") // Or the latest version
+    testImplementation(kotlin("test"))
+
+    // MockK for mocking Kotlin singletons
+    testImplementation("io.mockk:mockk:1.13.10")
+
+    // Kluent for assertions
+    testImplementation("org.amshove.kluent:kluent-android:1.68")
+
 
 }

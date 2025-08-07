@@ -49,6 +49,7 @@ fun DocumentPage(navController: NavHostController, presenter: DocumentPresenter)
         presenter.fetchUserDocuments()
     }
 
+    // Show the delete confirmation dialog
     if (showDeleteDialog && documentToDelete != null) {
         DeleteConfirmationDialog(
             documentName = documentToDelete!!,
@@ -64,20 +65,13 @@ fun DocumentPage(navController: NavHostController, presenter: DocumentPresenter)
         )
     }
 
+    // Header
+    ScreenHeaderTop("Documents")
+
     LazyColumn(
-        modifier = Modifier.fillMaxSize(),
-        contentPadding = PaddingValues(16.dp),
+        modifier = Modifier.fillMaxWidth(),
         verticalArrangement = Arrangement.spacedBy(12.dp)
     ) {
-        item {
-            Text(
-                text = "Documents",
-                style = MaterialTheme.typography.headlineLarge,
-                fontWeight = FontWeight.Bold
-            )
-            Spacer(modifier = Modifier.height(16.dp))
-        }
-
         //empty card when its loading
         if (isLoading && documents.isEmpty()) {
             item {
@@ -89,11 +83,10 @@ fun DocumentPage(navController: NavHostController, presenter: DocumentPresenter)
             item {
                 Text(
                     "No documents found. Add one to get started!",
-                    modifier = Modifier.padding(vertical = 24.dp)
                 )
             }
         } else {
-
+            // documents card, each document is a row
             items(documents, key = { it.first }) { (name, data) ->
                 DocumentRowItem(
                     documentName = name,
@@ -110,15 +103,17 @@ fun DocumentPage(navController: NavHostController, presenter: DocumentPresenter)
             }
         }
 
-        // --- Add Document Button ---
+        // Add Document Button
         item {
             Spacer(modifier = Modifier.height(16.dp))
             AddDocumentsButton(navController)
         }
     }
+    BackButton(navController)
 }
 
 
+// card for each document
 @Composable
 fun DocumentRowItem(
     documentName: String,
@@ -126,6 +121,7 @@ fun DocumentRowItem(
     onDownloadClick: () -> Unit,
     onDeleteClick: () -> Unit
 ) {
+
     Card(
         modifier = Modifier
             .fillMaxWidth(),
@@ -200,9 +196,7 @@ fun AddDocumentsButton(navController: NavHostController) {
     }
 }
 
-/**
- * NEW: Function to start a file download using Android's DownloadManager.
- */
+// function to start the download of the document user clicked
 private fun startDownload(
     context: Context,
     url: String,
@@ -210,6 +204,7 @@ private fun startDownload(
     description: String
 ) {
     try {
+        // sends a request to the download manager to start the download
         val request = DownloadManager.Request(Uri.parse(url))
             .setTitle(title)
             .setDescription(description)
@@ -226,12 +221,14 @@ private fun startDownload(
     }
 }
 
+// delete confirmation dialog composable
 @Composable
 fun DeleteConfirmationDialog(
     documentName: String,
     onConfirm: () -> Unit,
     onDismiss: () -> Unit
 ) {
+    // Create a dialog to confirm document deletion
     AlertDialog(
         onDismissRequest = onDismiss,
         title = { Text("Delete Document") },
@@ -251,3 +248,4 @@ fun DeleteConfirmationDialog(
         }
     )
 }
+

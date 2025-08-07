@@ -2,16 +2,22 @@ package com.example.b07proj.view
 
 import android.util.Log
 import android.widget.Toast
+import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
+import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
+import androidx.compose.material.icons.Icons
+import androidx.compose.material.icons.filled.Add
+import androidx.compose.material.icons.filled.Edit
 import androidx.compose.material3.Button
 import androidx.compose.material3.CircularProgressIndicator
 import androidx.compose.material3.ExperimentalMaterial3Api
+import androidx.compose.material3.Icon
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.DisposableEffect
@@ -27,9 +33,11 @@ import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.style.TextAlign
+import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import androidx.navigation.NavHostController
+import androidx.navigation.compose.rememberNavController
 import com.example.b07proj.R
 import com.example.b07proj.model.Question
 import com.example.b07proj.presenter.dataItems.AddDataItemContract
@@ -103,7 +111,7 @@ fun AddContactsPage(navController: NavHostController) {
     // Question objects for each questions for emergency contacts
     val freeformQuestion1 = Question(
         id = 666,
-        question = "What is the name of the emergency contact?",
+        question = "What is the emergency contact's name?",
         type = "freeform",
         variable = "contactName"
     )
@@ -133,22 +141,12 @@ fun AddContactsPage(navController: NavHostController) {
         // actual UI for page starts here
         LoggedInTopBar(navController) {
             Column(
-                modifier = Modifier
-                    .padding(16.dp)
-                    .fillMaxWidth(),
+                modifier = Modifier.fillMaxWidth(),
                 horizontalAlignment = Alignment.Start,
+                verticalArrangement = Arrangement.spacedBy(8.dp)
             ) {
                 // header
-                Text(
-                    text = stringResource(id = R.string.addContactHeader),
-                    color = backgroundAccent,
-                    fontSize = 30.sp,
-                    fontWeight = FontWeight.Bold,
-                    fontFamily = myFont,
-                    textAlign = TextAlign.Center
-                )
-
-                Spacer(modifier = Modifier.height(24.dp))
+                ScreenHeaderTop(stringResource(R.string.addContactHeader))
 
                 // First question, free form question
                 FreeformQuestion2(
@@ -158,8 +156,6 @@ fun AddContactsPage(navController: NavHostController) {
                     onValueChange = { newText -> answers[freeformQuestion1.variable] = newText },
                     label = "Name"
                 )
-
-                Spacer(modifier = Modifier.height(24.dp))
 
                 // Contact primary phone number
                 PhoneNumberQuestion(
@@ -171,15 +167,13 @@ fun AddContactsPage(navController: NavHostController) {
                     isError = errors[phoneNumberQuestion2.variable] == true
                 )
 
-                Spacer(modifier = Modifier.height(24.dp))
-
                 // question for relation to user
                 DropdownQuestion(
                     question = dropdownQuestion3,
                     onAnswer = { newText -> answers[dropdownQuestion3.variable as String] = newText }
                 )
 
-                Spacer(modifier = Modifier.height(24.dp))
+                Spacer(modifier = Modifier.height(8.dp))
 
                 // question for providing email address of contact
                 EmailQuestion(
@@ -191,42 +185,58 @@ fun AddContactsPage(navController: NavHostController) {
                     isError = errors[emailQuestion4.variable] == true
                 )
 
-                Spacer(modifier = Modifier.height(24.dp))
-
-                // submission button
-                Button(
-                    enabled = answers.size == 4 && answers.all { item -> item.value.isNotEmpty() },
-                    onClick = {
-                        // get answer phone number and email (we need to check them)
-                        val phoneNumber = answers[phoneNumberQuestion2.variable].orEmpty()
-                        val emailAddress = answers[emailQuestion4.variable].orEmpty()
-
-                        val isPhoneValid = isPhoneNumberValid(phoneNumber)
-                        val isEmailValid = isEmailValid(emailAddress)
-
-                        // update errors boolean values at each question.variable
-                        // ex: if isPhoneNumberValid was false then errors["phoneNumber"] should be true
-                        errors[phoneNumberQuestion2.variable] = !isPhoneValid
-                        errors[emailQuestion4.variable] = !isEmailValid
-
-                        // we only proceed if both are valid ie both true
-                        if (isPhoneValid && isEmailValid ) {
-                            Log.d("AddContactsPage", "Valid phone number and email: $answers")
-                            presenter.saveDataItem(Categories.EMERGENCY_CONTACTS, answers.toMap(), contactId)
-                        }
-                        else {
-                            Log.d("AddContactsPage", "Valid phone number or email incorrect logic: $answers")
-                        }
-                    },
-                    modifier = Modifier.fillMaxWidth().padding(top = 16.dp)
+                // Submission / Cancel button
+                Row (
+                    modifier = Modifier.fillMaxWidth(),
+                    horizontalArrangement = Arrangement.SpaceBetween
                 ) {
-                    // change button text depending on if we editing or adding contact
-                    val buttonText = if (contactId == null) {
-                        "Add Contact"
-                    } else {
-                        "Update Contact"
+                    BackButton (
+                        navController, "Cancel",
+                        modifier = Modifier.weight(1f)
+                    )
+                    Spacer( modifier = Modifier.weight(0.25f) )
+
+                    Button(
+                        enabled = answers.size == 4 && answers.all { item -> item.value.isNotEmpty() },
+                        onClick = {
+                            // get answer phone number and email (we need to check them)
+                            val phoneNumber = answers[phoneNumberQuestion2.variable].orEmpty()
+                            val emailAddress = answers[emailQuestion4.variable].orEmpty()
+
+                            val isPhoneValid = isPhoneNumberValid(phoneNumber)
+                            val isEmailValid = isEmailValid(emailAddress)
+
+                            // update errors boolean values at each question.variable
+                            // ex: if isPhoneNumberValid was false then errors["phoneNumber"] should be true
+                            errors[phoneNumberQuestion2.variable] = !isPhoneValid
+                            errors[emailQuestion4.variable] = !isEmailValid
+
+                            // we only proceed if both are valid ie both true
+                            if (isPhoneValid && isEmailValid ) {
+                                Log.d("AddContactsPage", "Valid phone number and email: $answers")
+                                presenter.saveDataItem(Categories.EMERGENCY_CONTACTS, answers.toMap(), contactId)
+                            }
+                            else {
+                                Log.d("AddContactsPage", "Valid phone number or email incorrect logic: $answers")
+                            }
+                        },
+                        modifier = Modifier.fillMaxWidth().padding(top = 16.dp).weight(1f)
+                    ) {
+                        Row(
+                            verticalAlignment = Alignment.CenterVertically,
+                            horizontalArrangement = Arrangement.SpaceBetween
+
+                        ) {
+                            AddEditOrCancelRow(contactId)
+                        }
+//                        // change button text depending on if we editing or adding contact
+//                        val buttonText = if (contactId == null) {
+//                            "Add Contact"
+//                        } else {
+//                            "Update Contact"
+//                        }
+//                        Text(buttonText)
                     }
-                    Text(buttonText)
                 }
             }
         }

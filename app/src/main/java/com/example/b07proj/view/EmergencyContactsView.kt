@@ -36,9 +36,11 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.font.FontWeight
+import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import androidx.navigation.NavHostController
+import androidx.navigation.compose.rememberNavController
 import com.example.b07proj.R
 import com.example.b07proj.model.dataCategories.EmergencyContact
 import com.example.b07proj.presenter.dataItems.Categories
@@ -92,9 +94,9 @@ fun EmergencyContactPage(navController: NavHostController) {
                 showEmptyState = false
             }
 
-            override fun onContactDeleted(contactId: String) {
+            override fun onDataItemDeleted(dataItemId: String) {
                 // when we deleted a contact, remove that contact off the list and update
-                val updatedList = contacts.filterNot { it.id == contactId }
+                val updatedList = contacts.filterNot { it.id == dataItemId }
                 contacts = updatedList
                 if (updatedList.isEmpty()) {
                     showEmptyState = true
@@ -106,16 +108,21 @@ fun EmergencyContactPage(navController: NavHostController) {
     DisposableEffect(presenter) {
         presenter.view = view
         // Load data when the view is ready
-        presenter.loadContacts(Categories.EMERGENCY_CONTACTS, EmergencyContact::class.java)
+        presenter.loadDataItems(Categories.EMERGENCY_CONTACTS, EmergencyContact::class.java)
         onDispose {
             presenter.onViewDestroyed()
         }
     }
+
+
     // the actual UI
     LoggedInTopBar(navController) {
-        Box(
-            modifier = Modifier.fillMaxSize().padding(16.dp),
-            contentAlignment = Alignment.Center
+        // Header
+        ScreenHeaderTop(stringResource(R.string.EmergencyContactsHeader))
+
+        Column(
+            modifier = Modifier.fillMaxWidth(),
+            horizontalAlignment = Alignment.CenterHorizontally
         ) {
             when {
                 // different states we have separate UIs for them
@@ -123,16 +130,13 @@ fun EmergencyContactPage(navController: NavHostController) {
                 errorMessage != null -> Text("Error: $errorMessage")
                 showEmptyState -> {
                     Column(
-                        modifier = Modifier.padding(5.dp).fillMaxSize(),
+                        modifier = Modifier.fillMaxWidth(),
                         verticalArrangement = Arrangement.spacedBy(12.dp),
                         horizontalAlignment = Alignment.CenterHorizontally
-
                     ) {
                         Text(
                             "You have not added any emergency contacts yet.",
                             fontFamily = myFont
-
-
                         )
                         AddContactsButton(navController)
                     }
@@ -141,28 +145,27 @@ fun EmergencyContactPage(navController: NavHostController) {
                 else -> {
 
                     LazyColumn(
-                        modifier = Modifier.padding(5.dp).fillMaxSize(),
-                        contentPadding = PaddingValues(16.dp),
+                        modifier = Modifier.padding(5.dp).fillMaxWidth(),
                         verticalArrangement = Arrangement.spacedBy(12.dp),
                         horizontalAlignment = Alignment.CenterHorizontally
                     ) {
                         // header
-                        item {
-                            Text(
-                                text = stringResource(R.string.EmergencyContactsHeader),
-                                color = backgroundAccent,
-                                fontSize = 30.sp,
-                                fontWeight = FontWeight.Bold,
-                                fontFamily = myFont
-                            )
-                            Spacer(modifier = Modifier.height(16.dp))
-                        }
+//                        item {
+//                            Text(
+//                                text = stringResource(R.string.EmergencyContactsHeader),
+//                                color = backgroundAccent,
+//                                fontSize = 30.sp,
+//                                fontWeight = FontWeight.Bold,
+//                                fontFamily = myFont
+//                            )
+//                            Spacer(modifier = Modifier.height(16.dp))
+//                        }
                         // list of contacts spawn here, each contact in contacts we have a ContactCard for
                         items(contacts, key = {it.id})  { contact ->
                             ContactCard(
                                 contact = contact,
                                 onDelete = {
-                                    presenter.deleteContact(Categories.EMERGENCY_CONTACTS, contact.id)
+                                    presenter.deleteDataItem(Categories.EMERGENCY_CONTACTS, contact.id)
                                 },
                                 // if we are editing pass in the contact id associated with it
                                 onEdit = {
@@ -179,6 +182,7 @@ fun EmergencyContactPage(navController: NavHostController) {
                 }
             }
         }
+        BackButton(navController)
     }
 }
 
@@ -195,7 +199,7 @@ fun AddContactsButton(navController: NavHostController) {
 fun ContactCard(contact: EmergencyContact, onDelete: () -> Unit, onEdit: () -> Unit) {
     // UI for a single "Contact card"
     Card(
-            modifier = Modifier.fillMaxWidth()
+        modifier = Modifier.fillMaxWidth()
     ) {
         Row(
             modifier = Modifier.fillMaxWidth(),

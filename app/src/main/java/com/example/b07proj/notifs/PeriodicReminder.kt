@@ -7,12 +7,15 @@ import android.content.Intent
 import java.util.Calendar
 import androidx.core.content.edit
 
+// Required for the alarm for PeriodicReminder to broadcast the notification
 const val PREFS_NAME = "app_prefs"
 const val KEY_ALARM_HOUR = "alarm_hour"
 const val KEY_ALARM_MIN = "alarm_min"
 const val KEY_ALARM_INTERVAL_MS = "alarm_interval_ms"
 
+
 class PeriodicReminderManager private constructor(context: Context) {
+
     private val context: Context = context.applicationContext
     private val alarmManager: AlarmManager =
         context.getSystemService(Context.ALARM_SERVICE) as AlarmManager
@@ -29,10 +32,9 @@ class PeriodicReminderManager private constructor(context: Context) {
     init {
         // We do this so it doesn't fire at the start
         instance = this
-
         alarmManager.cancel(pendingIntent)
     }
-
+    // sets the alarm to a specific time
     fun setAlarmInterval(intervalMS: Long, hourOfDay: Int, minOfDay: Int) {
         val calendar: Calendar = Calendar.getInstance().apply {
             timeInMillis = System.currentTimeMillis()
@@ -53,7 +55,7 @@ class PeriodicReminderManager private constructor(context: Context) {
         )
         saveAlarmTimePreference(context, hourOfDay, minOfDay, intervalMS)
     }
-
+    // saves the time to shared prefs
     private fun saveAlarmTimePreference(context: Context, hour: Int, min: Int, intervalMS: Long ) {
 
         println("?? hour: $hour")

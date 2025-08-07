@@ -6,31 +6,28 @@ import com.google.firebase.auth.AuthCredential
 import com.google.firebase.auth.ktx.auth
 import com.google.firebase.ktx.Firebase
 
-/**
- * A singleton object to manage Firebase Authentication and the current user session.
- */
-object HandleAuth {
+// Singleton object that implements the IAuthService interface.
+object HandleAuth : IAuthService{
 
-    private val auth: FirebaseAuth = Firebase.auth
+    val auth: FirebaseAuth = Firebase.auth
 
-    /**
-     * Holds the UUID of the currently logged-in user.
-     * It is null if no one is logged in.
-     */
+    // Global UUID for the currently signed-in user.
     var currentUserUuid: String? = null
-        private set
+        //setter for the uuid
+        set
 
     // When this object is first created, check if a user is already signed in from a previous session.
     init {
         currentUserUuid = auth.currentUser?.uid
     }
-
-    fun signUp(
+    // Sign up a new user with email and password.
+    override fun signUp(
         email: String,
         password: String,
         onSuccess: () -> Unit,
         onFailure: (String) -> Unit
     ) {
+        // firebase handles this for us
         auth.createUserWithEmailAndPassword(email, password)
             .addOnCompleteListener { task ->
                 if (task.isSuccessful) {
@@ -42,13 +39,14 @@ object HandleAuth {
                 }
             }
     }
-
-    fun loginWithEmail(
+    // login a user with email and password
+    override fun loginWithEmail(
         email: String,
         password: String,
         onSuccess: () -> Unit,
         onFailure: (String) -> Unit
     ) {
+        // firebase sign in
         auth.signInWithEmailAndPassword(email, password)
             .addOnCompleteListener { task ->
                 if (task.isSuccessful) {
@@ -61,17 +59,8 @@ object HandleAuth {
             }
     }
 
-    /**
-     * A function for your PIN login flow.
-     * You call this after the PIN has been successfully verified.
-     */
-    fun loginWithPin(uuid: String) {
-        // Here, we trust the PIN check was successful and we simply set the user session.
-        currentUserUuid = uuid
-        Log.d("HandleAuth", "User session started via PIN for UUID: $currentUserUuid")
-    }
-
-    fun signInWithGoogle(credential: AuthCredential, onSuccess: () -> Unit, onFailure: (String) -> Unit) {
+    // Signin user with google account
+    override fun signInWithGoogle(credential: AuthCredential, onSuccess: () -> Unit, onFailure: (String) -> Unit) {
         auth.signInWithCredential(credential)
             .addOnCompleteListener { task ->
                 if (task.isSuccessful) {

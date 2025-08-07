@@ -2,15 +2,21 @@ package com.example.b07proj.view
 
 import android.util.Log
 import android.widget.Toast
+import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
+import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
+import androidx.compose.material.icons.Icons
+import androidx.compose.material.icons.filled.Add
+import androidx.compose.material.icons.filled.Edit
 import androidx.compose.material3.Button
 import androidx.compose.material3.CircularProgressIndicator
+import androidx.compose.material3.Icon
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.DisposableEffect
@@ -24,17 +30,13 @@ import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.res.stringResource
-import androidx.compose.ui.text.font.FontWeight
-import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.unit.dp
-import androidx.compose.ui.unit.sp
 import androidx.navigation.NavHostController
 import com.example.b07proj.R
 import com.example.b07proj.model.Question
 import com.example.b07proj.presenter.dataItems.AddDataItemContract
 import com.example.b07proj.presenter.dataItems.AddDataItemPresenter
 import com.example.b07proj.presenter.dataItems.Categories
-import com.example.b07proj.ui.theme.backgroundAccent
 
 // Renderer component for medication page
 @Composable
@@ -102,7 +104,6 @@ fun AddMedicationPage(navController: NavHostController) {
     }
 
     // Question objects for each questions for medication
-    // #TODO ask if the ID numbers have to be next to each other or if they can be far apart
     // Ask for name of medication
     val freeformQuestion1 = Question(
         id = 672,
@@ -134,21 +135,12 @@ fun AddMedicationPage(navController: NavHostController) {
         // actual UI for page starts here
         LoggedInTopBar(navController) {
             Column(
-                modifier = Modifier
-                    .padding(16.dp)
-                    .fillMaxWidth(),
+                modifier = Modifier.fillMaxWidth(),
                 horizontalAlignment = Alignment.Start,
+                verticalArrangement = Arrangement.spacedBy(8.dp)
             ) {
                 // header
-                Text(
-                    text = stringResource(id = R.string.addMedicationHeader),
-                    color = backgroundAccent,
-                    fontSize = 30.sp,
-                    fontWeight = FontWeight.Bold,
-                    fontFamily = myFont,
-                    textAlign = TextAlign.Center
-                )
-                Spacer(modifier = Modifier.height(24.dp))
+                ScreenHeaderTop(stringResource(R.string.addMedicationHeader))
 
                 // First question for medication name
                 FreeformQuestion2(
@@ -157,7 +149,6 @@ fun AddMedicationPage(navController: NavHostController) {
                     onValueChange = { newText -> answers[freeformQuestion1.variable] = newText },
                     label = "Name"
                 )
-                Spacer(modifier = Modifier.height(24.dp))
 
                 // Second question for medication dosage
                 FreeformQuestion2(
@@ -166,31 +157,56 @@ fun AddMedicationPage(navController: NavHostController) {
                     onValueChange = { newText -> answers[freeformQuestion2.variable] = newText },
                     label = "Dosage"
                 )
-                Spacer(modifier = Modifier.height(24.dp))
 
-                // TODO: Create a DateQuestion1 w/o the submission button
-                // Third question for medication expiry
                 DateQuestion(
                     question = dateQuestion3,
                     onAnswer = { newText -> answers[dateQuestion3.variable!!] = newText }
                 )
-                Spacer(modifier = Modifier.height(24.dp))
+                Spacer(modifier = Modifier.height(8.dp))
 
-                // submission button
-                Button(
-                    enabled = answers.size == 3 && answers.all { item -> item.value.isNotEmpty() },
-                    onClick = {
-                        Log.d("AddMedicationPage", "Valid answers: $answers")
-                        presenter.saveDataItem(Categories.MEDICATIONS, answers.toMap(), medicationId)
-                    },
-                    modifier = Modifier.fillMaxWidth().padding(top = 16.dp)
+                // Submission / Cancel button
+                Row (
+                    modifier = Modifier.fillMaxWidth(),
+                    horizontalArrangement = Arrangement.SpaceBetween
                 ) {
-                    Text("Add Medication")
+                    BackButton (
+                        navController, "Cancel",
+                        modifier = Modifier.weight(1f)
+                    )
+                    Spacer( modifier = Modifier.weight(0.25f) )
+                    Button(
+                        enabled = answers.size == 3 && answers.all { item -> item.value.isNotEmpty() },
+                        onClick = {
+                            Log.d("AddMedicationPage", "Valid answers: $answers")
+                            presenter.saveDataItem(Categories.MEDICATIONS, answers.toMap(), medicationId)
+                        },
+                        modifier = Modifier.padding(top = 16.dp).weight(1f),
+                    ) {
+                        AddEditOrCancelRow(medicationId)
+                    }
                 }
+
             }
         }
         if (isLoading) {
             CircularProgressIndicator()
         }
+    }
+}
+
+@Composable
+fun AddEditOrCancelRow(id: String?) {
+    Row(
+        verticalAlignment = Alignment.CenterVertically,
+        horizontalArrangement = Arrangement.SpaceBetween
+    ) {
+        Icon(
+            imageVector = if (id == null) Icons.Filled.Add else Icons.Filled.Edit,
+            contentDescription = "Home",
+        )
+        Text(
+            text = if (id == null) "Add" else "Edit",
+            modifier = Modifier.padding(end = 8.dp)
+        )
     }
 }

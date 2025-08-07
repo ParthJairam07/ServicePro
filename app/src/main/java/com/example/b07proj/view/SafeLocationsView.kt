@@ -90,9 +90,9 @@ fun SafeLocationPage(navController: NavHostController) {
                 showEmptyState = false
             }
 
-            override fun onContactDeleted(contactId: String) {
+            override fun onDataItemDeleted(dataItemId: String) {
                 // when we deleted a contact, remove that contact off the list and update
-                val updatedList = locations.filterNot { it.id == contactId }
+                val updatedList = locations.filterNot { it.id == dataItemId }
                 locations = updatedList
                 if (updatedList.isEmpty()) {
                     showEmptyState = true
@@ -105,15 +105,18 @@ fun SafeLocationPage(navController: NavHostController) {
     DisposableEffect(presenter) {
         presenter.view = view
         // Load data when the view is ready
-        presenter.loadContacts(Categories.SAFE_LOCATIONS, SafeLocation::class.java)
+        presenter.loadDataItems(Categories.SAFE_LOCATIONS, SafeLocation::class.java)
         onDispose {
             presenter.onViewDestroyed()
         }
     }
     // the actual UI
     LoggedInTopBar(navController) {
+        // Header
+        ScreenHeaderTop(stringResource(R.string.SafeLocationsHeader))
+
         Box(
-            modifier = Modifier.fillMaxSize().padding(16.dp),
+            modifier = Modifier.fillMaxWidth(),
             contentAlignment = Alignment.Center
         ) {
             when {
@@ -122,7 +125,7 @@ fun SafeLocationPage(navController: NavHostController) {
                 errorMessage != null -> Text("Error: $errorMessage")
                 showEmptyState -> {
                     Column(
-                        modifier = Modifier.padding(5.dp).fillMaxSize(),
+                        modifier = Modifier.fillMaxWidth(),
                         verticalArrangement = Arrangement.spacedBy(12.dp),
                         horizontalAlignment = Alignment.CenterHorizontally
                     ) {
@@ -136,26 +139,25 @@ fun SafeLocationPage(navController: NavHostController) {
                 // this means we have a contact list (at least 1)
                 else -> {
                     LazyColumn(
-                        modifier = Modifier.padding(5.dp).fillMaxSize(),
-                        contentPadding = PaddingValues(16.dp),
+                        modifier = Modifier.fillMaxWidth(),
                         verticalArrangement = Arrangement.spacedBy(12.dp),
                         horizontalAlignment = Alignment.CenterHorizontally
                     ) {
-                        item {
-                            Text(
-                                text = stringResource(R.string.SafeLocationsHeader),
-                                color = backgroundAccent,
-                                fontSize = 30.sp,
-                                fontWeight = FontWeight.Bold,
-                                fontFamily = myFont
-                            )
-                            Spacer(modifier = Modifier.height(16.dp))
-                        }
+//                        item {
+//                            Text(
+//                                text = stringResource(R.string.SafeLocationsHeader),
+//                                color = backgroundAccent,
+//                                fontSize = 30.sp,
+//                                fontWeight = FontWeight.Bold,
+//                                fontFamily = myFont
+//                            )
+//                            Spacer(modifier = Modifier.height(16.dp))
+//                        }
                         items(locations, key = {it.id})  { contact ->
                             LocationCard(
                                 location = contact,
                                 onDelete = {
-                                    presenter.deleteContact(Categories.SAFE_LOCATIONS, contact.id)
+                                    presenter.deleteDataItem(Categories.SAFE_LOCATIONS, contact.id)
                                 },
                                 // if we are editing pass in the contact id associated with it
                                 onEdit = {
@@ -171,6 +173,7 @@ fun SafeLocationPage(navController: NavHostController) {
                 }
             }
         }
+        BackButton(navController)
     }
 }
 

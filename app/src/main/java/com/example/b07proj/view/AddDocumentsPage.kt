@@ -15,9 +15,11 @@ import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.TextStyle
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.style.TextAlign
+import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import androidx.navigation.NavHostController
+import androidx.navigation.compose.rememberNavController
 import com.example.b07proj.R
 import com.example.b07proj.model.Question
 import com.example.b07proj.ui.theme.backgroundAccent
@@ -66,21 +68,20 @@ fun AddDocumentsPage(
     }
 
     LoggedInTopBar(navController) {
+
+        Row(
+            modifier = Modifier.fillMaxWidth(),
+            horizontalArrangement = Arrangement.Center
+        ) {
+            ScreenHeaderTop("Upload File")
+        }
+
         Column(
-            modifier = Modifier
-                .padding(16.dp)
-                .fillMaxWidth(),
+            modifier = Modifier.fillMaxWidth(),
             horizontalAlignment = Alignment.Start,
             verticalArrangement = Arrangement.spacedBy(8.dp)
         ) {
-            Text(
-                text = stringResource(id = R.string.addDocumentHeader),
-                color = backgroundAccent,
-                fontSize = 30.sp,
-                fontWeight = FontWeight.Bold,
-                fontFamily = myFont,
-                textAlign = TextAlign.Center
-            )
+
             // Types of questions
             val nameQuestion = Question(
                 id = 999,
@@ -124,9 +125,11 @@ fun AddDocumentsPage(
 
             Spacer(modifier = Modifier.height(8.dp))
 
+            QuizQuestion("Select a document to upload", required = true)
             Button(onClick = { filePickerLauncher.launch("*/*") }) {
                 Text("Select Document", style = TextStyle(fontFamily = myFont))
             }
+
             // Display selected file name
             selectedFileUri?.let { uri ->
                 Text(
@@ -141,24 +144,44 @@ fun AddDocumentsPage(
             if (isLoading) {
                 CircularProgressIndicator()
             } else {
-                Button(
-                    onClick = {
-                        // launch coroutine to upload and save document
-                        coroutineScope.launch {
-                            presenter.uploadAndSaveDocument(
-                                fileUri = selectedFileUri!!,
-                                documentName = documentName,
-                                documentDescription = documentDescription,
-                                relevantDate = documentDate
-                            )
-                        }
-                    },
-                    enabled = selectedFileUri != null && documentName.isNotBlank()
+
+                Row(
+                    modifier = Modifier.fillMaxWidth(),
+                    horizontalArrangement = Arrangement.SpaceBetween
                 ) {
-                    Text("Upload and Save Entire Document", style = TextStyle(fontFamily = myFont))
+                    BackButton(
+                        navController, "Cancel",
+                        modifier = Modifier.weight(1f)
+                    )
+                    Spacer(modifier = Modifier.weight(0.25f))
+                    Button(
+                        onClick = {
+                            // launch coroutine to upload and save document
+                            coroutineScope.launch {
+                                presenter.uploadAndSaveDocument(
+                                    fileUri = selectedFileUri!!,
+                                    documentName = documentName,
+                                    documentDescription = documentDescription,
+                                    relevantDate = documentDate
+                                )
+                            }
+                        },
+                        enabled = selectedFileUri != null && documentName.isNotBlank(),
+                        modifier = Modifier.fillMaxWidth().padding(top = 16.dp).weight(1f)
+                    ) {
+                        // We will always be adding, so the text will always be null
+                        AddEditOrCancelRow(null)
+                    }
                 }
+
             }
         }
     }
 }
 
+
+@Preview(showBackground = true)
+@Composable
+fun AddDocumentsPagePreview() {
+    AddDocumentsPage(rememberNavController())
+}

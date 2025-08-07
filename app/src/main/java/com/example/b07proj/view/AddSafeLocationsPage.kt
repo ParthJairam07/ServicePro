@@ -2,15 +2,21 @@ package com.example.b07proj.view
 
 import android.util.Log
 import android.widget.Toast
+import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
+import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
+import androidx.compose.material.icons.Icons
+import androidx.compose.material.icons.filled.Add
+import androidx.compose.material.icons.filled.Edit
 import androidx.compose.material3.Button
 import androidx.compose.material3.CircularProgressIndicator
+import androidx.compose.material3.Icon
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.DisposableEffect
@@ -48,6 +54,7 @@ fun AddSafeLocationsPage(navController: NavHostController) {
     // To determine if we show the spinner or not
     var isLoading by remember { mutableStateOf(false) }
     val context = LocalContext.current
+
     val presenter : AddDataItemContract.Presenter = remember { AddDataItemPresenter(null) }
 
     // get locationId from navigation arguments, note if will be null if we are adding
@@ -123,21 +130,12 @@ fun AddSafeLocationsPage(navController: NavHostController) {
         // actual UI for page starts here
         LoggedInTopBar(navController) {
             Column(
-                modifier = Modifier
-                    .padding(16.dp)
-                    .fillMaxWidth(),
+                modifier = Modifier.fillMaxWidth(),
                 horizontalAlignment = Alignment.Start,
+                verticalArrangement = Arrangement.spacedBy(8.dp)
             ) {
                 // header
-                Text(
-                    text = stringResource(id = R.string.addSafeLocationHeader),
-                    color = backgroundAccent,
-                    fontSize = 30.sp,
-                    fontWeight = FontWeight.Bold,
-                    fontFamily = myFont,
-                    textAlign = TextAlign.Center
-                )
-                Spacer(modifier = Modifier.height(24.dp))
+                ScreenHeaderTop(stringResource(R.string.addSafeLocationHeader))
 
                 // First question for safe location address
                 FreeformQuestion2(
@@ -146,7 +144,6 @@ fun AddSafeLocationsPage(navController: NavHostController) {
                     onValueChange = { newText -> answers[freeformQuestion1.variable] = newText },
                     label = "Address"
                 )
-                Spacer(modifier = Modifier.height(24.dp))
 
                 // Second question for safe location description
                 FreeformQuestion2(
@@ -156,8 +153,6 @@ fun AddSafeLocationsPage(navController: NavHostController) {
                     label = "Description"
                 )
 
-                Spacer(modifier = Modifier.height(24.dp))
-
                 // third question for safe location name
                 FreeformQuestion2(
                     question = freeformQuestion3,
@@ -165,18 +160,32 @@ fun AddSafeLocationsPage(navController: NavHostController) {
                     onValueChange = { newText -> answers[freeformQuestion3.variable] = newText },
                     label = "Name"
                 )
-                Spacer(modifier = Modifier.height(24.dp))
 
-                // submission button
-                Button(
-                    enabled = answers.size == 3 && answers.all { item -> item.value.isNotEmpty() },
-                    onClick = {
-                        Log.d("AddSafeLocationsPage", "Valid answers: $answers")
-                        presenter.saveDataItem(Categories.SAFE_LOCATIONS, answers.toMap(), locationId)
-                    },
-                    modifier = Modifier.fillMaxWidth().padding(top = 16.dp)
+                // Submission / Cancel button
+                Row (
+                    modifier = Modifier.fillMaxWidth(),
+                    horizontalArrangement = Arrangement.SpaceBetween
                 ) {
-                    Text("Add Safe Location")
+                    BackButton(
+                        navController, "Cancel",
+                        modifier = Modifier.weight(1f)
+                    )
+                    Spacer(modifier = Modifier.weight(0.25f))
+
+                    Button(
+                        enabled = answers.size == 3 && answers.all { item -> item.value.isNotEmpty() },
+                        onClick = {
+                            Log.d("AddSafeLocationsPage", "Valid answers: $answers")
+                            presenter.saveDataItem(
+                                Categories.SAFE_LOCATIONS,
+                                answers.toMap(),
+                                locationId
+                            )
+                        },
+                        modifier = Modifier.fillMaxWidth().padding(top = 16.dp).weight(1f)
+                    ) {
+                        AddEditOrCancelRow(locationId)
+                    }
                 }
             }
         }

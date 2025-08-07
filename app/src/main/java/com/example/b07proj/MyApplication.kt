@@ -12,8 +12,5 @@ class MyApplication : Application() {
         FirebaseApp.initializeApp(this)
         // Initialize periodic reminder singleton
         PeriodicReminderManager.init(this)
-
-        // For testing
-//        PeriodicReminderManager.instance?.setAlarmInterval(/* AlarmManager.INTERVAL_DAY */ 5000L, 15, 30)
     }
 }

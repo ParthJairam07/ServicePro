@@ -10,8 +10,9 @@ import javax.crypto.KeyGenerator
 import javax.crypto.SecretKey
 import javax.crypto.spec.GCMParameterSpec
 
+// Object to manage PIN-based login for the app.
 object PinManager {
-
+    // Constants for keystore and transformation
     private const val KEYSTORE_PROVIDER = "AndroidKeyStore"
     private const val TRANSFORMATION = "AES/GCM/NoPadding"
 
@@ -19,6 +20,7 @@ object PinManager {
     private const val KEY_ALIAS = "com_example_b07proj_local_pin_key"
     private const val IV_SEPARATOR = "|"
 
+    // Initialize the KeyStore
     private val keyStore = KeyStore.getInstance(KEYSTORE_PROVIDER).apply {
         load(null)
     }
@@ -28,6 +30,7 @@ object PinManager {
     fun encrypt(dataToEncrypt: String): String? {
         // Now uses the KEY_ALIAS internally
         return try {
+            // Initialize the cipher with the KEY_ALIAS and transformation and encrypt the data
             val cipher = Cipher.getInstance(TRANSFORMATION)
             cipher.init(Cipher.ENCRYPT_MODE, getOrCreateSecretKey())
             val encryptedBytes = cipher.doFinal(dataToEncrypt.toByteArray(Charsets.UTF_8))
@@ -45,6 +48,7 @@ object PinManager {
     fun decrypt(encryptedData: String): String? {
         // Now uses the fixed KEY_ALIAS internally
         return try {
+            // Split the IV and encrypted data then initialize the cipher with the KEY_ALIAS and transformation and decrypt the data
             val parts = encryptedData.split(IV_SEPARATOR)
             if (parts.size != 2) return null
             val iv = Base64.decode(parts[0], Base64.DEFAULT)
@@ -58,30 +62,32 @@ object PinManager {
             null
         }
     }
-
+    // Get the UUID and PIN from the encrypted data.
     fun getUuid(encryptedData: String): String? {
         val decryptedJson = decrypt(encryptedData)
+        // checks if the decrypted json is null or not
         return decryptedJson?.let { try { JSONObject(it).getString("uuid") } catch (e: Exception) { null } }
     }
-
+    // Get the PIN from the encrypted data.
     fun getPin(encryptedData: String): String? {
         val decryptedJson = decrypt(encryptedData)
         return decryptedJson?.let { try { JSONObject(it).getString("pin") } catch (e: Exception) { null } }
     }
 
-    // Now private and uses the constant alias
+    // function to get or create the secret key
     private fun getOrCreateSecretKey(): SecretKey {
         val existingKey = keyStore.getEntry(KEY_ALIAS, null) as? KeyStore.SecretKeyEntry
         return existingKey?.secretKey ?: generateSecretKey()
     }
 
-    // Now private and uses the constant alias
+    // function to generate the secret key
     private fun generateSecretKey(): SecretKey {
         val keyGenerator = KeyGenerator.getInstance(KeyProperties.KEY_ALGORITHM_AES, KEYSTORE_PROVIDER)
         val keyGenSpec = KeyGenParameterSpec.Builder(
             KEY_ALIAS,
             KeyProperties.PURPOSE_ENCRYPT or KeyProperties.PURPOSE_DECRYPT
         )
+            // Set the encryption mode to GCM
             .setBlockModes(KeyProperties.BLOCK_MODE_GCM)
             .setEncryptionPaddings(KeyProperties.ENCRYPTION_PADDING_NONE)
             .setKeySize(256)

@@ -37,6 +37,7 @@ import com.example.b07proj.notifs.KEY_ALARM_INTERVAL_MS
 import com.example.b07proj.notifs.KEY_ALARM_MIN
 import com.example.b07proj.notifs.PREFS_NAME
 import com.example.b07proj.notifs.PeriodicReminderManager
+import com.example.b07proj.notifs.sendNotificationOnAppCreate
 import com.example.b07proj.ui.theme.BackgroundColor
 
 // Settings page for the app
@@ -127,8 +128,6 @@ fun UISettingsPage(navController: NavHostController) {
                         shape = SegmentedButtonDefaults.itemShape(index = index, count = options.size),
                         onClick = {
                             selectedIndex = index
-                            println("$label was pressed")
-                            println(dayToTime[label]!!)
                             // First, update the remembered variable (so the UI reflects changes)
                             interval.longValue = dayToTime[label]!!
                             // Then, change the variables into saved preferences
@@ -148,7 +147,7 @@ fun UISettingsPage(navController: NavHostController) {
             }
         }
 
-        Spacer(modifier = Modifier.padding(16.dp))
+        Spacer(modifier = Modifier.padding(8.dp))
 
         Row {
             Text(
@@ -197,6 +196,7 @@ fun UISettingsPage(navController: NavHostController) {
             )
         }
 
+
         // Show time picker only if we say so
         if (showDialog.value)
         {
@@ -215,6 +215,44 @@ fun UISettingsPage(navController: NavHostController) {
                 true // Has to be true for 24-hour format
             ).show()
         }
+
+        Spacer(modifier = Modifier.padding(8.dp))
+
+        Text(
+            text = "Send a demo notification",
+            style = TextStyle(
+                fontSize = 16.sp,
+                fontWeight = FontWeight.SemiBold,
+                fontFamily = myFont
+            )
+        )
+        // Demo notification
+        Button(
+            onClick = {
+                sendNotificationOnAppCreate(context = navController.context);
+            },
+            // color is white
+            colors = ButtonDefaults.buttonColors(
+                containerColor = androidx.compose.ui.graphics.Color.White
+            ),
+            border = androidx.compose.foundation.BorderStroke(
+                width = 1.dp,
+                color = BackgroundColor
+            )
+        ) {
+            Text(
+                text = "Test!",
+                style = TextStyle(
+                    fontSize = 16.sp,
+                    fontWeight = FontWeight.SemiBold,
+                    fontFamily = myFont
+                ),
+                color = BackgroundColor
+            )
+        }
+
+        Spacer( modifier = Modifier.padding(top = 8.dp) )
+        BackButton(navController)
     }
 }
 

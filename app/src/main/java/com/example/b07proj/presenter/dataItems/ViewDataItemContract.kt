@@ -1,6 +1,6 @@
 package com.example.b07proj.presenter.dataItems
 
-// a contract between presenter and view for when viewing contacts
+// a contract between presenter and view for when viewing data items
 interface ViewDataItemContract {
     // presenter -> view
 
@@ -8,18 +8,18 @@ interface ViewDataItemContract {
         fun showLoading()
         fun hideLoading()
         fun displayContacts(fetchedContacts: List<T>)
-        fun displayEmptyState() // when there is no contacts
+        fun displayEmptyState() // when there is no data items
         fun displayError(message: String)
-        // when we delete a contact, tell view to update its list of contacts (remove the deleted one)
-        fun onContactDeleted(contactId: String)
+        // when we delete a data item, tell view to update its list of data items (remove the deleted one)
+        fun onDataItemDeleted(dataItemId: String)
 
     }
     // view -> presenter
     interface Presenter<T> {
 
-        fun loadContacts(category: Categories, itemClass: Class<T>)
+        fun loadDataItems(category: Categories, itemClass: Class<T>)
         // tell presenter to delete a certain contact based on contactId
-        fun deleteContact(categories: Categories, contactId: String)
+        fun deleteDataItem(categories: Categories, dataItemId: String)
         fun onViewDestroyed()
     }
 

@@ -1,14 +1,17 @@
 package com.example.b07proj.presenter
 
-import com.example.b07proj.model.HandleAuth // Make sure you import the object
+import com.example.b07proj.model.HandleAuth
+import com.example.b07proj.model.IAuthService
 import com.example.b07proj.view.SignUpView
 import com.google.firebase.auth.GoogleAuthProvider
 
 class AuthPresenter (
-    val view: SignUpView
+    public val view: SignUpView,
+    private val authService: IAuthService = HandleAuth
 ){
-
+    // Handle the sign-up button click
     fun onSignUpClick(email: String, password: String) {
+        // Validate the email and password
         if (!isValidEmail(email)) {
             view.showError("Invalid email format")
             return
@@ -19,7 +22,7 @@ class AuthPresenter (
         }
 
         //Call the method directly on the singleton object `HandleAuth`.
-        HandleAuth.signUp(email, password,
+        authService.signUp(email, password,
             onSuccess = {
                 view.onSignUpSuccess()
             },
@@ -29,6 +32,7 @@ class AuthPresenter (
         )
     }
 
+    // Handle the login button click
     fun onLoginClick(email: String, password: String) {
         if (!isValidEmail(email)) {
             view.showError("Invalid email format")
@@ -40,7 +44,7 @@ class AuthPresenter (
         }
 
         // Call the method directly on the singleton object `HandleAuth`.
-        HandleAuth.loginWithEmail(email, password,
+        authService.loginWithEmail(email, password,
             onSuccess = {
                 view.onSignUpSuccess()
             },
@@ -49,12 +53,12 @@ class AuthPresenter (
             }
         )
     }
-
+    // Handle the Google sign-in success
     fun onGoogleSignInSucceeded(idToken: String) {
         val credential = GoogleAuthProvider.getCredential(idToken, null)
 
         // Call the method directly on the singleton object `HandleAuth`.
-        HandleAuth.signInWithGoogle(credential,
+        authService.signInWithGoogle(credential,
             onSuccess = {
                 view.onSignUpSuccess()
             },
@@ -63,8 +67,13 @@ class AuthPresenter (
             }
         )
     }
-
+    // check if email is valid, using regex
     private fun isValidEmail(email: String): Boolean {
-        return android.util.Patterns.EMAIL_ADDRESS.matcher(email).matches()
+        if (email.isBlank()) {
+            return false
+        }
+        // A common and simple regex for email validation.
+        val emailRegex = Regex("^[a-zA-Z0-9._%+-]+@[a-zA-Z0-9.-]+\\.[a-zA-Z]{2,6}$")
+        return emailRegex.matches(email)
     }
 }
