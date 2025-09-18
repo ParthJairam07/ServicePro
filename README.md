@@ -165,4 +165,4 @@ and regular reminders to ensure users can manage and update their safety plans a
 
 
 
-This app was for a CSCBO7, the people worked on this are Abinash Nagendran, Akshayan Prabaharan, Ayyash Anhardeen, Krish Patel, Parth Rupesh Jairam
+This app was for a CSCBO7, the people worked on this are Parth Rupesh Jairam, Abinash Nagendran, Akshayan Prabaharan, Ayyash Anhardeen, Krish Patel.
